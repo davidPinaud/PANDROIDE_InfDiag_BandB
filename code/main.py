@@ -1,2 +1,0 @@
-#Code
-print("hello world")
