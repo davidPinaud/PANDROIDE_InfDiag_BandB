@@ -1,0 +1,334 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper]{geometry}
+\geometry{hscale=0.80,vscale=0.80,centering}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage{amssymb}
+\usepackage{breqn}
+\usepackage{graphicx}
+\usepackage[affil-it]{authblk}
+\newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
+\title{Projet de Mathématiques Étoilé\\
+\bigbreak\textbf{Algorithmes rapides pour la transformée de Fourier discrète}}
+\author{PINAUD David \& BASTIEN Titouan}
+\date{15 Mai, 2018}
+\affil{Université Paris Descartes}
+\begin{document}
+\maketitle
+\hspace*{2.8cm}\includegraphics[width=100mm]{Fourier2.png}
+\renewcommand{\contentsname}{Table des Matières}
+\pagebreak
+\tableofcontents
+\pagebreak
+\section{Introduction}
+\subsection{Transformée de Fourier}
+La transformée de Fourier d'une fonction est une autre fonction décrivant le spectre fréquentiel de cette dernière, c'est à dire l'ensemble des fréquences qui la décrivent. Elle a été inventée par le mathématicien français Joseph Fourier (1768-1830), et est très utilisée en traitement du signal. \\\\
+\boldmath
+\textbf{Définition 1.1.1}
+\textit{Soit f une fonction intégrable sur $\mathbb{R}$, sa transformée de Fourier est définie par :}
+\begin{equation}
+\mathcal{F}(f):\nu\mapsto \hat{f}(\nu)=\int_{-\infty}^{+\infty}f(t)e^{-i2\pi\nu t}dt
+\end{equation}
+\textit{où $t$ est en secondes (dans le cas d'un signal) et $\nu$ est la fréquence en hertz.}\\
+
+De la même manière, on peut déduire un signal à partir de son spectre fréquentiel grâce à la transformée de Fourier inverse :\\\\
+\textbf{Définition 1.1.2}
+\textit{Soit \(\hat{f}\) la transformée de Fourier de f. Si \(\hat{f}\) est intégrable sur $\mathbb{R}$, sa transformée de Fourier inverse est définie par : }
+\begin{equation}
+\mathcal{F}^{-1}(\hat{f}):t\mapsto f(t)=\int_{-\infty}^{+\infty}\hat{f}(\nu)e^{i2\pi\nu t}d\nu
+\end{equation}
+\textit{où $t$ est en secondes (dans le cas d'un signal) et $\nu$ est la fréquence en hertz.}\\
+\subsection{Transformée de Fourier discrète}
+En pratique, l'environnement de calcul des ordinateurs exige l'utilisation d'une version discrète de la transformée de Fourier.\\\\
+\textbf{Définition 1.2.1}
+\textit{La transformée de Fourier discrète (TFD) est l'application linéaire}
+\begin{equation*}
+\mathcal{F}:\mathbb{C}^N\rightarrow\mathbb{C}^N
+\end{equation*}
+\begin{equation*}
+u\mapsto\hat{u}=(\hat{u}_0,\hat{u}_1,\ldots,\hat{u}_{N-1})
+\end{equation*}
+\textit{où} $\forall k\in\Omega_N$
+\begin{equation}
+\hat{u}_k=\frac{1}{N}\sum_{n=0}^{N-1} u_ne^{-\frac{2i\pi kn}{N}}=\frac{1}{N}\sum_{n=0}^{N-1} u_n\omega_N^{-kn}\\
+\end{equation}
+\textit{En posant} $\Omega_N=\llbracket 0,N-1\rrbracket ~et~\omega_n=e^{\frac{2i\pi}{N}}$.\\
+De la même manière, on définit la version discrète de la  transformée de Fourier inverse.\\\\
+\textbf{Définition 1.2.2}
+\textit{La transformée de Fourier discrète inverse (TFD inverse) est l'application linéaire}
+\begin{equation*}
+\mathcal{F}^{-1}:\mathbb{C}^N\rightarrow\mathbb{C}^N
+\end{equation*}
+\begin{equation*}
+u\mapsto\check{u}=(\check{u}_0,\check{u}_1,\ldots,\check{u}_{N-1})
+\end{equation*}
+\textit{où} $\forall k\in\Omega_N$,
+\begin{equation}
+\check{u}_k=\sum_{n=0}^{N-1}u_n\omega_N^{kn}
+\end{equation}
+\section{Propriétés de la TFD}
+Nous allons établir quelques propriétés importantes de la transformée de Fourier discrète.
+\subsection{Espaces vectoriels et forme matricielle}
+\textbf{Théorème 2.1.1} 
+\textit{La TFD est un endomorphisme de \(\mathbb{C}^N\).}\\
+\textit{Démonstration} : Il est évident que \(\mathcal{F}:\mathbb{C}^N\rightarrow\mathbb{C}^N\).
+Montrons que \(\mathcal{F}\) est une application linéaire.\\
+Soient $u$ et $v$ deux vecteurs de $\mathbb{C}^N$, et soit $\lambda$ un complexe.
+Alors 
+\begin{equation*}
+\mathcal{F}(\lambda u+v)=\hat{w}
+\end{equation*}
+où $w=\lambda u+v$\\
+On a : $\forall k\in\Omega_N$, 
+\begin{eqnarray*}
+\hat{w}_k&=&\frac{1}{N}\sum_{n=0}^{N-1}(\lambda u_n+v_n)\omega_N^{-kn}\\
+&=&\frac{1}{N}\sum_{n=0}^{N-1}\lambda u_n \omega_N^{-kn}+\frac{1}{N}\sum_{n=0}^{N-1}v_n\omega_N^{-kn}\\
+&=&\frac{\lambda}{N}\sum_{n=0}^{N-1}u_n\omega_N^{-kn}+\frac{1}{N}\sum_{n=0}^{N-1}v_n\omega_N^{-kn}
+\end{eqnarray*}\\
+On reconnaît les TFD de $u$ et $v$,\\
+d'où $\forall k\in\Omega_N$,
+\begin{equation*}
+\hat{w}_k=\lambda \hat{u}_k + \hat{v}_k
+\end{equation*}
+i.e.
+\begin{equation*}
+\mathcal{F}(\lambda u+v)=\lambda\mathcal{F}(u)+\mathcal{F}(v)
+\end{equation*}\\
+Donc \(\mathcal{F}\) est une application linéaire de $\mathbb{C}^N$ dans $\mathbb{C}^N$, c'est à dire un endomorphisme de $\mathbb{C}^N$.
+\begin{flushright} $\square$ \end{flushright}
+\textbf{Théorème 2.1.2} \textit{La matrice $M=\mathcal{M_B}(\mathcal{F})$ de la TFD dans la base canonique de $\mathbb{C}^N$ est égale à :}
+\begin{equation}
+M=\frac{1}{N}
+\begin{pmatrix}
+1&1&1&\ldots&1\\
+1&\omega_N^{-1}&\omega_N^{-2}&\ldots&\omega_N^{-(N-1)}\\
+1&\omega_N^{-2}&\omega_N^{-4}&\ldots&\omega_N^{-2(N-1)}\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+1&\omega_N^{-(N-1)}&\omega_N^{-2(N-1)}&\ldots&\omega_N^{-(N-1)(N-1)}\\
+\end{pmatrix}
+=\frac{1}{N}(\omega_N^{-kl})_{0\leq k,l\leq N-1}
+\end{equation}
+\textit{Démonstration} : On note $M=(m_{lk})_{0\leq l,k\leq N-1}$.\\ Par définition :
+\begin{equation*}
+\forall (l,k) \in \Omega_N^2,\quad (m_{lk})=(\widehat{e_k})_l
+\end{equation*}
+où les vecteurs $e_k$ sont les vecteurs de la base canonique de $\mathbb{C}^N$ définis par :\\
+$\forall (k,n) \in \Omega_N^2$,
+\[(e_k)_n=
+\begin{cases}
+1~si~n=k\\
+0~sinon\\
+\end{cases}
+\]
+On a : $\forall (l,k) \in \Omega_N^2$,
+\begin{equation*}
+(m_{lk})=\frac{1}{N}\sum_{n=0}^{N-1} (e_k)_n(\omega_N^{-ln})
+\end{equation*}
+Les éléments de cette somme sont toujours nuls sauf quand $k=n$, donc 
+\begin{equation*}
+(m_{lk})=\frac{1}{N}(\omega_N^{-lk})_{0\leq l,k\leq N-1}
+\end{equation*}
+\begin{flushright} $\square$ \end{flushright}
+On remarque que $\omega_N^{-lk}=\omega_N^{-kl}$ : l'expression de $M$ ne dépend pas de l'ordre de $l$ et $k$, donc la matrice $M$ est symétrique par rapport à sa diagonale principale.\\\\
+\textbf{Définition 2.1.3} \textit{Soit $A=(a_{lk})$ une matrice à coefficients complexes. La matrice $A^*=(\overline{a_{kl}})$ est appelée matrice adjointe de $A$ (on a $A^*=\,^t\overline{A}$).}\\\\
+\textbf{Théorème 2.1.4} \textit{La TFD est un isomorphisme de $\mathbb{C}^N$ de réciproque $\mathcal{F}^{-1}$} (voir définition 1.2.2).\\
+\textit{Démonstration} : Soit $M$ la matrice de la TFD.\\ On a :
+\begin{eqnarray*}
+M^*M&=&\sum_{n=0}^{N-1} \overline{m_{nl}}m_{nk}\\
+&=&\sum_{n=0}^{N-1}\frac{1}{N}\omega_N^{nl}\frac{1}{N}\omega_N^{-nk}\\
+&=&\frac{1}{N^2}\sum_{n=0}^{N-1}\omega_N^{n(l-k)}
+\end{eqnarray*}
+On voit que $\omega_N^{n(l-k)}$ est de la forme $e^{-{2i\pi n\alpha}}=1$ où $\alpha=\frac{l-k}{N}$ si et seulement si~$l-k \equiv 0 \Mod{N}$. Sinon, on a la somme partielle d'une série géométrique de terme général $e^{\frac{-2i\pi\beta}{N}}$, avec $\beta=l-k$ un entier non multiple de $N$. La valeur de cette somme est connue et égale à $\cfrac{1-e^{\frac{-2i\pi\beta N}{N}}}{1-e^{\frac{-2i\pi\beta}{N}}}$. Les $N$ au numérateur se simplifient et on obtient que la somme est égale à 0.\\
+D'où :
+\begin{equation*}
+M^*M=
+\begin{cases}
+\cfrac{1}{N}~si~l \equiv k \Mod{N}\\
+0~sinon
+\end{cases}
+\end{equation*}
+Donc $M^*M=\cfrac{1}{N}I_N \Leftrightarrow NM^*M=I_N$. On a trouvé la matrice inverse de $M$ qu'on note $M^{-1}=NM^*$. On en déduit que $\mathcal{F}$ admet une réciproque dont la matrice est $M^{-1}$. Finalement, $\mathcal{F}$ est un endomorphisme de $\mathbb{C}^N$ (propriété 2.1.1) qui admet une réciproque, donc $\mathcal{F}$ est un isomorphisme de $\mathbb{C}^N$. On déduit ensuite $\mathcal{F}^{-1}$ de $M^{-1}$. \begin{flushright} $\square$ \end{flushright}
+\subsection{Produit de convolution périodique discret}
+Le produit de convolution est un procédé très utilisé en mathématiques, notamment en traitement du signal. Il permet entre autres de filtrer les signaux. Nous allons voir son rapport avec la transformée de Fourier.\\\\
+\textbf{Définition 2.2.1} \textit{Soient $u$ et $v$ deux vecteurs de $\mathbb{C}^N$. Le produit de convolution de $u$ et $v$ est le vecteur $u\ast v \in \mathbb{C}^N$ défini pour tout $n \in \mathbb{C}^N$ par :\\
+\begin{equation}
+(u\ast v)_n = \sum_{m=0}^{N-1}u_mv_{n-m}
+\end{equation}}\\
+Nous allons montrer le lien entre TFD et le produit de convolution périodique. Pour cela, nous avons besoin d'une propriété importante de la périodicité vectorielle.\\\\
+\textbf{Lemme 2.2.2} \textit{Soit $u\in \mathbb{C}^{\mathbb{N}}$ un vecteur que l'on prolonge N-périodiquement tel que pour tout $n \in \mathbb{Z}$ par : $u_n = u_{n\Mod{N}}$. Alors :} \begin{equation}
+\sum_{n=0}^{N-1}u_{n-m}=\sum_{n=0}^{N-1}u_n
+\end{equation}
+\textit{Démonstration} : Soient $u\in \mathbb{C}^{\mathbb{N}}$ et $m \in \mathbb{Z}$, alors pour tout $n \in  \mathbb{N}$, $u_{n-m}=u_{n-r}$, avec $r=m\Mod{N}$. D'où : 
+\begin{equation*}
+\sum_{n=0}^{N-1}u_{n-m}=\sum_{n=0}^{N-1}u_{n-r}=\sum_{n=0}^{r-1}u_{n-r}+\sum_{n=r}^{N-1}u_{n-r}
+\end{equation*}
+En posant $k=n-r$, on obtient : 
+\begin{equation*}
+\sum_{n=0}^{N-1}u_{n-m}=\sum_{n=0}^{r-1}u_{n-r}+\sum_{k=0}^{N-1-r}u_{k}
+\end{equation*}
+Puis, par périodicité :
+\begin{equation*}
+\sum_{n=0}^{N-1}u_{n-m}=\sum_{n=N}^{N+r-1}u_{n-r}+\sum_{k=0}^{N-1-r}u_{k}
+\end{equation*}Finalement, on a :
+\begin{equation*}
+\sum_{n=0}^{N-1}u_{n-m}=\sum_{k=N-r}^{N-1}u_{k}+\sum_{k=0}^{N-1-r}u_{k}=\sum_{k=0}^{N-1}u_{k}=\sum_{n=0}^{N-1}u_{n}
+\end{equation*}\begin{flushright} $\square$ \end{flushright}
+Autrement dit, la somme des coordonnées d'un vecteur périodique est invariante par translation. Cependant, ce résultat n'est valable que si l'on somme $N$ termes consécutifs.\\\\
+\textbf{Théorème 2.2.3} \textit{Soient $u$ et $v$ deux vecteurs de $\mathbb{C}^N$. Alors pour tout $k \in \Omega_N$ :\begin{equation}
+\widehat{(u\ast v)}_k=N\hat{u}_k\hat{v}_k
+\end{equation}}
+\textit{Démonstration} : Pour tout $k\in \Omega_N$, \begin{equation*}
+\widehat{(u\ast v)}_k=\frac{1}{N}\sum_{n=0}^{N-1}(u\ast v)_n\omega_N^{-kn}
+\end{equation*}
+Par définition :\begin{eqnarray*}
+\widehat{(u\ast v)}_k&=&\frac{1}{N}\sum_{n=0}^{N-1}\omega_N^{-kn}\times \sum_{m=0}^{N-1}u_mv_{n-m}\\
+&=&\frac{1}{N}\sum_{m=0}^{N-1}u_m\times \sum_{n=0}^{N-1}v_{n-m}\omega_N^{-kn}\nonumber\\
+&=&\frac{1}{N}\sum_{m=0}^{N-1}u_m\times \sum_{n=0}^{N-1}v_{n-m}\omega_N^{-k(n-m)}\omega_N^{-km}\\
+&=&\frac{1}{N}\sum_{m=0}^{N-1}u_m\omega_N^{-km}\times \sum_{n=0}^{N-1}v_{n-m}\omega_N^{-k(n-m)}
+\end{eqnarray*}
+Par définition, le vecteur $v$ est $N$-périodique. $\omega_N$ est aussi $N$-périodique. En effet, pour tout $\alpha\in \mathbb{N}$, $\omega_N^{\alpha+N} = e^{\frac{2i\pi\alpha}{N}}\times e^{2i\pi}=\omega_N^{\alpha}$.
+Donc le vecteur $w\in\mathbb{C}^N$ défini pour tout $n\in\Omega_N$ par : $w_n=v_n\omega_N^{-kn}$ est $N$-périodique. On peut donc appliquer le lemme 2.2.2 :\begin{eqnarray*}
+\widehat{(u\ast v)}_k&=&\frac{1}{N}\sum_{m=0}^{N-1}u_m\omega_N^{-km}\times \sum_{n=0}^{N-1}w_{n-m}\\
+&=&\frac{1}{N}\sum_{m=0}^{N-1}u_m\omega_N^{-km}\times \sum_{n=0}^{N-1}w_n\nonumber\\
+&=&\frac{1}{N}\sum_{m=0}^{N-1}u_m\omega_N^{-km}\times \sum_{n=0}^{N-1}v_n\omega_N^{-kn}
+\end{eqnarray*}
+On reconnaît le produit des TFD de $u_k$ et $v_k$ aux coefficients $\cfrac{1}{N}$ près :
+\begin{equation*}
+\widehat{(u\ast v)}_k=\frac{1}{N}N\hat{u}_kN\hat{v}_k=N\hat{u}_k\hat{v}_k
+\end{equation*}\begin{flushright} $\square$ \end{flushright}
+\section{Algorithme de Cooley-Tukey pour les vecteurs de taille $2^q$}
+A priori, le calcul de la TFD d'un vecteur $u \in\mathbb{C}^N$ nécessite $N^2$ additions et $N^2$ multiplications, c'est à dire $\mathcal{O}(N^2)$ opérations. Le théorème 2.2.3 faisant le lien entre TFD et produit de convolution ne nous est par conséquent d'aucune utilité, puisqu'on peut voir facilement que le calcul de ce dernier se fait en $\mathcal{O}(N^2)$ opérations avec ou sans la TFD. Cependant, pour un vecteur de taille $N=2^q$, nous allons montrer qu'il est possible de calculer la TFD de $u$ en $\mathcal{O}(Nlog_2(N))$ opération, en utilisant l'algorithme mis au point par \textbf{James Cooley} et \textbf{John Tukey} en 1965.
+\subsection{Principe de l'algorithme de Cooley-Tukey}
+L'algorithme de Cooley-Tukey est récursif. Il part du principe que la TFD d'un vecteur $u$ de taille $N\equiv 0\Mod{2}$ peut s'écrire comme une combinaison linéaire des TFD de ses composantes paires et impaires. En effet, pour tout $k\in\Omega_N$, on a : \begin{equation*}
+\hat{u}_k=\frac{1}{N}\sum_{n=0}^{N} u_n\omega_N^{-kn}
+\end{equation*}
+En séparant les composantes selon leur parité, on a :
+\begin{equation*}
+\hat{u}_k=\frac{1}{N}\sum_{n=0}^{\frac{N-2}{2}} u_{2n}\omega_N^{-k2n}+\frac{1}{N}\sum_{n=0}^{\frac{N-2}{2}} u_{2n+1}\omega_N^{-k(2n+1)}
+\end{equation*}
+En remarquant que $\omega_N^2=\omega_{N/2}$, on obtient : \begin{equation*}
+\hat{u}_k=\frac{1}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n}\omega_{N/2}^{-kn}+\frac{\omega_N^{-k}}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n+1}\omega_{N/2}^{-kn}
+\end{equation*}
+Ce qui, exprimé selon $\hat{v}_k$ et $\hat{w}_k$, équivaut à :
+\begin{equation*}
+\hat{u}_k=\frac{1}{2}\hat{v}_k+\frac{\omega_N^{-k}}{2}\hat{w}_k
+\end{equation*}
+où $v=(u_0,u_2,\ldots,u_{N-2})\in\mathbb{C}^{N/2}$ et $w=(u_1,u_3,\ldots,u_{N-1})\in\mathbb{C}^{N/2}$.\\
+Un autre point important est que $v_k$ et $w_k$ étant définis pour $k\in\Omega_{N/2}$,  l'équation (9) n'est a priori valable que pour $k\in\Omega_{N/2}$. Trouver les coordonnées restantes de $\hat{u}$ revient à trouver $\hat{u}_{k+\frac{N}{2}}$ pour tout $k\in\Omega_{N/2}$. On a :\begin{eqnarray*}
+\hat{u}_{k+\frac{N}{2}}&=&\frac{1}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n}\omega_{N/2}^{-(k+\frac{N}{2})n}+\frac{\omega_N^{-(k+\frac{N}{2})}}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n+1}\omega_{N/2}^{-(k+\frac{N}{2})n}\\
+&=&\frac{1}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n}\omega_{N/2}^{-kn}\omega_{N/2}^{-\frac{N}{2}n}+\frac{\omega_N^{-k}\omega_N^{\frac{N}{2}}}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n+1}\omega_{N/2}^{-kn}\omega_{N/2}^{-\frac{N}{2}n}\\
+&=&\frac{1}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n}\omega_{N/2}^{-kn}-\frac{\omega_N^{-k}}{N}\sum_{n=0}^{\frac{N}{2}-1} u_{2n+1}\omega_{N/2}^{-kn}\\
+&=&\frac{1}{2}\hat{v}_k-\frac{\omega_N^{-k}}{2}\hat{w}_k
+\end{eqnarray*}
+Ainsi, il apparaît que : \begin{equation}
+\hat{u}_k=\begin{cases}
+\cfrac{1}{2}\hat{v}_k+\cfrac{\omega_N^{-k}}{2}\hat{w}_k~si~k\in\Omega_{N/2}\\
+\cfrac{1}{2}\hat{v}_{(k-\frac{N}{2})}-\cfrac{\omega_N^{-(k-\frac{N}{2})}}{2}\hat{w}_{(k-\frac{N}{2})}~si~(k-\frac{N}{2})\in\Omega_{N/2}
+\end{cases}
+\end{equation}
+Dans notre algorithme, on va calculer récursivement les coordonnées de $\hat{u}$ en utilisant la formule (9). La récursion s'arrêtera pour $N=2$. Ce choix est arbitraire, on aurait pu prendre pour condition une autre valeur de $N$. Pour $N=2$, le vecteur sera calculé selon la définition de la TFD :\begin{equation*}
+\hat{u}=(\hat{u}_0,\hat{u}_1)
+\end{equation*}\\
+avec \begin{eqnarray*}
+\hat{u}_0&=&\frac{1}{2}\sum_{n=0}^{1}u_n\omega_2^{-0\times n}\\
+&=&\frac{1}{2}(u_0+u_1)
+\end{eqnarray*}
+et \begin{eqnarray*}
+\hat{u}_1&=&\frac{1}{2}\sum_{n=0}^{1}u_n\omega_2^{-1\times n}\\
+&=&\frac{1}{2}(u_0+u_1e^{-i\pi})\\
+&=&\frac{1}{2}(u_0-u_1)
+\end{eqnarray*}
+donc \begin{equation*}
+\hat{u}=(\frac{1}{2}(u_0+u_1),\frac{1}{2}(u_0-u_1))
+\end{equation*}
+\subsection{Pseudo-code}
+Voici un exemple de pseudo-code pour l'algorithme de Cooley-Tukey, où le nom de notre algorithme est TFR (transformée de Fourier rapide) :\\\\
+\textbf{algorithme:} soit $TFR$ défini par :\\\\
+\hspace*{1cm}\textbf{entrée:} vecteur $u\in\mathbb{C}^N$, $N=2^q$\\
+\hspace*{1cm}\textbf{sortie:} vecteur $\hat{u}=TFR(u)\in\mathbb{C}^N$\\\\
+\hspace*{1cm}\textbf{si} $N=2$\\
+\hspace*{2cm} $\hat{u}\leftarrow(\frac{1}{2}(u_0+u_1),\frac{1}{2}(u_0-u_1))$\\
+\hspace*{1cm}\textbf{sinon}\\
+\hspace*{2cm}$v\leftarrow(u_0,u_2,\ldots,u_{N-2})\in\mathbb{C}^{N/2}$\\
+\hspace*{2cm}$w\leftarrow(u_1,u_3,\ldots,u_{N-1})\in\mathbb{C}^{N/2}$\\
+\hspace*{2cm}$\hat{v}\leftarrow TFR(v)$\\
+\hspace*{2cm}$\hat{w}\leftarrow TFR(w)$\\
+\hspace*{2cm}\textbf{pour $k$ allant de $0$ à $\frac{N}{2}-1$}\\
+\hspace*{3cm}$\hat{u}_k\leftarrow\cfrac{1}{2}\hat{v}_k+\cfrac{\omega_N^{-k}}{2}\hat{w}_k$\\
+\hspace*{3cm}$\hat{u}_{k+\frac{N}{2}}\leftarrow\cfrac{1}{2}\hat{v}_k-\cfrac{\omega_N^{-k}}{2}\hat{w}_k$\\
+\hspace*{2cm}\textbf{fin pour}\\
+\hspace*{1cm}\textbf{fin si}\\
+\hspace*{1cm}\textbf{retourner $\hat{u}$}
+\subsection{Calcul de la complexité}
+Nous allons montrer que la complexité de l'algorithme de Cooley-Tukey est de $\mathcal{O}(Nlog_2(N))$ opérations. On remarque qu'une itération de TFR engendre deux itérations récursives ainsi que $N$ fois trois opérations (deux multiplications et une addition). On a donc la relation de récurrence suivante : $c_q=2c_{q-1}+3\times 2^q$, avec $c_q$ le nombre d'opérations nécessaires pour calculer la TFD d'un vecteur de taille $N=2^q$, $q\in\mathbb{N}$.\\ $(c_q)$ est une suite linéaire récurrente du premier ordre. Pour trouver la forme explicite de la suite $(c_q)$, nous devons tout d'abord énoncer des propriétés qui nous seront utiles.\\
+Soit $E=\mathbb{R}^{\mathbb{N}}$ l'ensemble des suites $(a_n)_{n\in\mathbb{N}}$ à valeurs réelles. On considère l'ensemble :\\ \begin{equation*}
+F_\alpha=\{(a_n)_{n\in\mathbb{N}}\in E,~\forall n\in\mathbb{N},~a_{n+1}-\alpha a_n=0\}.
+\end{equation*}\\
+\textbf{Théorème 3.3.1} \textit{Soit $(a_n)\in E$. Alors }:\begin{equation}
+(a_n)\in F_\alpha\Leftrightarrow a_n=\lambda\alpha^n,~\lambda\in\mathbb{R}
+\end{equation}
+\textit{Démonstration} : On a pour tout $n\in\mathbb{N}$ : $a_{n+1}=\alpha a_n$. D'où $a_1=\lambda\alpha$, $\lambda=a_0$. Supposons qu'il existe un $n\in\mathbb{N}$ tel que $a_n=\lambda\alpha^n$. Alors $a_{n+1}=\alpha a_n=\lambda\alpha^{n+1}$. Donc par récurrence, pour tout $n\in\mathbb{N},~a_n=\lambda\alpha^n$.\\
+$\Leftarrow$ Soit $(a_n)\in E$ telle que pour tout $n\in\mathbb{N},~a_n=\lambda\alpha^n$. Alors $a_{n+1}-\alpha a_n=\lambda\alpha^{n+1}-\lambda\alpha^{n+1}=0$. Donc $(a_n)\in F_\alpha$.
+\begin{flushright} $\square$ \end{flushright}
+On considère maintenant l'ensemble $G_\alpha=\{(a_n)_{n\in\mathbb{N}}\in E,~\forall n\in\mathbb{N},~a_{n+1}-\alpha a_n=b_{n+1}\}$, avec $(b_n)\in E$ une suite fixée.\\\\
+\textbf{Théorème 3.3.2} \textit{Soit $(c_n)\in G_\alpha$. Alors : }\begin{equation}
+(a_n)\in G_\alpha\Leftrightarrow(a_n-c_n)\in F_\alpha
+\end{equation}
+\textit{Démonstration} : Soit $(a_n)\in E$ telle que $(a_n)\in G_\alpha$.
+On a pour tout $n\in\mathbb{N}$ :\\ \begin{equation*}
+a_{n+1}-\alpha a_n=c_{n+1}-\alpha c_n=b_{n+1}
+\end{equation*}
+$\Leftrightarrow$
+\begin{equation*}
+a_{n+1}-c_{n+1}-\alpha(a_n-c_n)=b_{n+1}-b_{n+1}=0
+\end{equation*}
+$\Leftrightarrow$
+\begin{equation*}
+(a_n-c_n)\in F_\alpha
+\end{equation*}
+\begin{flushright} $\square$ \end{flushright}
+De ce qui précède on déduit que si $(c_n)\in G_\alpha$ alors toute suite $(a_n)\in G_\alpha$ a pour terme général $a_n=c_n+\lambda\alpha^n$.
+On pose désormais pour tout $n\in\mathbb{N}$ : $b_n=b_0\alpha^n$, $b_0\neq 0$. On en déduit le théorème suivant :\\\\
+\textbf{Théorème 3.3.3} \textit{Il existe $(c_n)\in G_\alpha$ tel que pour tout $n\in\mathbb{N}$, $c_n=b_0n\alpha^n$.}\\\\
+\textit{Démonstration} : Soit $(c_n)\in E$ une suite de terme général $c_n=b_0n\alpha^n$. Alors pour tout $n\in\mathbb{N}$ :\begin{eqnarray*}
+c_{n+1}-\alpha c_n&=&b_0(n+1)\alpha^{n+1}-b_0n\alpha^{n+1}\\
+&=&b_0\alpha^{n+1}\\
+&=&b_{n+1}
+\end{eqnarray*}
+Donc $(c_n)\in G_\alpha$.
+\begin{flushright} $\square$ \end{flushright}
+On peut maintenant calculer la complexité de notre algorithme, en remarquant que $(c_q)\in G_2$, avec $b_q=3\times2^q$. Comme on sait que $a_q=3q2^q\in G_2$, on en déduit que pour tout $q\in\mathbb{N}$ : \begin{equation*}
+c_q=a_q+\lambda\alpha^q=3q2^q+\lambda 2^q
+\end{equation*}
+On trouve $\lambda$ grâce à la condition initiale : $c_1=4$ (coût de la TFD d'un vecteur de taille 2). D'où $\lambda=-2$. Finalement, on a : \begin{eqnarray}
+c_q&=&2^q(3q-2)\nonumber\\
+&=&N(3log_2(N)-2)
+\end{eqnarray}
+Pour $N$ assez grand, le terme en $Nlog_2(N)$ domine et on a bien :\\ \begin{equation}
+c_q=\mathcal{O}(Nlog_2(N))
+\end{equation}
+	\section{Algorithme de Bluestein pour des vecteurs de taille quelconque}
+    	\subsection{Principe de l'Algorithme de Bluestein}
+L'algorithme de Bluestein permet de calculer la TFD d'un vecteur de taille quelconque en l'exprimant selon un produit de convolution calculé grâce à l'algorithme de Cooley-Tukey.\\\\
+Soit $u\in\mathbb{C}^N$. Pour tout $k\in\Omega_N$, on a :
+\begin{equation*}
+\hat{u}_k=\frac{1}{N}\sum_{n=0}^{N-1}u_n\omega_N^{-kn}
+\end{equation*}
+On pose $kn=\cfrac{-(k-n)^2}{2}+\cfrac{n^2}{2}+\cfrac{k^2}{2}$, d’où :
+\begin{eqnarray*}
+\hat{u}_k&=&\frac{1}{N}\sum_{n=0}^{N-1}u_n\omega_N^{(\frac{-(k-n)^2}{2}+\frac{n^2}{2}+\frac{k^2}{2})}\\
+&=&\frac{1}{N}\omega_N^{\frac{k^2}{2}}\sum_{n=0}^{N-1}u_n\omega_N^{(\frac{-(k-n)^2}{2}
++\frac{n^2}{2})}\\
+&=&\frac{1}{N}\omega_{2N}^{k^2}\sum_{n=0}^{N-1}(u_n\omega_{2N}^{n^2})\omega_{2N}^{-(k-n)^2}
+\end{eqnarray*}
+On pose $a_n=u_n\omega_{2N}^{n^2}$ et $b_n=\omega_{2N}^{-(k-n)^2}$. Alors l'équation peut se réécrire : \begin{eqnarray}
+\hat{u}_k&=&\frac{1}{N}\overline{b_k}\sum_{n=0}^{N-1}a_nb_{k-n}\nonumber\\
+&=&\frac{\overline{b_k}}{N}(a*b)_k
+\end{eqnarray}
+Pour calculer ce produit de convolution, on ajoute des coefficients nuls à la fin des vecteurs $a$ et $b$ jusqu'à obtenir les vecteurs $A$ et $B$ de taille $M=2^q$. On peut ensuite appliquer l'algorithme de Cooley-Tukey.
+\subsection{Complexité de l'Algorithme de Bluestein}
+On calcule le produit de convolution de $a$ et $b$ grâce à la formule (8) : $\widehat{(A\ast B)}_k=M\hat{A}_k\hat{B}_k$. Il suffit ensuite de faire la TFD inverse du résultat pour obtenir $u$ : $(A\ast B)=\mathcal{F}^{-1}\widehat{(A\ast B)}$ aux coefficient de phase $\cfrac{\overline{b_k}}{N}$ près. On effectue donc deux fois $\mathcal{O}(Mlog_2(M))$ opérations ainsi que $N$ multiplications. La complexité de l'algorithme de Bluestein est donc en $\mathcal{O}(Mlog_2(M))=\mathcal{O}(Nlog_2(N))$. 
+\end{document}
