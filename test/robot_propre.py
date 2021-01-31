@@ -482,4 +482,42 @@ def run():
     print(f"{level} : {mid-start:10.3f}s - {stop-mid:10.3f}s")
 
 
-run()
+def human_readable(n):
+  def div(x): return x//1024, x % 1024
+  res = ""
+
+  for s in ["o", "Ko", "Mo", "Go"]:
+    n, r = div(n)
+    if r > 0:
+      res = f"{r}{s} {res}"
+    if n == 0:
+      return res
+
+  return f"{n}To {res}"
+
+
+def nbParamInClique(model, jt, n):
+  nb = 1
+  for i in jt.clique(n):
+    nb *= model.variable(i).domainSize()
+  return nb
+
+
+def simule():
+  xInitial = 7
+  yInitial = 4
+  for level in range(2, 10):
+    robot = createIDRobot(level, xInitial, yInitial)
+    start = time.time()
+    ie = gum.ShaferShenoyLIMIDInference(robot)
+    mid = time.time()
+    jt = ie.junctionTree()
+    maxsiz = max([len(jt.clique(n)) for n in jt.nodes()])
+
+    tw = max([nbParamInClique(robot, jt, n) for n in jt.nodes()])
+
+    stop = time.time()
+    print(f"{level} : {mid-start:7.3f}s - {stop-mid:7.3f}s - size={maxsiz} - treewidth= {human_readable(tw)}")
+
+
+simule()
