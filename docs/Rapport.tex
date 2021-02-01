@@ -1,0 +1,93 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper]{geometry}
+\geometry{hscale=0.80,vscale=0.80,centering}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage{amssymb}
+\usepackage{breqn}
+\usepackage{graphicx}
+\usepackage[affil-it]{authblk}
+\newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
+\title{Projet P-A.N.D.R.O.I.D.E.\\
+\bigbreak\textbf{Branch and Bound pour les diagrammes d'influence}}
+\author{PINAUD David \& BIEGAS Emilie}
+\date{Janvier 2021}
+\affil{Université Sorbonne Sciences}
+\begin{document}
+\maketitle
+
+\renewcommand{\contentsname}{Table des Matières}
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Introduction}
+
+\subsection{Les diagrammes d'influence (ID)}
+Les diagrammes d'influence sont des graphes acycliques dirigés présentant trois types de nœuds. 
+Les nœuds aléatoire, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
+Les nœuds de décision, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds utilitaire, illustrés graphiquement par un losange, représentent une fonction d'utilité locale exprimant la préférence.
+Les arêtes de ce graphe représentent donc une dépendance entre les nœuds et ont une signification différente en fonction du type de nœud à son extrémité.
+En effet, si une arête pointe vers un nœud aléatoire, cela représente une dépendance probabiliste; si elle pointe vers un nœud de décision, elle a un but informatif; enfin, si elle pointe vers un nœud utilitaire, elle représente une dépendance fonctionnelle.
+
+Les IDs respectent deux hypothèses, une hypothèse de régularité et une hypothèse dite non-oubliant.
+Ainsi, les décisions sont ordonnées dans le temps et chaque décision est conditionnée à toutes les observations et décisions.
+C'est-à-dire que les décisions antérieures (l'ensemble d'elle est appelé historique) sont des informations variables des décisions ultérieures (mais les décisions futures ne le sont pas??).
+\\\\
+
+\subsection{Les LIMIDs}
+ Les LIMIDs sont des diagrammes d'influence qui assouplissent les deux hypothèses précédemment citées. Tout d'abord, les LIMIDs assouplissent l'hypothèse non-oubliant de manière à conditionner une décision sur un nombre limité d'observations et de décisions antérieurs pertinentes (pour un compromis qualité/complexité).
+Ensuite, assouplir l'hypothèse de régularité permet par exemple de modéliser la coopération de problèmes de décision multi-agents où un agent n'est pas au courant de décision d'autres agents.
+
+*Limites actuelles
+
+\subsection{But du projet}
+Le but de ce projet est donc d'étudier un algorithme de Branch and Bound pour résoudre des LIMIDs dans un petit graphe de recherche dans lequel différents chemins menant au même nœud représentent différentes histoires.
+Pour ce faire, on doit tirer parti des opportunités pour le calcul de stratégie, utiliser des techniques d'inférence probabiliste et calculer les limites dans un graphe.
+
+\pagebreak
+\section{Explication de l'algorithme de Branch and Bound}
+Les IDs sont résolus en trouvant une stratégie qui maximise l'utilité prévue.
+L'algorithme étudié dans ce projet résout les IDs en les convertissant en arbre ET/OU puis en effectuant un parcours en profondeur sur ces derniers.
+Les nœuds ET sont alors des variables aléatoires correspondant aux noeuds chances qui sont informatifs à un noeud de décision et les nœuds OU sont des nœuds de décision (représentant des alternatives de décision), enfin les feuilles sont les nœuds d'utilités.
+Un chemin racine-feuille représente alors une instance des noeuds d'information et de décision.
+En effectuant un parcours en profondeur d'abord, on peut générer l'arbre à la volée et ne garder qu'une partie de l'arborescence en mémoire.
+Deux problèmes se posent alors, le calcul des limites et celui des probabilités postérieures.
+Pour ce faire, on introduit un ID secondaire appelé diagramme d'influence détendu.
+
+\section{Implémentation de l'algorithme}
+
+\subsection{Calcul des bornes}
+La borne inférieure est la meilleure valeur calculée pour un nœud OU.
+Pour déterminer la borne supérieure, il faut résoudre un ID détendu. 
+Ce dernier est créé en ajoutant des informations à l'ID de départ (en veillant à ce que cette solution soit bien une borne supérieure de l'ID d'origine) et en simplifiant l'ID en déplacant des arcs non requis (en veillant à ce que ce soit bien plus facile à résoudre).
+
+Notons tout d'abord que la politique optimale pour un nœud $D_j$ dépend d'un ensemble d'informations $N_j$ ou est indépendant de l'histoire. $N_j$ est l'état actuel du problème de décision, c'est-à-dire l'ensemble des informations suffisantes pour $D_j$ et est appelé SIS.
+
+L'ID détendu est alors crée en deux étapes.
+Tout d'abord, le SIS de chaque nœud de décision est calculé dans l'ordre temporel inverse $D_n$, ..., $D_1$ faisant de chaque SIS les variables d'information pour sa variable de décision.
+Les arcs non requis sont ensuite supprimés de l'ID.
+
+Note :
+Réduction d'un ID : supprimer tout arc d'information non requis.
+
+\subsection{Extension aux LIMIDs}
+L'algorithme pour résoudre un ID utilise un arbre ET/OU, à la différence de celui résolvant un LIMID qui, lui, utilise un graphe ET/OU.
+Afin d'étendre l'approche Branch and Bound aux LIMIDs, on utilise un algorithme d'arborescence de jointure.
+
+L'arbre de jointure est construit à partir de l'ID détendu et est utilisé pour calculer les probabilités et les bornes supérieures pour le graphe ET/OU.
+
+\subsection{Implémentation des arbres ET/OU}
+
+\subsection{Test}
+
+\subsection{Documentation}
+
+\section{Intégration possible de l'algorithme dans PyAgrum}
+*vérifier la compatibilité de l'inférence avec les inférences existantes
+*vérifier la compatibilité avec notebooks
+
+\end{document}
