@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# |/usr/bin/env python
 # coding: utf-8
 
 import time
@@ -7,6 +7,16 @@ import math
 import pyAgrum as gum
 import numpy as np
 
+maze = ["|-------------------------|",
+        "|      |       |          |",
+        "|      |   |   |          |",
+        "|      |---|   |          |",
+        "|              |          |",
+        "|              |          |",
+        "|              |     $    |",
+        "|                         |",
+        "|-------------------------|"]
+
 
 def getCasesAndGris():
   """
@@ -14,7 +24,7 @@ def getCasesAndGris():
   gris : tableau de tableau de taille deux qui est l'ensemble des coordonnées des cases grisées
   cases : tableau de 3 dimensions qui stocke, pour chaque direction cardinale, pour chaque case, si on peut faire un pas dans cette
           direction (c'est à dire qu'il n'y pas de mur)
-          convention : cases[x,y,i]=0 si il n'y a pas de mur dans la direction i quand on est dans la case x,y et cases[x,y,i]=1 sinon. i                appartient à [0,1,2,3] qui correspondent à ouest,nord,est,surd respectivement.
+          convention : cases[x,y,i]=0 si il n'y a pas de mur dans la direction i quand on est dans la case x,y et cases[x,y,i]=1 sinon. i appartient à [0,1,2,3] qui correspondent à ouest,nord,est,surd respectivement.
   """
 
   # cases est qui stocke, selon les directions, si on peut faire le pas dans la direction ou non (0 oui, 1 non)
@@ -99,7 +109,7 @@ def createIDRobot(n, xInitial, yInitial):
   5 mod(6) --> le noeud est un w
 
   decision contient tous les identifiants des noeuds décisions de l'ID, par convention, si l'ID est égal à
-  6*n+i pour tout i appartenant à 0,...,n-1, le noeud est le noeud décision de la ième étape.
+  6*n+i pour tout i appartenant à 0,   ,n-1, le noeud est le noeud décision de la ième étape.
   """
 
   """
