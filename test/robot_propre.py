@@ -483,11 +483,11 @@ def run():
 
 
 def human_readable(n):
-  def div(x): return x//1024, x % 1024
+  def div1024(x): return x//1024, x % 1024
   res = ""
 
   for s in ["o", "Ko", "Mo", "Go"]:
-    n, r = div(n)
+    n, r = div1024(n)
     if r > 0:
       res = f"{r}{s} {res}"
     if n == 0:
@@ -497,7 +497,7 @@ def human_readable(n):
 
 
 def nbParamInClique(model, jt, n):
-  nb = 1
+  nb = 8  # size of python's float
   for i in jt.clique(n):
     nb *= model.variable(i).domainSize()
   return nb
@@ -508,16 +508,17 @@ def simule():
   yInitial = 4
   for level in range(2, 10):
     robot = createIDRobot(level, xInitial, yInitial)
+
     start = time.time()
     ie = gum.ShaferShenoyLIMIDInference(robot)
+
     mid = time.time()
     jt = ie.junctionTree()
-    maxsiz = max([len(jt.clique(n)) for n in jt.nodes()])
-
-    tw = max([nbParamInClique(robot, jt, n) for n in jt.nodes()])
+    maxtw = max([len(jt.clique(n)) for n in jt.nodes()])
+    maxsize = max([nbParamInClique(robot, jt, n) for n in jt.nodes()])
 
     stop = time.time()
-    print(f"{level} : {mid-start:7.3f}s - {stop-mid:7.3f}s - size={maxsiz} - treewidth= {human_readable(tw)}")
+    print(f"{level} : {mid-start:7.3f}s - {stop-mid:7.3f}s - treewidth={maxtw} - size= {human_readable(maxsize)}")
 
 
 simule()
