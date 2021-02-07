@@ -28,10 +28,11 @@
 
 \subsection{Les diagrammes d'influence (ID)}
 Les diagrammes d'influence sont des graphes acycliques dirigés présentant trois types de nœuds. 
-Les nœuds aléatoire, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
-Les nœuds de décision, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds utilitaire, illustrés graphiquement par un losange, représentent une fonction d'utilité locale exprimant la préférence.
-Les arêtes de ce graphe représentent donc une dépendance entre les nœuds et ont une signification différente en fonction du type de nœud à son extrémité.
-En effet, si une arête pointe vers un nœud aléatoire, cela représente une dépendance probabiliste; si elle pointe vers un nœud de décision, elle a un but informatif; enfin, si elle pointe vers un nœud utilitaire, elle représente une dépendance fonctionnelle.
+Les nœuds de chance, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
+Les nœuds de décision, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds d'utilité, illustrés graphiquement par un losange, représentent une fonction d'utilité locale exprimant la préférence.
+Lorsqu'il y a plusieurs nœuds d'utilité, l'utilité totale en est la somme (c'est une décomposition partiellement additive de l'utilité).
+Les arcs de ce graphe représentent donc une dépendance entre les nœuds et ont une signification différente en fonction du type de nœud à son extrémité.
+En effet, si une arc pointe vers un nœud de chance, cela représente une dépendance probabiliste; si elle pointe vers un nœud de décision, elle a un but informatif; enfin, si elle pointe vers un nœud d'utilité, elle représente une dépendance fonctionnelle.
 
 Les IDs respectent deux hypothèses, une hypothèse de régularité et une hypothèse dite non-oubliant.
 Ainsi, les décisions sont ordonnées dans le temps et chaque décision est conditionnée à toutes les observations et décisions.
@@ -52,8 +53,8 @@ Pour ce faire, on doit tirer parti des opportunités pour le calcul de stratégi
 \section{Explication de l'algorithme de Branch and Bound}
 Les IDs sont résolus en trouvant une stratégie qui maximise l'utilité prévue.
 L'algorithme étudié dans ce projet résout les IDs en les convertissant en arbre ET/OU puis en effectuant un parcours en profondeur sur ces derniers.
-Les nœuds ET sont alors des variables aléatoires correspondant aux noeuds chances qui sont informatifs à un noeud de décision et les nœuds OU sont des nœuds de décision (représentant des alternatives de décision), enfin les feuilles sont les nœuds d'utilités.
-Un chemin racine-feuille représente alors une instance des noeuds d'information et de décision.
+Les nœuds ET sont alors des variables aléatoires correspondant aux nœuds de chance qui sont informatifs à un nœud de décision et les nœuds OU sont des nœuds de décision (représentant des alternatives de décision), enfin les feuilles sont les nœuds d'utilité.
+Un chemin racine-feuille représente alors une instance des nœuds d'information et de décision.
 En effectuant un parcours en profondeur d'abord, on peut générer l'arbre à la volée et ne garder qu'une partie de l'arborescence en mémoire.
 Deux problèmes se posent alors, le calcul des limites et celui des probabilités postérieures.
 Pour ce faire, on introduit un ID secondaire appelé diagramme d'influence détendu.
