@@ -121,29 +121,46 @@ Il n'est pas envisageable de concevoir une machine capable de stocker autant de 
 \bigbreak
 
 \subsection{But du projet}
-Le but de ce projet est d'implémenter en utilisant un algorithme heuristique basé sur le Branch and Bound pour résoudre ce type de problème à complexité en espace et en temps très grande. %Pour ce faire, nous allons nous baser sur une étude menée en 2013
-%Pour ce faire, on doit tirer parti des opportunités pour le calcul de stratégie, utiliser des techniques d'inférence probabiliste et calculer les limites dans un graphe.
-[...]
-Le but final de ce projet est l'intégration de notre algorithme dans la librairie Python PyAgrum. Pour cela, il faut que notre code soit compatible avec les inférences existantes, avec les notebooks , ainsi qu'avec la documentation actuelle.
+Le but de ce projet est d'implémenter en utilisant un algorithme heuristique basé sur le Branch and Bound pour résoudre ce type de problème à grande complexité en espace et en temps. Enfin, il est envisagé l'intégrer l'algorithme dans la librairie Python PyAgrum.
 
 \section{Explication de l'algorithme de Branch and Bound}
-Les IDs sont résolus en trouvant une stratégie qui maximise l'utilité prévue.
-L'algorithme étudié dans ce projet résout les IDs en les convertissant en arbre ET/OU puis en effectuant un parcours en profondeur sur ces derniers.
+Les LIMIDs sont résolus en trouvant une stratégie qui maximise l'utilité prévue.
+L'algorithme étudié dans ce projet résout les LIMIDs en les convertissant en un graphe ET/OU puis en effectuant un parcours en profondeur sur ces derniers.
 Les nœuds ET sont alors des variables aléatoires correspondant aux nœuds chances qui sont informatifs à un nœud de décision et les nœuds OU sont des nœuds de décision (représentant des alternatives de décision), enfin les feuilles sont les nœuds d'utilités.
 Un chemin racine-feuille représente alors une instance des nœuds d'information et de décision.
 En effectuant un parcours en profondeur d'abord, on peut générer l'arbre à la volée et ne garder qu'une partie de l'arborescence en mémoire.
 Deux problèmes se posent alors, le calcul des limites et celui des probabilités postérieures.
 
-\section{Points importants de l'algorithme}
-Les grandes difficultés de l'algorithme de Branch and Bound sont les suivantes :
+\section{Déliverables du projet}
+Le projet a pour but de réaliser :
 \begin{itemize}
-\item Implémentation des arbres ET/OU
-\item Calcul des bornes et des probabilités postérieures
-\item Extension aux LIMIDs
-\item Commentaires adéquats dans le fichier code
-\item Tests
-\item Documentation
+\item Un état de l'art et stabilisation des algorithmes pour la résolution avec Branch and Bound, en particulier l'analyse du calcul des bornes et des probabilités postérieures.
+\item Une implémentation efficace et compacte des arbres ET/OU.
+\item Une intégration de l'algorithme correctement documentée (style python en anglais) dans l'API pyAgrum vérifiant l'implémentation des méthodes (liste non exhaustive) :
+\begin{itemize}
+    \item makeInference : Réalise l'inférence sur un LIMID.
+    \item PosterieurUtility : Retourne la probabilité postérieure d'un noeud.
+    \item lIMInfluenceDiagram : Retourne le LIMID associé à l'instance de la classe.
+    \item optimalDecision : Retourne la décision optimale pour un certain noeud décision basé sur le critère MEU.
+    \item MEU : Retourne l'utilité maximate espérée de l'inférence.
+    \item junctionTree : Retourne l'arbre de jonction associé au LIMID
+    \item andOrTree: Retourne le graphe de jonction développé
+    \item une fonction pour avoir le graphe/arbre du branch and bound + une fonction pour avoir les états?
 \end{itemize}
+\item Une série de tests unitaires effectués sur les méthodes avec l'API TestUnit.
+\item Une série de benchmark validant l'utilité de notre implémentation de la méthode branch and bound face aux méthodes existante.
+\end{itemize}
+
+
+ %il y a un repertoire dans pyagrum sur les tests ou on va rajouter les tests (on utilise UnitTest)
+ 
+ %lien pour les codes de test dans pyagrul : https://gitlab.com/agrumery/aGrUM/-/blob/master/wrappers/pyAgrum/testunits/tests/AggregatorsForBNTestSuite.py
+ 
+ %lien pour voir la documentation : https://gitlab.com/agrumery/aGrUM/-/blob/master/wrappers/pyAgrum/pyLibs/causal/_CausalFormula.py
+
+%\section{Implémentation de l'algorithme dans pyAgrum}
+
+
 
 
 \end{document}
