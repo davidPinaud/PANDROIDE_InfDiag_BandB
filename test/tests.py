@@ -52,6 +52,8 @@ class LimidTestCase(unittest.TestCase):
         #test???
     def test_graphAuxilliaire(self):
         pass
+    def test_step7(self):
+        #TODO tester si on trouve bien un truc et pas de boucle infini
 
     """
     def test_MEU(self):
