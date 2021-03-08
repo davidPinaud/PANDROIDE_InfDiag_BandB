@@ -20,31 +20,26 @@ class LimidTestCase(unittest.TestCase):
 
    
 
-    def setUp(self):
-
-        self.ID1=gum.fastID("A->*B<-C->V->B->$U<-C")
-        self.ID2=gum.fastID("A->*B<-C->V->B->$U<-C")
-        self.ID3=gum.fastID("A->*B<-C->V->B->$U<-C")
-        self.ID4=gum.fastID("A->*B<-C->V->B->$U<-C")
-
-        self.ordre1=[self.ID1.idFromName("B")]
-        self.ordre2=[self.ID2.idFromName("B")]
-        self.ordre3=[self.ID3.idFromName("B")]
-        self.ordre4=[self.ID4.idFromName("B")]
-
+    
+    def test_SIS(self):
+        ID1=gum.fastID("A->*B<-C->V->B->$U<-C")
+        ID2=gum.fastID("A->*B<-C->V->B->$U<-C")
+        ID3=gum.fastID("A->*B<-C->V->B->$U<-C")
+        ID4=gum.fastID("A->*B<-C->V->B->$U<-C")
+        ordre1=[self.ID1.idFromName("B")]
+        ordre2=[self.ID2.idFromName("B")]
+        ordre3=[self.ID3.idFromName("B")]
+        ordre4=[self.ID4.idFromName("B")]
         bnb1=BranchAndBoundLIMIDInference(self.ID1,self.ordre1)
         bnb2=BranchAndBoundLIMIDInference(self.ID2,self.ordre2)
         bnb3=BranchAndBoundLIMIDInference(self.ID3,self.ordre3)
         bnb4=BranchAndBoundLIMIDInference(self.ID4,self.ordre4)
-
-    
-    def test_SIS(self):
         x=1
         y=[]
-        self.assertEqual(self.bnb1.SIS(x),y,'SIS 1 incorrect')
-        self.assertEqual(self.bnb2.SIS(x),y,'SIS 2 incorrect')
-        self.assertEqual(self.bnb3.SIS(x),y,'SIS 3 incorrect')
-        self.assertEqual(self.bnb4.SIS(x),y,'SIS 4 incorrect')
+        self.assertEqual(bnb1.SIS(x),y,'SIS 1 incorrect')
+        self.assertEqual(bnb2.SIS(x),y,'SIS 2 incorrect')
+        self.assertEqual(bnb3.SIS(x),y,'SIS 3 incorrect')
+        self.assertEqual(bnb4.SIS(x),y,'SIS 4 incorrect')
 
     def test_fromIDToMoralizedAncestral(self):
         x=1

@@ -2,7 +2,7 @@ import numpy as np
 import os
 from pylab import *
 import matplotlib.pyplot as plt
-from IPython.core.display import display,HTML
+from IPython.core.display import Math, display,HTML
 import math
 import pyAgrum as gum
 
@@ -12,40 +12,117 @@ class BranchAndBoundLIMIDInference():
         self.ID=ID
         self.ordreDecision=OrdreDecision
 
-    #ID-->DAG-->MoralizedAncestral(UndiGraph)-->MoralizedAncestral(DiGraph)
-    #-->graphe auxilliaire-->Matrice représentative-->CoupeMin-->SIS
+    #ID->DAG (sans neouds utilités)->graphe moralisé ancestral ou on doit trouver l'ensemble de noeuds
+    #séparant X et Y
     def SIS(self,decisionNodeID):
-        #ID-->DAG-->MoralizedAncestral(UndiGraph)-->MoralizedAncestral(DiGraph)
+        labelledScanned="labelledScanned"
+        labelledUnscanned="labelledUnscanned"
+        unlabelled="unlabelled"
+        #--Construction du graphe moralisé sur lequel appliquer l'algorithme--
         moralizedAncestral,id_source,id_puit=self.fromIDToMoralizedAncestral(decisionNodeID)
+        #--Construction du graphe de travail sur lequel on peut appliquer l'algorithme--
+        workGraph=GraphForSIS()
+        for id in moralizedAncestral.nodes():
+            #All nodes unlabelled and IN property set to false
+            workGraph.addNode(id,unlabelled,None,None,False)
+        for edge in moralizedAncestral.edge():
+            workGraph.addEdge(edge[0],edge[1],1,None,None)
 
-        #TODO: verifier qu'il n'y ait pas d'arc entre alpha et X et entre Y et Beta dans F-F, mettre cap infini dans F-F
+        #---Algorithme----
+        queue=[]
+        while(True):
+            #Step 1
+            y=workGraph.getNode(id_puit)
+            workGraph.setLabel_Positive(y,y)
+            queue.append(y)
+            workGraph.setState(y,labelledUnscanned)
+            #Step 2 & 3
+            x=id_source
+            while(True):
+                u=queue.pop()
+                #1
+                if(workGraph.getNode(u).getIN()==False):
+                    workGraph.fsearch(u)
+                #2
+                if(workGraph.getNode(u).getIN()==True and workGraph.getNode(u).getLabel_Negative()==None and workGraph.getNode(u).getLabel_Positive()!=None):
+                    workGraph.bsearch(u,y,queue)
+                #3
+                if(workGraph.getNode(u).getIN()==True and workGraph.getNode(u).getLabel_Negative()!=None):
+                    workGraph.fsearch(u)
+                    workGraph.bsearch(u,y,queue)
+                #4
+                workGraph.setState(u,labelledScanned)
+                if ((len(queue)<=0 and workGraph.getState(x)==unlabelled) or workGraph.getState(x)==labelledScanned or workGraph.getState(x)==labelledUnscanned):
+                    break
+            if(workGraph.getState(x)==labelledScanned or workGraph.getState(x)==labelledUnscanned):
+                #Step 4
+                u=x
+                w=x
+                
+                while(True):
+                    #Step 5
+                    z=None
+                    #5.1
+                    if(workGraph.getLabel_Positive(u)!=None and workGraph.getLabel_Negative(u)==None):
+                        z=workGraph.getLabel_Positive(u)
+                        u_z=workGraph.getEdge(u,z)
+                        u_z.setMarked(True)
+                        u_z.setDir([z,u])
+                        if(z!=y):
+                            workGraph.setIN(z,True)
+                    #5.2
+                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)==None):
+                        z=workGraph.getLabel_Negative(u)
+                        u_z=workGraph.getEdge(u,z)
+                        u_z.setMarked(False)
+                        if(workGraph.getLabel_Negatif(z)!=None and workGraph.getLabel_Positive(z)==None):
+                            workGraph.setIN(z,False)
+                    #5.3
+                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None and u==workGraph.getLabel_Negative(w) and z==workGraph.getLabel_Positive(u)):
+                        u_z=workGraph.getEdge(u,z)
+                        u_z.setMarked(True)
+                        u_z.setDir([z,u])
+                        if(z!=y):
+                            workGraph.setIN(z,True)
+                    #5.4
+                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None and u==workGraph.getLabel_Positive(w) and z==workGraph.getLabel_Negative(u)):
+                        u_z=workGraph.getEdge(u,z)
+                        u_z.setMarked(False)
+                    #Step 6
+                    if(z!=y):
+                        w=u
+                        u=z
+                    else:
+                        queue=[]
+                        workGraph.eraseLabels()
+                        break
+            if((len(queue)<=0 and workGraph.getState(x)==unlabelled)):
+                break
+        #Step 7
+        ensembleSeparant=[]
+        y=workGraph.getNode(id_puit)
+        for edge in workGraph.getEdges():
+            if(y in edge.getNodes() and edge.getMarked()):
+                if(y==edge.getNodes()[0]):
+                    u=edge.getNodes()[1]
+                else:
+                    u=edge.getNodes()[0]
+                if(workGraph.getLabel_Positive(u)==None and workGraph.getLabel_Negative(u)==None):
+                    ensembleSeparant.append(u)
+                if(workGraph.getLabel_Positive(u)!=None or workGraph.getLabel_Negative(u)!=None):
+                    pass
 
-        #MoralizedAncestral(DiGraph)-->graphe auxilliaire
-        graph_Auxilliaire,id_source_aux_plus,id_source_aux_moins,id_puit_aux_plus,id_puit_aux_moins=self.graphAuxilliaire(moralizedAncestral,id_source,id_puit)
 
-        #-->graphe auxilliaire-->Matrice représentative
-        GraphMatrix=self.getGraphMatrixWithCapacityOneFromDiGraph(graph_Auxilliaire)
-        g=Graph(GraphMatrix)
 
-        #Matrice représentative-->CoupeMin
-        source=list(graph_Auxilliaire.nodes()).index(id_source_aux_moins)
-        sink=list(graph_Auxilliaire.nodes()).index(id_puit_aux_plus)
-        mincut=g.mincut(source, sink)
 
-        mincutDansGrapheAux=[]
-        for arc in mincut:
-            #arcs en fonction des identifiants dans le graphe auxilliaire
-            mincutDansGrapheAux.append([list(graph_Auxilliaire.nodes())[arc[0]],list(graph_Auxilliaire.nodes())[arc[1]]])
 
-        #CoupeMin-->SIS
-        SIS=[]
-        maxList=len(list(moralizedAncestral.nodes()))
-        for arc in mincutDansGrapheAux:
-            if(arc[0]==arc[1]+maxList):
-                SIS.append(arc[0])
 
-        return SIS
-    #1+2.a ID-->DAG-->MoralizedAncestral(UndiGraph)-->MoralizedAncestral(DiGraph)
+
+
+
+        
+
+    
     def fromIDToMoralizedAncestral(self,decisionNodeID):
         """
         Fonction qui transforme l'ID en graphe moralisé ancestral pour appliquer Acid&Campos
@@ -54,7 +131,7 @@ class BranchAndBoundLIMIDInference():
         decisionNodeID est l'identifiant du noeud de décision pour lequel on veut trouver le SIS
         ordre est l'ordre de la prise de décision dans l'ID (identifiants des noeuds de décision)
 
-        renvoi le graphe moralisé ancestral (version digraphe) et les identifiants des noeuds sources et puits
+        renvoi le graphe moralisé ancestral (version undigraph) et les identifiants des noeuds sources et puits
         """
         #--construction de X=fa(Delta_j)--
         #(reunion des familles des noeuds de decisions précedant decisionNode selon l'ordre ordre)
@@ -84,45 +161,7 @@ class BranchAndBoundLIMIDInference():
                     elif(nodeID in Y):
                         MoralizedAncestral.addEdge(BetaYid,nodeID)
                         break
-        MoralizedAncestral_digraph=self.getDigraphFromUnDiGraph(MoralizedAncestral)
-        return MoralizedAncestral_digraph,alphaXid,BetaYid   
-
-    #MoralizedAncestral(DiGraph)-->Graph auxillaire
-    def graphAuxilliaire(self,MoralizedAncestral_digraph,id_source,id_puit):
-        """
-        fonction qui retourne le graph auxilliaire a partir d'un graph non dirigé
-        """
-        graphAuxilliaire=gum.DiGraph()
-        listNode=list(MoralizedAncestral_digraph.nodes())
-        maxList=len(listNode)
-
-        #Pour chaque noeud, ajouter deux noeud u+ et u-
-        #dans graphe moral : [u0,u1,u2,u3,u4]
-        #dans graphe auxilliaire : [u0+,u1+,u2+,u3+,u4+,u0-,u1-,u2-u3-,u4-]
-        for i in range(len(listNode)):
-            #Pour chaque noeud du dag, ajouter un noeud u+, u-
-            graphAuxilliaire.addNodeWithId(listNode[i])
-            graphAuxilliaire.addNodeWithId(listNode[i]+maxList) #assure qu'il n'y ait pas de conflit d'identifiants et permet de ne gérer qu'un seul vecteur
-            if(listNode[i]==id_source):
-                id_source_aux_plus=listNode[i]
-                id_source_aux_moins=listNode[i]+maxList
-            elif(listNode[i]==id_puit):
-                id_puit_aux_plus=listNode[i]
-                id_puit_aux_moins=listNode[i]+maxList
-            #Creer un arc entre u+ et u-
-            graphAuxilliaire.addArc(listNode[i],listNode[i]+maxList)
-
-        #pour chaque arc u->v dans le digraph, créer un arc (u-)->v+
-        for arc in list(MoralizedAncestral_digraph.arcs()):
-            id_noeud_depart=arc[0]
-            id_noeud_arrive=arc[1]
-            id_noeud_depart_moins_dans_graphe_aux=id_noeud_depart+maxList
-            id_noeud_arrive_plus_dans_graphe_aux=id_noeud_arrive
-            graphAuxilliaire.addArc(id_noeud_depart_moins_dans_graphe_aux,id_noeud_arrive_plus_dans_graphe_aux)
-
-        return graphAuxilliaire,id_source_aux_plus,id_source_aux_moins,id_puit_aux_plus,id_puit_aux_moins
-
-    
+        return MoralizedAncestral,alphaXid,BetaYid     
 
     #--Méthodes utilitaires--
     def getNamesFromID(self,listId):
@@ -176,77 +215,125 @@ class BranchAndBoundLIMIDInference():
 
         return graph
 
-class Graph:
-
-    def __init__(self, graph):
-        self.graph = graph
-        self. ROW = len(graph)
-        self.visited=[]
-
-
-    # Using BFS as a searching algorithm 
-    def searching_algo_BFS(self, s, t, parent):
-
-        self.visited = [False] * (self.ROW)
-        queue = []
-
-        queue.append(s)
-        self.visited[s] = True
-
-        while queue:
-
-            u = queue.pop(0)
-
-            for ind, val in enumerate(self.graph[u]):
-                if self.visited[ind] == False and val > 0:
-                    queue.append(ind)
-                    self.visited[ind] = True
-                    parent[ind] = u
-
-        return True if self.visited[t] else False
-
-    # Applying fordfulkerson algorithm
-    def ford_fulkerson(self, source, sink):
-        temp=[]
-        for i in range(len(self.graph)):
-            temp.append(self.graph[i].copy())
-        parent = [-1] * (self.ROW)
-        max_flow = 0
-
-        while self.searching_algo_BFS(source, sink, parent):
-
-            path_flow = float("Inf")
-            s = sink
-            while(s != source):
-                path_flow = min(path_flow, self.graph[parent[s]][s])
-                s = parent[s]
-
-            # Adding the path flows
-            max_flow += path_flow
-
-            # Updating the residual values of edges
-            v = sink
-            while(v != source):
-                u = parent[v]
-                self.graph[u][v] -= path_flow
-                self.graph[v][u] += path_flow
-                v = parent[v]
-        self.graph=temp
-        return max_flow,self.visited
-    
-    def mincut(self,source, sink):
-        column=len(self.graph[0])
-        max_flow,marque=self.ford_fulkerson(source,sink)
-        mincut=[]
-        for i in range(len(marque)):
-            #si le noeud numéro i est marqué
-            if(marque[i]):
-                for k in range(column):
-                    #si il y a un arc entre le noeud i et le noeud k, il ne faut pas que le noeud k soit marqué
-                    if(self.graph[i][k]>0 and not marque[k]):
-                        mincut.append([i,k])
-        return mincut
-
-
-
-
+class GraphForSIS:
+    def __init__(self,nodeList,edgeList):
+        self.nodeList=nodeList
+        self.edgeList=edgeList
+    def fsearch(self,u):
+        for edge in self.edgeList:
+            if(u in edge.getNodes()):
+                v=np.abs(edge.getNodes().index(u)-1)
+                if(self.getLabel_Positive(u)==None and self.getLabel_Negative(u)==None and not self.getEdge(u,v).getMarked()):
+                    self.setLabel_p(v,u)
+    def bsearch(self,u,y,queue):
+        for edge in self.edgeList:
+            if(u in edge.getNodes()):
+                t=np.abs(edge.getNodes().index(u)-1)
+                if(self.getEdge(u,t).getMarked() and self.getEdge(u,t).getDir()==[t,u]):
+                    if(self.getLabel_Negative(t)==None):
+                        self.setLabel_Negative(y)=u
+                    if(self.getState(t)=="labelledScanned"):
+                        self.setState(t,"labelledUnscanned")
+                        queue.append(t)
+    def eraseLabels(self):
+        for node in self.nodeList:
+            node.setLabel_Positive(None)
+            node.getLabel_Negative(None)
+    def getLabel_Positive(self,id):
+        return self.getNode(id).getLabel_Positive()
+    def getLabel_Negative(self,id):
+        return self.getNode(id).getLabel_Negative()
+    def setLabel_Positive(self,id,label):
+        self.getNode(id).setLabel_Positive(label)
+    def setLabel_Positive(self,id,label):
+        self.getNode(id).setLabel_Negative(label)
+    def getState(self,id):
+        return self.getNode(id).getState()
+    def setState(self,id,state):
+        self.getNode(id).setState(state)
+    def getIN(self,id):
+        return self.getNode(id).getIN()
+    def setIN(self,id,IN):
+        self.getNode(id).setIN(IN)
+    def getNodes(self):
+        return self.nodeList
+    def getNode(self,id):
+        for node in self.nodeList:
+            if(node.getID()==id):
+                return node
+    def getEdge(self,idNode1,idNode2):
+        node1=self.getNode(idNode1)
+        node2=self.getNode(idNode2)
+        for edge in self.getEdges():
+            if edge.getNodes==[node1,node2] or edge.getNodes==[node2,node1]:
+                return edge
+    def getEdges(self):
+        return self.edgeList
+    def addNode(self,node):
+        self.nodeList.append(node)
+    def addNode(self,id,state,label_positive,label_negative):
+        self.nodeList.append(NodeForSIS(id,state,label_positive,label_negative))
+    def addEdge(self,idNode1,idNode2,capacity):
+        if(idNode1!=idNode2 and idNode1 in self.nodeList and idNode2 in self.nodeList and capacity>=1):
+            self.edgeList.append(EdgeForSIS(idNode1,idNode2,capacity))
+class NodeForSIS:
+    def __init__(self,id,state,label_positive,label_negative,IN):
+        self.id=id
+        if(state in ["labelledScanned","labelledUnscanned","unlabelled"]):
+            self.state=state
+        else:
+            state=None
+        self.label_positive=label_positive
+        self.label_negative=label_negative
+        self.IN=IN
+    def getIn(self):
+        return self.IN
+    def getID(self):
+        return self.id
+    def getState(self):
+        return self.state
+    def getLabel_Positive(self):
+        return self.label_positive
+    def getLabel_Negative(self):
+        return self.label_negative
+    def setIn(self,IN):
+        self.IN=IN
+    def setState(self,state):
+        if(state in ["labelledScanned","labelledUnscanned","unlabelled"]):
+            self.state=state
+        else:
+            state=None
+    def setLabel_Positive(self,label_positive):
+        self.label_positive=label_positive
+    def setLabel_Negative(self,label_negative):
+        self.label_negative=label_negative
+    def copy(self,toCopy):
+        self.id=toCopy.getID()
+        self.state=toCopy.getState()
+        self.label_positive=toCopy.getLabel_Positive()
+        self.label_negative=toCopy.getLabel_Negative()
+        self.IN=toCopy.getIN()
+class EdgeForSIS:
+    def __init__(self,idNode1,idNode2,capacity,marked,dir):
+        self.idNode1=idNode1
+        self.idNode2=idNode2
+        self.capacity=capacity
+        self.marked=marked
+        self.dir=dir
+    def getNodes(self):
+        return [self.idNode1,self.idNode2]
+    def getCapacity(self):
+        return self.capacity
+    def setNodes(self,idNode1,idNode2):
+        self.idNode1=idNode1
+        self.idNode2=idNode2
+    def setCapacity(self,capacity):
+        self.capacity=capacity
+    def setMarked(self,mark):
+        self.marked=mark
+    def getMarked(self):
+        return self.marked
+    def setDir(self,dir):
+        self.dir=dir
+    def getDir(self):
+        return self.dir
