@@ -17,15 +17,18 @@ class BranchAndBoundLIMIDInference():
     def createRelaxation(self):
         relaxedID=gum.InfluenceDiagram(self.ID)
         #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
-        for i in range(len(ordreDecision)-1,-1,0):
+        for i in range(len(self.ordreDecision)-1,-1,-1):
             sis=self.SIS(self.ordreDecision[i],relaxedID)
             for nodeID in sis:
-                if(not relaxedID.existsArc(nodeID,self.ordreDecision[i])):
+                if(not relaxedID.existsArc(nodeID,self.ordreDecision[i]) and nodeID in relaxedID.nodes()):
                     relaxedID.addArc(nodeID,self.ordreDecision[i])
         #Enlever les noeuds non-requis
         #?
-        relaxedID=relaxedID.reducedLIMID()
-        #TODO:copier les cpt
+        relaxedID=gum.ShaferShenoyLIMIDInference(relaxedID).reducedLIMID()
+        #relaxedID=relaxedID.reducedLIMID()
+        for node in relaxedID.nodes():
+            if(relaxedID.isChanceNode(node)):
+                relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
         return relaxedID
         
 
@@ -39,7 +42,7 @@ class BranchAndBoundLIMIDInference():
         labelledUnscanned="labelledUnscanned"
         unlabelled="unlabelled"
         #--Construction du graphe moralisé sur lequel appliquer l'algorithme--
-        moralizedAncestral,id_source,id_puit=self.fromIDToMoralizedAncestral(decisionNodeID)
+        moralizedAncestral,id_source,id_puit=self.fromIDToMoralizedAncestral(decisionNodeID,ID)
 
         #--Construction du graphe de travail sur lequel on peut appliquer l'algorithme--
         nodeList=[]
@@ -70,7 +73,12 @@ class BranchAndBoundLIMIDInference():
             while(True):
                 #print("2")
                 #print("2 queue:",queue)
-                u=queue.pop()
+                
+                for node in queue:
+                    if workGraph.getNode(node).getState()==labelledUnscanned:
+                        u=node
+                        queue.remove(u)
+                        break
                 #1
                 if(workGraph.getIN(u)==False):
                     #print(2.1)
@@ -167,20 +175,21 @@ class BranchAndBoundLIMIDInference():
         #print(7,"vrai")
         ensembleSeparant=[]
         y=id_puit
-        for edge in workGraph.getEdges():
-            if(y in edge.getNodes() and edge.getMarked()):
-                #print(7.1)
-                if(y==edge.getNodes()[0]):
+        for edge in workGraph.getEdgesConnectedToNode(y):
+            if(edge.getMarked()):
+                if(edge.getNodes()[1]!=y):
                     u=edge.getNodes()[1]
                 else:
                     u=edge.getNodes()[0]
                 if(workGraph.getLabel_Positive(u)==None and workGraph.getLabel_Negative(u)==None):
-                    #print(7.2)
+                    print(7.2," u=",u)
                     ensembleSeparant.append(u)
                 if(workGraph.getLabel_Positive(u)!=None or workGraph.getLabel_Negative(u)!=None):
                     #print(7.3)
-                    res=workGraph.step7(u)
+                    res=workGraph.step7(u,y)
                     ensembleSeparant.append(res)
+                    print(7.3," u=",res)
+
         return ensembleSeparant
 
     
@@ -220,7 +229,7 @@ class BranchAndBoundLIMIDInference():
             if(not ID.isUtilityNode(nodeID)):
                 Y.remove(nodeID)
         XUY=X+Y
-        XUYNames=self.getNamesFromID(XUY)
+        XUYNames=self.getNamesFromID(XUY,ID)
         #--Construction du graphe ancestral moralisé--
         MoralizedAncestral=ID.moralizedAncestralGraph(XUYNames)#un undigraph avec des noeuds de mêmes identifiants que ceux du diagramme d'influences
         #--Ajout des noeuds sources(alpha) et puit (beta) et de leurs aretes
@@ -301,22 +310,26 @@ class GraphForSIS:
         self.nodeList=nodeList
         self.edgeList=edgeList
     #TODO :TESTER CETTE FONCTION
-    def step7(self,u):
+    def step7(self,u,y):
         listVisite=[u]
+        oldu=y
         while(True):
-            for edge in self.edgeList:
-                if (u in edge.getNodes()):
-                    if(u==edge.getNodes()[0]):
-                        v=edge.getNodes()[1]
-                    else:
-                        v=edge.getNodes()[0]
-                    if(self.getEdge(u,v).getMarked() and v not in listVisite):
-                        listVisite.append(v)
-                        if(self.getLabel_Positive(v)!=None or self.getLabel_Negative(v)!=None):
-                            return v
-                        else:
-                            break
-            u=v
+            for edge in self.getEdgesConnectedToNode(u):
+                if(u==edge.getNodes()[0]):
+                    v=edge.getNodes()[1]
+                else:
+                    v=edge.getNodes()[0]
+
+                if(self.getEdge(u,v).getMarked() and v!=oldu):
+                    if(self.getLabel_Positive(v)!=None or self.getLabel_Negative(v)!=None):
+                        oldu=u
+                        u=v
+                        break
+                
+            return u
+                        
+            
+            
             if(v in listVisite):
                 #print("in warning")
                 warnings.warn("Attention, ici, truc bizarre")
@@ -331,32 +344,17 @@ class GraphForSIS:
                         v=edge.getNodes()[1]
                     else:
                         v=edge.getNodes()[0]
-                    if(self.getEdge(u,v).getMarked() and v not in listVisite):
+                    if(self.getEdge(u,v).getMarked() and v not in listVisite and (self.getLabel_Positive(v)!=None or self.getLabel_Negative(v)!=None)):
                         hasVisitedNew=True
                         listVisite.append(v)
                         u=v
+                        break
                     if(not hasVisitedNew):
                         for i in range(len(listVisite)-1,-1,-1):
                             if(self.getLabel_Positive(listVisite[i])!=None or self.getLabel_Negative(listVisite[i])!=None):
                                 return listVisite[i]
     def step7V3(self,u):
-        listVisite=[u]
-        while(True):
-            hasVisitedNew=False
-            for edge in self.edgeList:
-                if (u in edge.getNodes()):
-                    if(u==edge.getNodes()[0]):
-                        v=edge.getNodes()[1]
-                    else:
-                        v=edge.getNodes()[0]
-                    if(self.getEdge(u,v).getMarked() and v not in listVisite):
-                        hasVisitedNew=True
-                        listVisite.append(v)
-                        u=v
-                    if(not hasVisitedNew):
-                        for i in range(len(listVisite)-1,-1,-1):
-                            if(self.getLabel_Positive(listVisite[i])!=None or self.getLabel_Negative(listVisite[i])!=None):
-                                return listVisite[i]
+        pass
         
     def voisin(self,nodeID):
         voisin=[]
@@ -378,7 +376,7 @@ class GraphForSIS:
                 else:
                     v=edge.getNodes()[0]
                 ##print("fSearch in 1, this v:",v)
-                if(self.getLabel_Positive(v)==None and self.getLabel_Negative(v)==None and not self.getEdge(u,v).getMarked()):
+                if(self.getState(v)=="unlabelled" and not self.getEdge(u,v).getMarked()):
                     ##print("fSearch in 2")
                     self.setLabel_Positive(v,u)
                     self.setState(v,"labelledUnscanned")
@@ -394,10 +392,11 @@ class GraphForSIS:
                 if(self.getEdge(u,t).getMarked() and self.getEdge(u,t).getDir()==[t,u]):
                     if(self.getLabel_Negative(t)==None):
                         self.setLabel_Negative(y,u)
+                        if(self.getState(t)=="labelledScanned"):
+                            self.setState(t,"labelledUnscanned")
+                            queue.append(t)
                         self.setState(y,"labelledUnscanned")
-                    if(self.getState(t)=="labelledScanned"):
-                        self.setState(t,"labelledUnscanned")
-                        queue.append(t)
+                    break
     def eraseLabels(self):
         for node in self.nodeList:
             node.setLabel_Positive(None)
@@ -431,6 +430,12 @@ class GraphForSIS:
                 return edge
     def getEdges(self):
         return self.edgeList
+    def getEdgesConnectedToNode(self,nodeID):
+        listEdges=[]
+        for edge in self.getEdges():
+            if(nodeID in edge.getNodes()):
+                listEdges.append(edge)
+        return listEdges
     def addNode(self,node):
         self.nodeList.append(node)
     def addNode(self,id,state,label_positive,label_negative,IN):
