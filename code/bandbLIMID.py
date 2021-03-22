@@ -13,9 +13,28 @@ class BranchAndBoundLIMIDInference():
         self.ID=ID
         self.ordreDecision=OrdreDecision
 
+    
+    def createRelaxation(self):
+        relaxedID=gum.InfluenceDiagram(self.ID)
+        #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
+        for i in range(len(ordreDecision)-1,-1,0):
+            sis=self.SIS(self.ordreDecision[i],relaxedID)
+            for nodeID in sis:
+                if(not relaxedID.existsArc(nodeID,self.ordreDecision[i])):
+                    relaxedID.addArc(nodeID,self.ordreDecision[i])
+        #Enlever les noeuds non-requis
+        #?
+        relaxedID=relaxedID.reducedLIMID()
+        #TODO:copier les cpt
+        return relaxedID
+        
+
+
+            
+
     #ID->DAG (sans neouds utilités)->graphe moralisé ancestral ou on doit trouver l'ensemble de noeuds
     #séparant X et Y
-    def SIS(self,decisionNodeID):
+    def SIS(self,decisionNodeID,ID):
         labelledScanned="labelledScanned"
         labelledUnscanned="labelledUnscanned"
         unlabelled="unlabelled"
@@ -160,7 +179,7 @@ class BranchAndBoundLIMIDInference():
                     ensembleSeparant.append(u)
                 if(workGraph.getLabel_Positive(u)!=None or workGraph.getLabel_Negative(u)!=None):
                     #print(7.3)
-                    res=workGraph.step7V2(u)
+                    res=workGraph.step7(u)
                     ensembleSeparant.append(res)
         return ensembleSeparant
 
@@ -178,7 +197,7 @@ class BranchAndBoundLIMIDInference():
         
 
     
-    def fromIDToMoralizedAncestral(self,decisionNodeID):
+    def fromIDToMoralizedAncestral(self,decisionNodeID,ID):
         """
         Fonction qui transforme l'ID en graphe moralisé ancestral pour appliquer Acid&Campos
 
@@ -191,26 +210,26 @@ class BranchAndBoundLIMIDInference():
         #--construction de X=fa(Delta_j)--
         #(reunion des familles des noeuds de decisions précedant decisionNode selon l'ordre ordre)
         X=[]
-        for nodeID in self.ID.nodes():
-            if(self.ID.isDecisionNode(nodeID)):
+        for nodeID in ID.nodes():
+            if(ID.isDecisionNode(nodeID)):
                 if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #si il precède dj dans l'ordre
-                    X=X+list(self.ID.family(nodeID)).copy()
+                    X=X+list(ID.family(nodeID)).copy()
         #--Construction de Y--
-        Y=list(self.ID.descendants(decisionNodeID)).copy()
+        Y=list(ID.descendants(decisionNodeID)).copy()
         for nodeID in Y:
-            if(not self.ID.isUtilityNode(nodeID)):
+            if(not ID.isUtilityNode(nodeID)):
                 Y.remove(nodeID)
         XUY=X+Y
         XUYNames=self.getNamesFromID(XUY)
         #--Construction du graphe ancestral moralisé--
-        MoralizedAncestral=self.ID.moralizedAncestralGraph(XUYNames)#un undigraph avec des noeuds de mêmes identifiants que ceux du diagramme d'influences
+        MoralizedAncestral=ID.moralizedAncestralGraph(XUYNames)#un undigraph avec des noeuds de mêmes identifiants que ceux du diagramme d'influences
         #--Ajout des noeuds sources(alpha) et puit (beta) et de leurs aretes
         alphaXid=MoralizedAncestral.addNode()
         BetaYid=MoralizedAncestral.addNode()
         temp=[]#liste des ancestre de tous de y de Y
         for y in Y: #Y liste des descendant de DJ qui sont des noeuds d'utilité
-            temp=temp+list(self.ID.ancestors(y))
-        desc=self.ID.descendants(decisionNodeID)
+            temp=temp+list(ID.ancestors(y))
+        desc=ID.descendants(decisionNodeID)
         for nodeID in temp:
             if(nodeID not in desc):
                 temp.remove(nodeID)
@@ -227,28 +246,28 @@ class BranchAndBoundLIMIDInference():
 
         
     #--Méthodes utilitaires--
-    def getNamesFromID(self,listId):
+    def getNamesFromID(self,listId,ID):
         """
         retourne les noms des noeuds donnés sous forme d'identifiant (listId) dans le diagramme d'influence InDi
         """
         names=[]
-        for name in self.ID.names():
-            if(self.ID.idFromName(name) in listId):
+        for name in ID.names():
+            if(ID.idFromName(name) in listId):
                 names.append(name)
         return names
-    def fromIDtoDAG(self):
+    def fromIDtoDAG(self,ID):
         """
         Rend un DAG pour un ID donné (ses noeuds ont les mêmes identifiants que ceux de l'ID)
         Le DAG rendu a un noeud correspondant à chaque noeud chance/decision mais pas pour les noeuds utilité. Il a aussi les mêmes arcs que l'ID (sans ceux vers les noeuds d'utilité bien sur car ils ne sont pas dans le DAG)
         """
         dag=gum.DAG()
-        for nodeID in self.ID.nodes():
-            if(not self.ID.isUtilityNode(nodeID)):
+        for nodeID in ID.nodes():
+            if(not ID.isUtilityNode(nodeID)):
                 dag.addNodeWithId(nodeID)
-        for arc in self.ID.arcs():
+        for arc in ID.arcs():
             source=arc[0]
             destination=arc[1]
-            if(not self.ID.isUtilityNode(source) and not self.ID.isUtilityNode(destination)):
+            if(not ID.isUtilityNode(source) and not self.ID.isUtilityNode(destination)):
                 dag.addArc(source,destination)
         return dag
     def getDigraphFromUnDiGraph(self,UnDiGraph):
@@ -320,7 +339,24 @@ class GraphForSIS:
                         for i in range(len(listVisite)-1,-1,-1):
                             if(self.getLabel_Positive(listVisite[i])!=None or self.getLabel_Negative(listVisite[i])!=None):
                                 return listVisite[i]
-
+    def step7V3(self,u):
+        listVisite=[u]
+        while(True):
+            hasVisitedNew=False
+            for edge in self.edgeList:
+                if (u in edge.getNodes()):
+                    if(u==edge.getNodes()[0]):
+                        v=edge.getNodes()[1]
+                    else:
+                        v=edge.getNodes()[0]
+                    if(self.getEdge(u,v).getMarked() and v not in listVisite):
+                        hasVisitedNew=True
+                        listVisite.append(v)
+                        u=v
+                    if(not hasVisitedNew):
+                        for i in range(len(listVisite)-1,-1,-1):
+                            if(self.getLabel_Positive(listVisite[i])!=None or self.getLabel_Negative(listVisite[i])!=None):
+                                return listVisite[i]
         
     def voisin(self,nodeID):
         voisin=[]
