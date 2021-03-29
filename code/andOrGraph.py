@@ -5,11 +5,18 @@ class andOrGraph():
         self.ID=ID
         self.ordre=ordre
         self.root=None
+<<<<<<< HEAD
 
 class orNode():
     def __init__(self, Id, childs):
+=======
+    
+
+def class orNode():
+    __init__(self,childs):
+>>>>>>> 958c80f047209549b09cdabe71502dc7486c8b34
         """
-        Id l'id du orNode
+        Id l'id du andNode
         childs les ids des enfants
         """
         self.Id=Id
