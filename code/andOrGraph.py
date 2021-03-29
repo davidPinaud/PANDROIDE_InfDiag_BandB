@@ -5,12 +5,25 @@ def class andOrGraph:
         self.ID=ID
         self.ordre=ordre
         self.root=None
-    
+        
+    def fromID(self,ID): 
+        sis = []
+        # Récupération des noeuds de décision
+        for nodeID in ID.nodes():
+            if(ID.isDecisionNode(nodeID)):
+                # Récupération des SIS de ces noeuds
+                sis.append((nodeId, ID.SIS(nodeID,ID)))
+         
+        childs=orNode()
+        for nodeD in sis:
+            childs=andNode(childs)
+        
+        self.root=
 
 def class orNode():
-    __init__(self,childs):
+    __init__(self, Id, childs):
         """
-        Id l'id du andNode
+        Id l'id du orNode
         childs les ids des enfants
         """
         self.Id=Id
