@@ -56,15 +56,17 @@ class BranchAndBoundLIMIDInference():
         
         #---Algorithme----
         
-        queue=[]
+        
         y=id_puit
         x=id_source
+        print("x",x,"y",y)
         while(True):
             #Step 1
             #print(1)
             doesProceedStep4=None
             doesProceedStep7=None
             workGraph.setLabel_Positive(y,y)
+            queue=[]
             queue.append(y)
             workGraph.setState(y,labelledUnscanned)
             
@@ -79,9 +81,10 @@ class BranchAndBoundLIMIDInference():
                         u=node
                         queue.remove(u)
                         break
+                print("u",u,self.getNameFromID(u))
                 #1
                 if(workGraph.getIN(u)==False):
-                    #print(2.1)
+                    print(2.1,"queue before",queue)
                     workGraph.fsearch(u,queue) # on a rajouté queue dans fsearch
                     """for node in workGraph.getNodes():
                         if node.getLabel_Positive()!=None:
@@ -94,28 +97,29 @@ class BranchAndBoundLIMIDInference():
                     for edge in workGraph.getEdges():
                         if(edge.getMarked()==True):
                             #print(edge.toString())"""
-                    #print("2.1 queue:",queue)
+                    print("2.1 queue after:",queue)
                     ##print(workGraph.toString())
                 #2
                 if(workGraph.getIN(u)==True and workGraph.getLabel_Negative(u)==None and workGraph.getLabel_Positive(u)!=None):
-                    workGraph.bsearch(u,y,queue)
-                    #print(2.2)
+                    workGraph.bsearch(u,queue)
+                    print(2.2)
                 #3
                 if(workGraph.getIN(u)==True and workGraph.getLabel_Negative(u)!=None):
                     workGraph.fsearch(u,queue)
-                    workGraph.bsearch(u,y,queue)
-                    #print(2.3)
+                    workGraph.bsearch(u,queue)
+                    print(2.3)
                 #4
                 #print(2.4)
                 workGraph.setState(u,labelledScanned)
-                doesProceedStep4=workGraph.getState(x)==labelledScanned or workGraph.getState(x)==labelledUnscanned
-                doesProceedStep7=(len(queue)<=0 and workGraph.getState(x)==unlabelled)
+                doesProceedStep4=workGraph.getState(x)!=unlabelled and workGraph.getState(x)!=None
+                doesProceedStep7=queue==[] and workGraph.getState(x)==unlabelled
                 if ( doesProceedStep7 or doesProceedStep4):
-                    #print(3)
-                    
+
+                    print(3,"proceed4?",doesProceedStep4,"proceed7?",doesProceedStep7)
                     break
+
             if(doesProceedStep4):
-                #print(4)
+                print(4)
                 #Step 4
                 u=x
                 w=x
@@ -125,28 +129,30 @@ class BranchAndBoundLIMIDInference():
                     #Step 5
                     z=None
                     #5.1
-                    #print("5.1 u:",u)
+                    print("5.1 u:",u,"pos label",workGraph.getLabel_Positive(u),"neg label",workGraph.getLabel_Negative(u))
                     if(workGraph.getLabel_Positive(u)!=None and workGraph.getLabel_Negative(u)==None):
                         #print(5.1)
                         z=workGraph.getLabel_Positive(u)
-                        #print("5.1 z: ",z)
+                        print("5.1 u:",u,"z: ",z)
                         u_z=workGraph.getEdge(u,z)
                         u_z.setMarked(True)
                         u_z.setDir([z,u])
                         if(z!=y):
                             workGraph.setIN(z,True)
-                            #print("5.1.1")
+                            print("5.1.1")
                     #5.2
                     if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)==None):
-                        #print(5.2)
+                        print(5.2)
                         z=workGraph.getLabel_Negative(u)
                         u_z=workGraph.getEdge(u,z)
                         u_z.setMarked(False)
-                        if(workGraph.getLabel_Negatif(z)!=None and workGraph.getLabel_Positive(z)==None):
+                        if(workGraph.getLabel_Negative(z)!=None and workGraph.getLabel_Positive(z)==None):
                             workGraph.setIN(z,False)
                     #5.3
-                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None and u==workGraph.getLabel_Negative(w) and z==workGraph.getLabel_Positive(u)):
-                        #print(5.3)
+                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None):
+                        u=workGraph.getLabel_Negative(w)
+                        z=workGraph.getLabel_Positive(u)
+                        print(5.3)
                         u_z=workGraph.getEdge(u,z)
                         u_z.setMarked(True)
                         u_z.setDir([z,u])
@@ -154,17 +160,17 @@ class BranchAndBoundLIMIDInference():
                             workGraph.setIN(z,True)
                     #5.4
                     if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None and u==workGraph.getLabel_Positive(w) and z==workGraph.getLabel_Negative(u)):
-                        #print(5.4)
+                        print(5.4)
                         u_z=workGraph.getEdge(u,z)
                         u_z.setMarked(False)
                     #Step 6
                     #print(6)
                     if(z!=y):
-                        #print(6.1)
+                        print(6.1)
                         w=u
                         u=z
-                    else:
-                        #print(6.2)
+                    else:#z==y
+                        print(6.2)
                         queue=[]
                         workGraph.eraseLabels()
                         break
@@ -175,6 +181,7 @@ class BranchAndBoundLIMIDInference():
         #print(7,"vrai")
         ensembleSeparant=[]
         y=id_puit
+        """
         for edge in workGraph.getEdgesConnectedToNode(y):
             if(edge.getMarked()):
                 if(edge.getNodes()[1]!=y):
@@ -189,72 +196,125 @@ class BranchAndBoundLIMIDInference():
                     res=workGraph.step7(u,y)
                     ensembleSeparant.append(res)
                     print(7.3," u=",res)
+        """
+        connectedToY=workGraph.getEdgesConnectedToNode(y)
+        print(7)
+        for edge in connectedToY:
+            if(y!=edge.getNodes()[0]):
+                u=edge.getNodes()[0]
+            else:
+                u=edge.getNodes()[1]
+            if(edge.getMarked()):
+                print("in 7BIS, LOOKING ",workGraph.getState(u)==unlabelled,u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
+                if(workGraph.getState(u)==unlabelled):
+                    print("in 7.1, adding ",u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
+                    ensembleSeparant.append(u)
+                    continue
+                elif(workGraph.getState(u)!=unlabelled):
+                    ensembleSeparant.append(self.getSISNode(u,workGraph))
 
         return ensembleSeparant
 
     
+    def getSISNode(self,u,workGraph):
+        connectedToU=workGraph.getEdgesConnectedToNode(u)
+        print("---------------------------")
+        i=0
+        m=[]
+        for edge in connectedToU:
+            if(u!=edge.getNodes()[0]):
+                v=edge.getNodes()[0]
+            else:
+                v=edge.getNodes()[1]
+            
+            
+            print("u",u,"v",v,"marked",edge.getMarked())
+            if edge.getMarked() :
+                 i=i+1
+                 m.append(edge.getNodes())
+
+        print(i,m)
 
 
 
 
-
-
-
-
-
-
-        
 
     
+
+    #Page 5 - 2012 Yuan&Hensen - Colonne de droite - 2ème paragraphe
     def fromIDToMoralizedAncestral(self,decisionNodeID,ID):
         """
         Fonction qui transforme l'ID en graphe moralisé ancestral pour appliquer Acid&Campos
 
         ID le diagramme d'influence étudié
         decisionNodeID est l'identifiant du noeud de décision pour lequel on veut trouver le SIS
-        ordre est l'ordre de la prise de décision dans l'ID (identifiants des noeuds de décision)
 
         renvoi le graphe moralisé ancestral (version undigraph) et les identifiants des noeuds sources et puits
         """
         #--construction de X=fa(Delta_j)--
-        #(reunion des familles des noeuds de decisions précedant decisionNode selon l'ordre ordre)
+        #(reunion des familles des noeuds de decisions précedant decisionNode selon l'ordre "ordre")
         X=[]
         for nodeID in ID.nodes():
             if(ID.isDecisionNode(nodeID)):
-                if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #si il precède dj dans l'ordre
+                if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #si il precède dj ou égal dans l'ordre
                     X=X+list(ID.family(nodeID)).copy()
-        #--Construction de Y--
+
+        #--Construction de Y=Noeuds Utilités qui sont des descendants de decisionNodeID--
         Y=list(ID.descendants(decisionNodeID)).copy()
-        for nodeID in Y:
+        ytemp=Y.copy()
+        for nodeID in ytemp:
             if(not ID.isUtilityNode(nodeID)):
                 Y.remove(nodeID)
-        XUY=X+Y
+        XUY=self.unionList(X,Y)
         XUYNames=self.getNamesFromID(XUY,ID)
+
         #--Construction du graphe ancestral moralisé--
-        MoralizedAncestral=ID.moralizedAncestralGraph(XUYNames)#un undigraph avec des noeuds de mêmes identifiants que ceux du diagramme d'influences
+        #un undigraph avec des noeuds de mêmes identifiants que ceux du diagramme d'influences
+        MoralizedAncestral=ID.moralizedAncestralGraph(XUYNames)
+
         #--Ajout des noeuds sources(alpha) et puit (beta) et de leurs aretes
         alphaXid=MoralizedAncestral.addNode()
         BetaYid=MoralizedAncestral.addNode()
-        temp=[]#liste des ancestre de tous de y de Y
-        for y in Y: #Y liste des descendant de DJ qui sont des noeuds d'utilité
-            temp=temp+list(ID.ancestors(y))
+
+        #Construction de la liste des ancêtres de Y descendant de D_j
+        temp=[]
+        for y in Y:
+            temp=self.unionList(temp,list(ID.ancestors(y)))
         desc=ID.descendants(decisionNodeID)
-        for nodeID in temp:
+        t=temp.copy()
+        for nodeID in t:
             if(nodeID not in desc):
                 temp.remove(nodeID)
-        for nodeID in MoralizedAncestral.nodes():
-            for node2ID in MoralizedAncestral.nodes():
-                if((nodeID,node2ID) in MoralizedAncestral.edges() or (node2ID,nodeID) in MoralizedAncestral.edges()):
-                    if(node2ID in X and nodeID not in X):
+
+        #Connection des sources et des puits
+        for nodeID in temp: #Connection puit
+            if( not MoralizedAncestral.existsEdge(BetaYid,nodeID)):
+                MoralizedAncestral.addEdge(nodeID,BetaYid)
+        for (nodeID,node2ID) in MoralizedAncestral.edges():#Connection source
+            if(nodeID in X and node2ID in X):
+                continue
+            if(nodeID in X or node2ID in X):
+                if(node2ID in X):
+                    if(nodeID not in X and not MoralizedAncestral.existsEdge(alphaXid,nodeID)):
                         MoralizedAncestral.addEdge(alphaXid,nodeID)
-                        break
-                    elif(nodeID in temp):
-                        MoralizedAncestral.addEdge(BetaYid,nodeID)
-                        break
+                if(nodeID in X):
+                    if(node2ID not in X and not MoralizedAncestral.existsEdge(alphaXid,node2ID)):
+                        MoralizedAncestral.addEdge(alphaXid,node2ID)
         return MoralizedAncestral,alphaXid,BetaYid     
 
         
     #--Méthodes utilitaires--
+    def getNameFromID(self,idNode):
+        for name in self.ID.names():
+            if(self.ID.idFromName(name)==idNode):
+                return name
+
+    def unionList(self,list1,list2):
+        union=list1.copy()
+        for e in list2:
+            if e not in union:
+                union.append(e)
+        return union
     def getNamesFromID(self,listId,ID):
         """
         retourne les noms des noeuds donnés sous forme d'identifiant (listId) dans le diagramme d'influence InDi
@@ -381,7 +441,7 @@ class GraphForSIS:
                     self.setLabel_Positive(v,u)
                     self.setState(v,"labelledUnscanned")
                     queue.append(v)
-    def bsearch(self,u,y,queue):
+    def bsearch(self,u,queue):
         #print("bSearch")
         for edge in self.edgeList:
             if(u in edge.getNodes()):
@@ -391,11 +451,11 @@ class GraphForSIS:
                     t=edge.getNodes()[0]
                 if(self.getEdge(u,t).getMarked() and self.getEdge(u,t).getDir()==[t,u]):
                     if(self.getLabel_Negative(t)==None):
-                        self.setLabel_Negative(y,u)
-                        if(self.getState(t)=="labelledScanned"):
-                            self.setState(t,"labelledUnscanned")
-                            queue.append(t)
-                        self.setState(y,"labelledUnscanned")
+                        #Erreur de frappe dans le texte ?????????  self.setLabel_Negative(y,u)
+                        self.setLabel_Negative(t,u)
+                    if(self.getState(t)=="labelledScanned"):
+                        self.setState(t,"labelledUnscanned")
+                        queue.append(t)
                     break
     def eraseLabels(self):
         for node in self.nodeList:
@@ -480,8 +540,13 @@ class NodeForSIS:
             state=None
     def setLabel_Positive(self,label_positive):
         self.label_positive=label_positive
+        if( not label_positive==None and self.state=="unlabelled"):
+            self.setState("labelledUnscanned")
+
     def setLabel_Negative(self,label_negative):
         self.label_negative=label_negative
+        if( not label_negative==None and self.state=="unlabelled"):
+            self.setState("labelledUnscanned")
     def copy(self,toCopy):
         self.id=toCopy.getID()
         self.state=toCopy.getState()

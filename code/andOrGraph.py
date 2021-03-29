@@ -5,36 +5,9 @@ class andOrGraph():
         self.ID=ID
         self.ordre=ordre
         self.root=None
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 class orNode():
     def __init__(self, Id, childs):
-=======
-    
-
-def class orNode():
-    __init__(self,childs):
->>>>>>> 958c80f047209549b09cdabe71502dc7486c8b34
-=======
-        
-    def fromID(self,ID): 
-        sis = []
-        # Récupération des noeuds de décision
-        for nodeID in ID.nodes():
-            if(ID.isDecisionNode(nodeID)):
-                # Récupération des SIS de ces noeuds
-                sis.append((nodeId, ID.SIS(nodeID,ID)))
-         
-        childs=orNode()
-        for nodeD in sis:
-            childs=andNode(childs)
-        
-        self.root=
-
-def class orNode():
-    __init__(self, Id, childs):
->>>>>>> d9506247497093978436ceafb2c1aab98cfd603f
         """
         Id l'id du orNode
         childs les ids des enfants
@@ -246,4 +219,3 @@ def branchAndBound():
             Si il n en reste plus, on met à jour la solution courante et on coupe les branches bornesup<solcourante
             
             Si il reste des branches, on reprend sinon on renvoie la meilleure sol (càd solcourante)
-    
