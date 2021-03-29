@@ -149,9 +149,7 @@ class BranchAndBoundLIMIDInference():
                         if(workGraph.getLabel_Negative(z)!=None and workGraph.getLabel_Positive(z)==None):
                             workGraph.setIN(z,False)
                     #5.3
-                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None):
-                        u=workGraph.getLabel_Negative(w)
-                        z=workGraph.getLabel_Positive(u)
+                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None and u==workGraph.getLabel_Negative(w) and z==workGraph.getLabel_Positive(u)):
                         print(5.3)
                         u_z=workGraph.getEdge(u,z)
                         u_z.setMarked(True)
@@ -181,22 +179,37 @@ class BranchAndBoundLIMIDInference():
         #print(7,"vrai")
         ensembleSeparant=[]
         y=id_puit
-        """
-        for edge in workGraph.getEdgesConnectedToNode(y):
+        
+        """for edge in workGraph.getEdgesConnectedToNode(y):
             if(edge.getMarked()):
                 if(edge.getNodes()[1]!=y):
                     u=edge.getNodes()[1]
                 else:
                     u=edge.getNodes()[0]
                 if(workGraph.getLabel_Positive(u)==None and workGraph.getLabel_Negative(u)==None):
-                    print(7.2," u=",u)
+                    print(7.2," u=",u,self.getNameFromID(u))
                     ensembleSeparant.append(u)
                 if(workGraph.getLabel_Positive(u)!=None or workGraph.getLabel_Negative(u)!=None):
                     #print(7.3)
                     res=workGraph.step7(u,y)
                     ensembleSeparant.append(res)
-                    print(7.3," u=",res)
-        """
+                    print(7.3," u=",res)"""
+        """for edge in workGraph.getEdgesConnectedToNode(y):
+            if(edge.getMarked()):
+                if(edge.getNodes()[1]!=y):
+                    u=edge.getNodes()[1]
+                else:
+                    u=edge.getNodes()[0]
+                print("7.2BIS, LOOKING ",workGraph.getState(u)==unlabelled,u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
+                if(workGraph.getState(u)==unlabelled):
+                    print(7.2," ADDING u=",u,self.getNameFromID(u))
+                    ensembleSeparant.append(u)
+                elif(workGraph.getState(u)!=unlabelled):
+                    print(7.3," LOOKING FROM u=",u,self.getNameFromID(u))
+                    res=workGraph.step7(u,y)
+                    print(7.3,"ADDING res=",res,self.getNameFromID(res))
+                    ensembleSeparant.append(res)"""
+        
         connectedToY=workGraph.getEdgesConnectedToNode(y)
         print(7)
         for edge in connectedToY:
@@ -211,35 +224,99 @@ class BranchAndBoundLIMIDInference():
                     ensembleSeparant.append(u)
                     continue
                 elif(workGraph.getState(u)!=unlabelled):
-                    ensembleSeparant.append(self.getSISNode(u,workGraph))
+                    print(7.3," LOOKING u=",u,self.getNameFromID(u))
+                    res=self.getSISNode(u,workGraph,y)
+                    print(7.3," ADDING res=",res,self.getNameFromID(res))
+                    ensembleSeparant.append(res)
 
         return ensembleSeparant
+    #f(u,workGraph,y)
+    def getSISNode(self,u,workGraph,oldu):
+        print(oldu,self.getNameFromID(oldu))
+        print(u,self.getNameFromID(u))
+        if(workGraph.getState(oldu)!="unlabelled" and workGraph.getState(u)=="unlabelled"):
+            return oldu
+        connectedToU=workGraph.getEdgesConnectedToNode(u)
+        for edge in connectedToU:
+            if(edge.getMarked() and oldu not in edge.getNodes()):
+                if(u!=edge.getNodes()[0]):
+                    v=edge.getNodes()[0]
+                else:
+                    v=edge.getNodes()[1]
+                return self.getSISNode(v,workGraph,u)
 
-    
-    def getSISNode(self,u,workGraph):
+    def f(self,u,workGraph,y):
+
         connectedToU=workGraph.getEdgesConnectedToNode(u)
         print("---------------------------")
         i=0
         m=[]
         for edge in connectedToU:
-            if(u!=edge.getNodes()[0]):
-                v=edge.getNodes()[0]
-            else:
-                v=edge.getNodes()[1]
-            
-            
-            print("u",u,"v",v,"marked",edge.getMarked())
-            if edge.getMarked() :
-                 i=i+1
-                 m.append(edge.getNodes())
+            if(y not in edge.getNodes()):
+                if(u!=edge.getNodes()[0]):
+                    v=edge.getNodes()[0]
+                else:
+                    v=edge.getNodes()[1]
+
+                print("u",u,"v",v,"marked",edge.getMarked())
+                if edge.getMarked() :
+                    i=i+1
+                    m.append(edge.getNodes())
 
         print(i,m)
 
 
 
 
-
+    def fromIDToMoralizedAncestral2(self,decisionNodeID,ID):
+        X=[]
+        for nodeID in ID.nodes():
+            if(ID.isDecisionNode(nodeID)):
+                if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #si il precède dj ou égal dans l'ordre
+                    X=X+list(ID.family(nodeID)).copy()
     
+        Y=list(ID.descendants(decisionNodeID)).copy()
+        ytemp=Y.copy()
+        for nodeID in ytemp:
+            if(not ID.isUtilityNode(nodeID)):
+                Y.remove(nodeID)
+        XUY=self.unionList(X,Y)
+        XUYNames=self.getNamesFromID(XUY,ID)
+        ancestralSubset=XUY.copy()
+        for x in XUY:
+            ancestralSubset=self.unionList(ancestralSubset,list(ID.ancestors(x)))
+        ID_dag=ID.dag()
+        for nodeID in ID.nodes():
+            if nodeID not in ancestralSubset:
+                ID_dag.eraseNode(nodeID)
+        MoralizedAncestral=ID_dag.moralGraph()
+        alphaXid=MoralizedAncestral.addNode()
+        BetaYid=MoralizedAncestral.addNode()
+        for (nodeID,node2ID) in MoralizedAncestral.edges():#Connection source
+            if(nodeID in X and node2ID in X):
+                continue
+            if(nodeID in X or node2ID in X):
+                if(node2ID in X):
+                    if(nodeID not in X and not MoralizedAncestral.existsEdge(alphaXid,nodeID)):
+                        MoralizedAncestral.addEdge(alphaXid,nodeID)
+                if(nodeID in X):
+                    if(node2ID not in X and not MoralizedAncestral.existsEdge(alphaXid,node2ID)):
+                        MoralizedAncestral.addEdge(alphaXid,node2ID)
+        temp=[]
+        for y in Y:
+            temp=self.unionList(temp,list(ID.ancestors(y)))
+        desc=ID.descendants(decisionNodeID)
+        t=temp.copy()
+        for nodeID in t:
+            if(nodeID not in desc):
+                temp.remove(nodeID)
+        for nodeID in temp: #Connection puit
+            if( not MoralizedAncestral.existsEdge(BetaYid,nodeID)):
+                MoralizedAncestral.addEdge(nodeID,BetaYid)
+        return MoralizedAncestral,alphaXid,BetaYid 
+        
+
+
 
     #Page 5 - 2012 Yuan&Hensen - Colonne de droite - 2ème paragraphe
     def fromIDToMoralizedAncestral(self,decisionNodeID,ID):
