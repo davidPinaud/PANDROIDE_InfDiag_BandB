@@ -200,7 +200,8 @@ class decisionNode():
         self.issue=issue
     def getIssue(self):
         return self.issue
-        
+    def getParents(self):
+        return self.parents
     def setBorneSup(self,borneSup):
         self.borneSup=borneSup
     def getBorneSup(self):

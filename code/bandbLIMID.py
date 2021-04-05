@@ -22,7 +22,6 @@ class BranchAndBoundLIMIDInference():
         evalMeilleurSolCourante=None
         #print('Init')
         #Initialisation
-        
         #créer les noeuds de décision
         decisionNodes=[]
         decisionNodeID=self.ordreDecision[0]
@@ -70,12 +69,12 @@ class BranchAndBoundLIMIDInference():
             for decisionNode in decisionNodes:
                 if(profondeurMeilleur+1<len(self.ordreDecision)-1):
                     print("début calcul borne")
-                    decisionNode.setBorneSup(self.evaluationID(self.IDRelaxe,decisionNode.getContexte()))
+                    decisionNode.setBorneSup(self.evaluationID(self.ID,decisionNode.getContexte()))
                     
                     #print("fin calcul borne")
                 else:
                     #print("début calcul evaluation de solution")
-                    eval=self.evaluationID(self.ID,decisionNode.getContexte())
+                    eval=self.evaluationID(self.IDRelaxe,decisionNode.getContexte())
                     decisionNode.setEvaluation(eval)
                     #print("fin calcul evaluation de solution")
                     if(evalMeilleurSolCourante==None or eval>evalMeilleurSolCourante):
@@ -148,6 +147,8 @@ class BranchAndBoundLIMIDInference():
         for node in relaxedID.nodes():
             if(relaxedID.isChanceNode(node)):
                 relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
+            if(relaxedID.isUtilityNode(node)):
+                relaxedID.utility(node).fillWith(gum.Potential(self.ID.utility(node)))
         return relaxedID
 
 
@@ -166,6 +167,8 @@ class BranchAndBoundLIMIDInference():
         for node in relaxedID.nodes():
             if(relaxedID.isChanceNode(node)):
                 relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
+            if(relaxedID.isUtilityNode(node)):
+                relaxedID.utility(node).fillWith(gum.Potential(self.ID.utility(node)))
         return relaxedID
         
 
