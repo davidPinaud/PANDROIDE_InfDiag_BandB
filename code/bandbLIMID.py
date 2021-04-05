@@ -6,14 +6,151 @@ from IPython.core.display import Math, display,HTML
 import math
 import pyAgrum as gum
 import warnings
+import andOrGraph
+
 
 class BranchAndBoundLIMIDInference():
 
     def __init__(self,ID,OrdreDecision):
         self.ID=ID
         self.ordreDecision=OrdreDecision
+        self.IDRelaxe=self.createRelaxation_Temporaire()
 
+    def branchAndBound(self):
+        listeMeilleurDecisionNode=[]
+        meilleurSolCourante=None
+        evalMeilleurSolCourante=None
+        #print('Init')
+        #Initialisation
+        
+        #créer les noeuds de décision
+        decisionNodes=[]
+        decisionNodeID=self.ordreDecision[0]
+        parents=list(self.ID.parents(decisionNodeID))
+        couche=self.createCouche(parents,[])        
+        for c in couche:
+            contexte=dict()
+            for p in range(len(parents)):
+                contexte[parents[p]]=int(c[p])
+            decisionNodes.append(andOrGraph.decisionNode(decisionNodeID,contexte,parents,None,0))
+        #Evaluer les noeuds de décision
+        for decisionNode in decisionNodes:
+            decisionNode.setBorneSup(self.evaluationID(self.IDRelaxe,decisionNode.getContexte()))
+            #decisionNode.setBorneSup(self.evaluationID(self.ID,decisionNode.getContexte()))
+
+        listeMeilleurDecisionNode=listeMeilleurDecisionNode+decisionNodes
+        listeMeilleurDecisionNode.sort(key=lambda x:x.getBorneSup())
+        #print('Init end')
+        #print("début while")
+        o=0
+        while(not len(listeMeilleurDecisionNode)==0):
+            print("--------------while n°",o,"taille liste,",len(listeMeilleurDecisionNode))
+            o=o+1
+            meilleurDecisionNode=listeMeilleurDecisionNode[-1]
+            del listeMeilleurDecisionNode[-1]
+            profondeurMeilleur=meilleurDecisionNode.getProfondeur()
+
+            decisionNodes=[]
+            decisionNodeID=self.ordreDecision[profondeurMeilleur+1]
+            parents=list(self.ID.parents(decisionNodeID))
+            #print("début couche")
+            couche=self.createCouche(parents,[])
+            #print("len couche :",len(couche))
+            #print("fin couche")
+            #print("début for couche")
+            for c in couche:
+                contexte=meilleurDecisionNode.getContexte().copy()
+                for p in range(len(parents)):
+                    contexte[parents[p]]=int(c[p])
+                print(contexte)
+                decisionNodes.append(andOrGraph.decisionNode(decisionNodeID,contexte,parents,meilleurDecisionNode,profondeurMeilleur+1))
+            #print("fin for couche")
+            #Evaluer les noeuds de décision
+            #print("début calcul evaluations avec nb de décisionNode:",len(decisionNodes))
+            for decisionNode in decisionNodes:
+                if(profondeurMeilleur+1<len(self.ordreDecision)-1):
+                    print("début calcul borne")
+                    decisionNode.setBorneSup(self.evaluationID(self.IDRelaxe,decisionNode.getContexte()))
+                    
+                    #print("fin calcul borne")
+                else:
+                    #print("début calcul evaluation de solution")
+                    eval=self.evaluationID(self.ID,decisionNode.getContexte())
+                    decisionNode.setEvaluation(eval)
+                    #print("fin calcul evaluation de solution")
+                    if(evalMeilleurSolCourante==None or eval>evalMeilleurSolCourante):
+                        print("changement de la solution, d'évaluation",eval,"contre",evalMeilleurSolCourante)
+                        meilleurSolCourante=decisionNode
+                        evalMeilleurSolCourante=eval
+            
+            if(profondeurMeilleur+1<len(self.ordreDecision)-1):
+                #print("début sort")
+                listeMeilleurDecisionNode=listeMeilleurDecisionNode+decisionNodes
+                listeMeilleurDecisionNode.sort(key=lambda x:x.getBorneSup())
+                #print("fin sort")
+            listDel=[]
+            #print("fin calcul evaluations")
+            print("début elaguage")
+            for i in range(len(listeMeilleurDecisionNode)):
+                #print("borneSup",listeMeilleurDecisionNode[i].getBorneSup(),"meilleureSol",evalMeilleurSolCourante)
+                if(listeMeilleurDecisionNode[i].getBorneSup()<evalMeilleurSolCourante):
+                    listDel.append(i)
+            listDel.sort(reverse=True)
+            print("liste à del",listDel)
+            for i in listDel:
+                del listeMeilleurDecisionNode[i]
+
+                
+            #print("fin élaguage")
+        #print("fin while")
+        return meilleurSolCourante,evalMeilleurSolCourante
+        
     
+    #evaluationID(IDRelaxé,contexte.items())        
+    def evaluationID(self,ID,evidence):
+        #print(evidence)
+        ss=gum.ShaferShenoyLIMIDInference(ID)
+        ss.setEvidence(evidence)
+        """
+            items=list(evidence.items())
+            for parentID,value in items:
+            ss.addEvidence(parentID,value)"""
+        ss.makeInference()
+        print(ss.MEU())
+        return ss.MEU()["mean"]
+
+    def createCouche(self,parents,alternative):
+        alternatives=[]
+        if(len(parents)==0):
+            return [alternative]
+        domain=self.ID.variable(parents[0]).domain()[1:-1].split(',')
+        for d in domain:
+            v=self.createCouche(parents[1:],[d]+alternative)
+            for e in v:
+                alternatives.append(e)
+        return alternatives
+
+    def createRelaxation_Temporaire(self):
+        #copy l'ID dans relaxedID pour ensuite lui ajouter des arcs
+        relaxedID=gum.InfluenceDiagram(self.ID)
+        #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
+        for i in range(len(self.ordreDecision)-1,-1,-1):
+            x=f"x_{i}"
+            y=f"y_{i}"
+            sis=[self.ID.idFromName(x),self.ID.idFromName(y)]
+            for nodeID in sis:
+                if(not relaxedID.existsArc(nodeID,self.ordreDecision[i])):
+                    relaxedID.addArc(nodeID,self.ordreDecision[i])
+        #Enlever les noeuds non-requis
+        #?
+        relaxedID=gum.ShaferShenoyLIMIDInference(relaxedID).reducedLIMID()
+        #relaxedID=relaxedID.reducedLIMID()
+        for node in relaxedID.nodes():
+            if(relaxedID.isChanceNode(node)):
+                relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
+        return relaxedID
+
+
     def createRelaxation(self):
         relaxedID=gum.InfluenceDiagram(self.ID)
         #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
