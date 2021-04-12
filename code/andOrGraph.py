@@ -238,6 +238,11 @@ class decisionNode():
         self.decisionOptimale=None
         self.ValeurDecisionOptimale=None
         self.doNotDevelop=[]
+        self.inference=None
+    def setInference(self,inference):
+        self.inference=inference
+    def getInference(self):
+        return self.inference
     def getId_andOr(self):
         return self.id_andOr
     def getDoNotDevelop(self):
