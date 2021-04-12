@@ -1,5 +1,4 @@
 import numpy as np
-
 class andOrGraph():
     def __init__(self,ID,ordre):
         self.ID=ID
@@ -17,17 +16,17 @@ class orNode():
         for child in childs:
             self.childs[child.getNodeID()]=child
         
-    def getChilds():
+    def getChilds(self):
         return self.childs
-    def getNodeID():
+    def getNodeID(self):
         return self.Id
-    def addChild(child):
+    def addChild(self,child):
         """
         ajoute un enfant avec son identifiant
         """
         self.childs.append(child)
 
-    def getValuation():
+    def getValuation(self):
         """
         return the valuation and the childs from whom it came
         for this orNode
@@ -41,7 +40,7 @@ class orNode():
             if(maxVal==None):
                 maxVal=valuation
                 maxChild=childID
-            elif(maxval<valuation):
+            elif(maxVal<valuation):
                 maxVal=valuation
                 maxChild=childID
         return maxVal,self.childs[maxChild]
@@ -71,13 +70,13 @@ class andNode():
         if(isLeaf):
             self.utilityValue=utilityValue
 
-    def getChilds():
+    def getChilds(self):
         return self.childs
 
-    def getNodeID():
+    def getNodeID(self):
         return self.Id
     
-    def addChild(child,probability):
+    def addChild(self,child,probability):
         """
         ajoute un enfant avec son identifiant
         et sa probabilité associé
@@ -87,14 +86,14 @@ class andNode():
         if(self.isLeaf):
             self.isLeaf=False
     
-    def isLeaf():
+    def isLeaf(self):
         return self.isLeaf
 
-    def getUtilityValue():
+    def getUtilityValue(self):
         if(self.isLeaf):
             return self.utilityValue
 
-    def getValuation():
+    def getValuation(self):
         if(self.isLeaf):
             return self.utilityValue
         else:
@@ -113,7 +112,7 @@ class sandNode():
 
 
 # Essai 2 : PB
-class andOrGraph():
+"""class andOrGraph():
     def __init__(self,ID,ordre):
         self.ID=ID
         self.ordre=ordre
@@ -121,7 +120,7 @@ class andOrGraph():
         
     def initialise():
         d0 = self.ordre[0]
-        conditionneur = self.ID.ancestors(desicionNodes[d0])
+        conditionneur = self.ID.parents(decisionNodes[d0])
         support = support des conditionneurs
         
         self.root = chanceNode(0, conditionneur[0], support[0])
@@ -152,46 +151,67 @@ class andOrGraph():
         for i in range(nbD0):
             newNoeud.addValue(evaluation)
         ancienNoeud.addChild(newNoeud)
-        
+        """
 class chanceNode():
-    def __init__(self,Id,noeud,support):
+    def __init__(self,Id,support,profondeur):
         self.support=support
-        self.noeud=noeud
         self.Id=Id
-        self.child=[]
+        self.childs=[]
 
-    def getSupport():
+    def getSupport(self):
         return self.support
 
-    def getNodeID():
+    def getNodeID(self):
         return self.Id
     
-    def addChild(child):
+    def addChild(self,child):
         """
         ajoute un enfant avec son identifiant
         """
-        self.child.append(child)
-        
+        self.childs.append(child)
+#parents ce sont les noeuds d'informations qui sont parents dans l'ID du noeud de décision
+#issue, c'est le noeud de décision du quel est issue ce noeud de décision dans le graphe ET/OU
 class decisionNode():
-    def __init__(self,Id,noeud):
-        self.noeud=noeud
+    def __init__(self,Id,contexte,parents,issue,profondeur):
+        self.contexte=contexte
         self.Id=Id
-        self.value=[]
-        self.child=[]
+        self.parents=parents
+        self.borneSup=None
+        self.issue=issue
+        self.childs=[]
+        self.profondeur=profondeur
+        self.evaluation=None
 
-    def getNodeID():
+    def getNodeID(self):
         return self.Id
+    def getProfondeur(self):
+        return self.profondeur
     
-    def addChild(child):
+    def addChild(self,child):
         """
         ajoute un enfant avec son identifiant
         """
-        self.child.append(child)
-        
-    def addValue(val):
-        self.value.append(val)
+        self.childs.append(child)
+    def setContexte(self,contexte):
+        self.contexte=contexte
+    def getContexte(self):
+        return self.contexte
+    def setIssue(self,issue):
+        self.issue=issue
+    def getIssue(self):
+        return self.issue
+    def getParents(self):
+        return self.parents
+    def setBorneSup(self,borneSup):
+        self.borneSup=borneSup
+    def getBorneSup(self):
+        return self.borneSup
+    def setEvaluation(self,evaluation):
+        self.evaluation=evaluation
+    def getEvaluation(self):
+        return self.evaluation
 
-#Dans bandbLIMID : PB
+"""#Dans bandbLIMID : PB
 def branchAndBound():
         # Récupération des noeuds de décision
         decisionNodes = [nodeID for nodeID in self.ID.nodes() if self.ID.isDecisionNode(nodeID)]
@@ -218,4 +238,4 @@ def branchAndBound():
             Si il reste des decisionNodes, on fait di=i+1 pour continuer
             Si il n en reste plus, on met à jour la solution courante et on coupe les branches bornesup<solcourante
             
-            Si il reste des branches, on reprend sinon on renvoie la meilleure sol (càd solcourante)
+            Si il reste des branches, on reprend sinon on renvoie la meilleure sol (càd solcourante)"""

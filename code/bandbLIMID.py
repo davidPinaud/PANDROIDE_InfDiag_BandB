@@ -6,14 +6,152 @@ from IPython.core.display import Math, display,HTML
 import math
 import pyAgrum as gum
 import warnings
+import andOrGraph
+
 
 class BranchAndBoundLIMIDInference():
 
     def __init__(self,ID,OrdreDecision):
         self.ID=ID
         self.ordreDecision=OrdreDecision
+        self.IDRelaxe=self.createRelaxation_Temporaire()
 
+    def branchAndBound(self):
+        listeMeilleurDecisionNode=[]
+        meilleurSolCourante=None
+        evalMeilleurSolCourante=None
+        #print('Init')
+        #Initialisation
+        #créer les noeuds de décision
+        decisionNodes=[]
+        decisionNodeID=self.ordreDecision[0]
+        parents=list(self.ID.parents(decisionNodeID))
+        couche=self.createCouche(parents,[])        
+        for c in couche:
+            contexte=dict()
+            for p in range(len(parents)):
+                contexte[parents[p]]=int(c[p])
+            decisionNodes.append(andOrGraph.decisionNode(decisionNodeID,contexte,parents,None,0))
+        #Evaluer les noeuds de décision
+        for decisionNode in decisionNodes:
+            decisionNode.setBorneSup(self.evaluationID(self.IDRelaxe,decisionNode.getContexte()))
+            #decisionNode.setBorneSup(self.evaluationID(self.ID,decisionNode.getContexte()))
+
+        listeMeilleurDecisionNode=listeMeilleurDecisionNode+decisionNodes
+        listeMeilleurDecisionNode.sort(key=lambda x:x.getBorneSup())
+        #print('Init end')
+        #print("début while")
+        o=0
+        while(not len(listeMeilleurDecisionNode)==0):
+            print("--------------while n°",o,"taille liste,",len(listeMeilleurDecisionNode))
+            o=o+1
+            meilleurDecisionNode=listeMeilleurDecisionNode[-1]
+            del listeMeilleurDecisionNode[-1]
+            profondeurMeilleur=meilleurDecisionNode.getProfondeur()
+
+            decisionNodes=[]
+            decisionNodeID=self.ordreDecision[profondeurMeilleur+1]
+            parents=list(self.ID.parents(decisionNodeID))
+            #print("début couche")
+            couche=self.createCouche(parents,[])
+            #print("len couche :",len(couche))
+            #print("fin couche")
+            #print("début for couche")
+            for c in couche:
+                contexte=meilleurDecisionNode.getContexte().copy()
+                for p in range(len(parents)):
+                    contexte[parents[p]]=int(c[p])
+                print(contexte)
+                decisionNodes.append(andOrGraph.decisionNode(decisionNodeID,contexte,parents,meilleurDecisionNode,profondeurMeilleur+1))
+            #print("fin for couche")
+            #Evaluer les noeuds de décision
+            #print("début calcul evaluations avec nb de décisionNode:",len(decisionNodes))
+            for decisionNode in decisionNodes:
+                if(profondeurMeilleur+1<len(self.ordreDecision)-1):
+                    print("début calcul borne")
+                    decisionNode.setBorneSup(self.evaluationID(self.ID,decisionNode.getContexte()))
+                    
+                    #print("fin calcul borne")
+                else:
+                    #print("début calcul evaluation de solution")
+                    eval=self.evaluationID(self.IDRelaxe,decisionNode.getContexte())
+                    decisionNode.setEvaluation(eval)
+                    #print("fin calcul evaluation de solution")
+                    if(evalMeilleurSolCourante==None or eval>evalMeilleurSolCourante):
+                        print("changement de la solution, d'évaluation",eval,"contre",evalMeilleurSolCourante)
+                        meilleurSolCourante=decisionNode
+                        evalMeilleurSolCourante=eval
+            
+            if(profondeurMeilleur+1<len(self.ordreDecision)-1):
+                #print("début sort")
+                listeMeilleurDecisionNode=listeMeilleurDecisionNode+decisionNodes
+                listeMeilleurDecisionNode.sort(key=lambda x:x.getBorneSup())
+                #print("fin sort")
+            listDel=[]
+            #print("fin calcul evaluations")
+            print("début elaguage")
+            for i in range(len(listeMeilleurDecisionNode)):
+                #print("borneSup",listeMeilleurDecisionNode[i].getBorneSup(),"meilleureSol",evalMeilleurSolCourante)
+                if(listeMeilleurDecisionNode[i].getBorneSup()<evalMeilleurSolCourante):
+                    listDel.append(i)
+            listDel.sort(reverse=True)
+            print("liste à del",listDel)
+            for i in listDel:
+                del listeMeilleurDecisionNode[i]
+
+                
+            #print("fin élaguage")
+        #print("fin while")
+        return meilleurSolCourante,evalMeilleurSolCourante
+        
     
+    #evaluationID(IDRelaxé,contexte.items())        
+    def evaluationID(self,ID,evidence):
+        #print(evidence)
+        ss=gum.ShaferShenoyLIMIDInference(ID)
+        ss.setEvidence(evidence)
+        """
+            items=list(evidence.items())
+            for parentID,value in items:
+            ss.addEvidence(parentID,value)"""
+        ss.makeInference()
+        print(ss.MEU())
+        return ss.MEU()["mean"]
+
+    def createCouche(self,parents,alternative):
+        alternatives=[]
+        if(len(parents)==0):
+            return [alternative]
+        domain=self.ID.variable(parents[0]).domain()[1:-1].split(',')
+        for d in domain:
+            v=self.createCouche(parents[1:],[d]+alternative)
+            for e in v:
+                alternatives.append(e)
+        return alternatives
+
+    def createRelaxation_Temporaire(self):
+        #copy l'ID dans relaxedID pour ensuite lui ajouter des arcs
+        relaxedID=gum.InfluenceDiagram(self.ID)
+        #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
+        for i in range(len(self.ordreDecision)-1,-1,-1):
+            x=f"x_{i}"
+            y=f"y_{i}"
+            sis=[self.ID.idFromName(x),self.ID.idFromName(y)]
+            for nodeID in sis:
+                if(not relaxedID.existsArc(nodeID,self.ordreDecision[i])):
+                    relaxedID.addArc(nodeID,self.ordreDecision[i])
+        #Enlever les noeuds non-requis
+        #?
+        relaxedID=gum.ShaferShenoyLIMIDInference(relaxedID).reducedLIMID()
+        #relaxedID=relaxedID.reducedLIMID()
+        for node in relaxedID.nodes():
+            if(relaxedID.isChanceNode(node)):
+                relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
+            if(relaxedID.isUtilityNode(node)):
+                relaxedID.utility(node).fillWith(gum.Potential(self.ID.utility(node)))
+        return relaxedID
+
+
     def createRelaxation(self):
         relaxedID=gum.InfluenceDiagram(self.ID)
         #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
@@ -29,6 +167,8 @@ class BranchAndBoundLIMIDInference():
         for node in relaxedID.nodes():
             if(relaxedID.isChanceNode(node)):
                 relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
+            if(relaxedID.isUtilityNode(node)):
+                relaxedID.utility(node).fillWith(gum.Potential(self.ID.utility(node)))
         return relaxedID
         
 
@@ -149,9 +289,7 @@ class BranchAndBoundLIMIDInference():
                         if(workGraph.getLabel_Negative(z)!=None and workGraph.getLabel_Positive(z)==None):
                             workGraph.setIN(z,False)
                     #5.3
-                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None):
-                        u=workGraph.getLabel_Negative(w)
-                        z=workGraph.getLabel_Positive(u)
+                    if(workGraph.getLabel_Negative(u)!=None and workGraph.getLabel_Positive(u)!=None and u==workGraph.getLabel_Negative(w) and z==workGraph.getLabel_Positive(u)):
                         print(5.3)
                         u_z=workGraph.getEdge(u,z)
                         u_z.setMarked(True)
@@ -181,22 +319,37 @@ class BranchAndBoundLIMIDInference():
         #print(7,"vrai")
         ensembleSeparant=[]
         y=id_puit
-        """
-        for edge in workGraph.getEdgesConnectedToNode(y):
+        
+        """for edge in workGraph.getEdgesConnectedToNode(y):
             if(edge.getMarked()):
                 if(edge.getNodes()[1]!=y):
                     u=edge.getNodes()[1]
                 else:
                     u=edge.getNodes()[0]
                 if(workGraph.getLabel_Positive(u)==None and workGraph.getLabel_Negative(u)==None):
-                    print(7.2," u=",u)
+                    print(7.2," u=",u,self.getNameFromID(u))
                     ensembleSeparant.append(u)
                 if(workGraph.getLabel_Positive(u)!=None or workGraph.getLabel_Negative(u)!=None):
                     #print(7.3)
                     res=workGraph.step7(u,y)
                     ensembleSeparant.append(res)
-                    print(7.3," u=",res)
-        """
+                    print(7.3," u=",res)"""
+        """for edge in workGraph.getEdgesConnectedToNode(y):
+            if(edge.getMarked()):
+                if(edge.getNodes()[1]!=y):
+                    u=edge.getNodes()[1]
+                else:
+                    u=edge.getNodes()[0]
+                print("7.2BIS, LOOKING ",workGraph.getState(u)==unlabelled,u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
+                if(workGraph.getState(u)==unlabelled):
+                    print(7.2," ADDING u=",u,self.getNameFromID(u))
+                    ensembleSeparant.append(u)
+                elif(workGraph.getState(u)!=unlabelled):
+                    print(7.3," LOOKING FROM u=",u,self.getNameFromID(u))
+                    res=workGraph.step7(u,y)
+                    print(7.3,"ADDING res=",res,self.getNameFromID(res))
+                    ensembleSeparant.append(res)"""
+        
         connectedToY=workGraph.getEdgesConnectedToNode(y)
         print(7)
         for edge in connectedToY:
@@ -211,35 +364,99 @@ class BranchAndBoundLIMIDInference():
                     ensembleSeparant.append(u)
                     continue
                 elif(workGraph.getState(u)!=unlabelled):
-                    ensembleSeparant.append(self.getSISNode(u,workGraph))
+                    print(7.3," LOOKING u=",u,self.getNameFromID(u))
+                    res=self.getSISNode(u,workGraph,y)
+                    print(7.3," ADDING res=",res,self.getNameFromID(res))
+                    ensembleSeparant.append(res)
 
         return ensembleSeparant
+    #f(u,workGraph,y)
+    def getSISNode(self,u,workGraph,oldu):
+        print(oldu,self.getNameFromID(oldu))
+        print(u,self.getNameFromID(u))
+        if(workGraph.getState(oldu)!="unlabelled" and workGraph.getState(u)=="unlabelled"):
+            return oldu
+        connectedToU=workGraph.getEdgesConnectedToNode(u)
+        for edge in connectedToU:
+            if(edge.getMarked() and oldu not in edge.getNodes()):
+                if(u!=edge.getNodes()[0]):
+                    v=edge.getNodes()[0]
+                else:
+                    v=edge.getNodes()[1]
+                return self.getSISNode(v,workGraph,u)
 
-    
-    def getSISNode(self,u,workGraph):
+    def f(self,u,workGraph,y):
+
         connectedToU=workGraph.getEdgesConnectedToNode(u)
         print("---------------------------")
         i=0
         m=[]
         for edge in connectedToU:
-            if(u!=edge.getNodes()[0]):
-                v=edge.getNodes()[0]
-            else:
-                v=edge.getNodes()[1]
-            
-            
-            print("u",u,"v",v,"marked",edge.getMarked())
-            if edge.getMarked() :
-                 i=i+1
-                 m.append(edge.getNodes())
+            if(y not in edge.getNodes()):
+                if(u!=edge.getNodes()[0]):
+                    v=edge.getNodes()[0]
+                else:
+                    v=edge.getNodes()[1]
+
+                print("u",u,"v",v,"marked",edge.getMarked())
+                if edge.getMarked() :
+                    i=i+1
+                    m.append(edge.getNodes())
 
         print(i,m)
 
 
 
 
-
+    def fromIDToMoralizedAncestral2(self,decisionNodeID,ID):
+        X=[]
+        for nodeID in ID.nodes():
+            if(ID.isDecisionNode(nodeID)):
+                if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #si il precède dj ou égal dans l'ordre
+                    X=X+list(ID.family(nodeID)).copy()
     
+        Y=list(ID.descendants(decisionNodeID)).copy()
+        ytemp=Y.copy()
+        for nodeID in ytemp:
+            if(not ID.isUtilityNode(nodeID)):
+                Y.remove(nodeID)
+        XUY=self.unionList(X,Y)
+        XUYNames=self.getNamesFromID(XUY,ID)
+        ancestralSubset=XUY.copy()
+        for x in XUY:
+            ancestralSubset=self.unionList(ancestralSubset,list(ID.ancestors(x)))
+        ID_dag=ID.dag()
+        for nodeID in ID.nodes():
+            if nodeID not in ancestralSubset:
+                ID_dag.eraseNode(nodeID)
+        MoralizedAncestral=ID_dag.moralGraph()
+        alphaXid=MoralizedAncestral.addNode()
+        BetaYid=MoralizedAncestral.addNode()
+        for (nodeID,node2ID) in MoralizedAncestral.edges():#Connection source
+            if(nodeID in X and node2ID in X):
+                continue
+            if(nodeID in X or node2ID in X):
+                if(node2ID in X):
+                    if(nodeID not in X and not MoralizedAncestral.existsEdge(alphaXid,nodeID)):
+                        MoralizedAncestral.addEdge(alphaXid,nodeID)
+                if(nodeID in X):
+                    if(node2ID not in X and not MoralizedAncestral.existsEdge(alphaXid,node2ID)):
+                        MoralizedAncestral.addEdge(alphaXid,node2ID)
+        temp=[]
+        for y in Y:
+            temp=self.unionList(temp,list(ID.ancestors(y)))
+        desc=ID.descendants(decisionNodeID)
+        t=temp.copy()
+        for nodeID in t:
+            if(nodeID not in desc):
+                temp.remove(nodeID)
+        for nodeID in temp: #Connection puit
+            if( not MoralizedAncestral.existsEdge(BetaYid,nodeID)):
+                MoralizedAncestral.addEdge(nodeID,BetaYid)
+        return MoralizedAncestral,alphaXid,BetaYid 
+        
+
+
 
     #Page 5 - 2012 Yuan&Hensen - Colonne de droite - 2ème paragraphe
     def fromIDToMoralizedAncestral(self,decisionNodeID,ID):
