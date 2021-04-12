@@ -1,9 +1,5 @@
 import numpy as np
-class andOrGraph():
-    def __init__(self,ID,ordre):
-        self.ID=ID
-        self.ordre=ordre
-        self.root=None
+
 
 class orNode():
     def __init__(self, Id, childs):
@@ -152,62 +148,117 @@ class sandNode():
             newNoeud.addValue(evaluation)
         ancienNoeud.addChild(newNoeud)
         """
+class andOrGraph():
+    def __init__(self,ID,root):
+        self.ID=ID
+        self.root=root
+        self.noeuds=[]
+        self.noeudsChance=[] 
+        self.noeudsDecision=[]
+        def getID(self):
+            return self.ID
+        def setRoot(self,root):
+            self.root=root
+        def getRoot(self):
+            return self.root
+        def addNoeudChance(self,noeud):#id = contexte sous forme de liste
+            self.noeudsChance.append(noeud)
+            self.noeuds.append(noeud)
+        def addNoeudDecision(self,noeud):
+            self.noeudsChance.append(noeud)
+            self.noeuds.append(noeud)
+        def getNoeudChance(self):
+            return self.noeudsChance
+        def getNoeudDecision(self):
+            return self.noeudsDecision
+        def getNoeud(self):
+            return self.noeuds
 class chanceNode():
-    def __init__(self,Id,support,profondeur):
-        self.support=support
+    def __init__(self,Id,support,parent,valeurParent):
         self.Id=Id
-        self.childs=[]
+        self.support=support #le support du noeud
+        self.childs=dict() #key = valeur du support, value=enfant
+        self.valeur=None
+        self.parent=parent
+        self.valeurParent=valeurParent
+        self.probabilitesPosteriori=dict()#key = valeur du support, value=proba
 
+    def getParent(self):
+        return self.parent
+    def setParent(self,parent):
+        self.parent=parent
+    def getValeurParent(self):
+        return self.valeurParent
+    def setValeurParent(self,valeurParent):
+        self.valeurParent=valeurParent
     def getSupport(self):
         return self.support
+    def setSupport(self,support):
+        self.support=support
 
     def getNodeID(self):
         return self.Id
     
-    def addChild(self,child):
+    def addChild(self,valeurSupportPourCetEnfant,child):
         """
         ajoute un enfant avec son identifiant
         """
-        self.childs.append(child)
-#parents ce sont les noeuds d'informations qui sont parents dans l'ID du noeud de décision
-#issue, c'est le noeud de décision du quel est issue ce noeud de décision dans le graphe ET/OU
+        self.childs[valeurSupportPourCetEnfant]=child
+    def getChilds(self):
+        return self.childs
+    def setChilds(self,childs):
+        self.childs=childs
+    def getProbabilitesPosteriori(self):
+        return self.probabilitesPosteriori
+    def setProbabilitesPosteriori(self,probabilitesPosteriori):
+        self.probabilitesPosteriori=probabilitesPosteriori
+#parents_chance ce sont les noeuds d'informations qui sont parents dans l'ID du noeud de décision
+#parent_decision, c'est le noeud de décision du quel est issue ce noeud de décision dans le graphe ET/OU
+#contexte est l'instanciation des parents_chance
 class decisionNode():
-    def __init__(self,Id,contexte,parents,issue,profondeur):
+    def __init__(self,Id,contexte,parent,support):
         self.contexte=contexte
         self.Id=Id
-        self.parents=parents
-        self.borneSup=None
-        self.issue=issue
-        self.childs=[]
-        self.profondeur=profondeur
-        self.evaluation=None
+        self.parent=parent
+        self.borneSup=dict() #key= domainValue, value=(mean,variance)
+        self.enfants=None
+        self.evaluation=None #key= domainValue, value=(mean,variance)
+        self.support=support
+        self.decisionOptimale=None
+        self.ValeurDecisionOptimale=None
 
+    def getDecisionOptimale(self):
+        return self.decisionOptimale
+    def setDecisionOptimale(self,decisionOptimale):
+        self.decisionOptimale=decisionOptimale
+    def getValeurDecisionOptimale(self):
+        return self.ValeurDecisionOptimale
+    def setValeurDecisionOptimale(self,decisionOptimale):
+        self.ValeurDecisionOptimale=decisionOptimale
+    def getSupport(self):
+        return self.support
+    def setSupport(self,support):
+        self.support=support
+        
     def getNodeID(self):
-        return self.Id
-    def getProfondeur(self):
-        return self.profondeur
-    
-    def addChild(self,child):
+        return self.Id    
+    def addEnfant(self,enfant):
         """
         ajoute un enfant avec son identifiant
         """
-        self.childs.append(child)
+        self.enfants.append(enfant)
     def setContexte(self,contexte):
         self.contexte=contexte
     def getContexte(self):
         return self.contexte
-    def setIssue(self,issue):
-        self.issue=issue
-    def getIssue(self):
-        return self.issue
-    def getParents(self):
-        return self.parents
-    def setBorneSup(self,borneSup):
-        self.borneSup=borneSup
+    def getParent(self):
+        return self.parent
+    def addBorneSup(self,key,borneSup):
+        self.borneSup[key]=borneSup
     def getBorneSup(self):
         return self.borneSup
-    def setEvaluation(self,evaluation):
-        self.evaluation=evaluation
+    def addEvaluation(self,key,evaluation):
+        self.evaluation[key]=evaluation
     def getEvaluation(self):
         return self.evaluation
 
