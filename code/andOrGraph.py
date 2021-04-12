@@ -155,24 +155,34 @@ class andOrGraph():
         self.noeuds=[]
         self.noeudsChance=[] 
         self.noeudsDecision=[]
-        def getID(self):
-            return self.ID
-        def setRoot(self,root):
-            self.root=root
-        def getRoot(self):
-            return self.root
-        def addNoeudChance(self,noeud):#id = contexte sous forme de liste
-            self.noeudsChance.append(noeud)
-            self.noeuds.append(noeud)
-        def addNoeudDecision(self,noeud):
-            self.noeudsChance.append(noeud)
-            self.noeuds.append(noeud)
-        def getNoeudChance(self):
-            return self.noeudsChance
-        def getNoeudDecision(self):
-            return self.noeudsDecision
-        def getNoeud(self):
-            return self.noeuds
+        self.IDNoeudDecisionAndOr=0
+    def getIDNoeudDecisionAndOr(self):
+        return self.IDNoeudDecisionAndOr
+    def getID(self):
+        return self.ID
+    def setRoot(self,root):
+        self.root=root
+    def getRoot(self):
+        return self.root
+    def addNoeudChance(self,noeud):#id = contexte sous forme de liste
+        self.noeudsChance.append(noeud)
+        self.noeuds.append(noeud)
+    def addNoeudDecision(self,noeud):
+        self.noeudsChance.append(noeud)
+        self.IDNoeudDecisionAndOr+=1
+        self.noeuds.append(noeud)
+    def getNoeudChance(self):
+        return self.noeudsChance
+    def getNoeudDecision(self):
+        return self.noeudsDecision
+    def getNoeudDecisionAndOr(self,id_andOr):
+        for d in self.noeudsDecision:
+            if d.getId_andOr()==id_andOr:
+                return d
+    def getNoeudDecisionIDs(self):
+        return [i for i in range(self.IDNoeudDecisionAndOr)]
+    def getNoeud(self):
+        return self.noeuds
 class chanceNode():
     def __init__(self,Id,support,parent,valeurParent):
         self.Id=Id
@@ -216,7 +226,8 @@ class chanceNode():
 #parent_decision, c'est le noeud de décision du quel est issue ce noeud de décision dans le graphe ET/OU
 #contexte est l'instanciation des parents_chance
 class decisionNode():
-    def __init__(self,Id,contexte,parent,support):
+    def __init__(self,Id,contexte,parent,support,id_andOr):
+        self.id_andOr=id_andOr
         self.contexte=contexte
         self.Id=Id
         self.parent=parent
@@ -226,7 +237,13 @@ class decisionNode():
         self.support=support
         self.decisionOptimale=None
         self.ValeurDecisionOptimale=None
-
+        self.doNotDevelop=[]
+    def getId_andOr(self):
+        return self.id_andOr
+    def getDoNotDevelop(self):
+        return self.doNotDevelop
+    def addDoNotDevelop(self,domainValue):
+        self.doNotDevelop.append(domainValue)
     def getDecisionOptimale(self):
         return self.decisionOptimale
     def setDecisionOptimale(self,decisionOptimale):

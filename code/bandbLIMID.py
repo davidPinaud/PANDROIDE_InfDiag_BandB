@@ -37,42 +37,85 @@ class BranchAndBoundLIMIDInference():
             root.addChild(d,node)
             self.createCoucheChance(self,parents[1:],node)
     #root,self.ordreDecision[i],[],dict()
-    def createCoucheDecision(self,root,decisionNodeID,contexte):
+    def createCoucheDecision(self,root,decisionNodeID,contexte,pile):
         childs=root.getChilds()
         isFeuille=True if len(childs)==0 else False
         if(not isFeuille):
             for supportValue,child in childs.items():
                 contexteTemp=dict(contexte)
                 contexteTemp[child.getNodeID()]=supportValue
-                self.createCoucheDecision(child,decisionNodeID,contexteTemp)
+                self.createCoucheDecision(child,decisionNodeID,contexteTemp,pile)
         else:
             domain=self.getDomain(root.getNodeID())
             for d in domain:
                 contexteTemp=dict(contexte)
                 contexteTemp[root.getNodeID()]=d
-                node=andOrGraph.decisionNode(decisionNodeID,contexteTemp,root,self.getDomain(decisionNodeID))
+                node=andOrGraph.decisionNode(decisionNodeID,contexteTemp,root,self.getDomain(decisionNodeID),self.andOrGraph.getIDNoeudDecisionAndOr())
+                if(not self.ordreDecision.index(node.getNodeID())==len(self.ordreDecision)-1):#is node is a leaf
+                    pile.append(node.getId_andOr())
                 self.andOrGraph.addNoeudDecision(node)
 
+    #écrire l'algo pour l'induction arrière quand on se retrouve dans une couche feuille
+    #écrire l'algo pour l'élagage
 
-
-    def branchAndBound3(self):
-        #####Init#####
-        decisionNodeID=self.ordreDecision[0]#Prendre le premier noeud de décision dans l'ordre de décision défini
+    #induction arriere : (on n'a pas a calculer la décision optimale car c'est fait dans addCouche)
+    #Entrée <- couche courante
+    #calculer les valeur des noeuds chances jusqu'a ce qu'on arrive à un noeud de décision
+    #pour ce noeud de décision, regarder toutes ses bornes supérieures et élaguer si besoin les domaines dont on n'a pas besoin
+    #continuer après le noeud de décision seulement si toute la couche après le noeud est évaluée (pas borne sup) tant qu'on arrive pas au self.root (racine de l'arbre)
+    def branchAndBound(self):
+        index=0
+        decisionNodeID=self.ordreDecision[index]#Prendre le premier noeud de décision dans l'ordre de décision défini
         #--on récupère les parents qui sont des noeuds chances dans l'ID du noeud de décision courant--
+        parents_chanceID=self.getParents_chanceID(decisionNodeID)
+        self.root=andOrGraph.chanceNode(parents_chanceID[0],self.getDomain(parents_chanceID[0]),None,None)#racine de l'arbre ET/OU
+        self.addCouche(index,self.root,dict(),parents_chanceID)
+        index+=1
+        pile=self.andOrGraph.IDNoeudDecisionAndOr().copy()
+        while(not len(pile)==0):
+            #Tant que la pile n'est pas vide :
+                #prendre un noeud de décision dans la pile et l'enlever de la pile
+                #pour tout element e du domaine du noeud de décision (sans ceux dans le doNotDevelop)
+                    #appeler addCouche pour creer la nouvelle couche    
+                        #si la couche est une couche feuille
+                            #appeler induction arriere
+                #sinon continuer
+            nodeADev=self.andOrGraph.getNoeudDecisionAndOr(pile.pop())
+            nodeADevID=nodeADev.getNodeID()
+            domain=self.getDomain(nodeADevID)
+            for dom in domain:
+                if(dom not in nodeADev.getDoNotDevelop()):
+                    parents_chanceID=self.getParents_chanceID(nodeADevID)
+                    root=andOrGraph.chanceNode(parents_chanceID[0],self.getDomain(parents_chanceID[0]),nodeADev,dom)
+                    self.addCouche(index,root,nodeADev.getContexte(),parents_chanceID,pile)
+                    index+=1
+                    if (index==len(self.ordreDecision)):
+                        pass
+                        #appeller induction arriere
+            
+    #dans la méthode du branch and bound
+    #il faut creer root et le mettre comme fils du noeuds de décision correspondant
+    def getParents_chanceID(self,decisionNodeID):
         temp=list(self.ID.parents(decisionNodeID))
         parents_chanceID=[]
         for t in temp:
             if self.ID.isChanceNode(temp):
                 parents_chanceID.append(t)
-        self.root=andOrGraph.chanceNode(parents_chanceID[0],self.getDomain(parents_chanceID[0]))#racine de l'arbre ET/OU
-        self.createCoucheChance(parents_chanceID,self.root)#Creer toutes les alternatives d'instanciation des parents_chances possibles
-        self.createCoucheDecision(self.root,decisionNodeID,dict())
+        return parents_chanceID
+    def addCouche(self,index,root,contexte_parentRoot,parents_chanceID,pile):
+        #####Init#####
+        decisionNodeID=self.ordreDecision[index]#Prendre le premier noeud de décision dans l'ordre de décision défini
+        #--on récupère les parents qui sont des noeuds chances dans l'ID du noeud de décision courant--
+        self.createCoucheChance(parents_chanceID[1:],root)#Creer toutes les alternatives d'instanciation des parents_chances possibles
+        self.createCoucheDecision(root,decisionNodeID,dict(),pile)
         #####END INIT#####
         ### Evaluation de la borneSup/borneInf######
         if(self.ordreDecision.index(decisionNodeID)<len(self.ordreDecision)-1):#si le noeud de décision n'est pas une feuille
             noeudsDecisions=self.andOrGraph.getNoeudDecision()
             for d in noeudsDecisions:
                 if(d.getNodeID()==decisionNodeID):#si elle est sur la couche courante
+                    contextetemp={**d.getContexte(),**contexte_parentRoot}
+                    d.setContexte(contextetemp)
                     domain=self.getDomain(d)
                     for dom in domain:
                         contextetemp=dict(d.getContexte())
@@ -83,6 +126,8 @@ class BranchAndBoundLIMIDInference():
             noeudsDecisions=self.andOrGraph.getNoeudDecision()
             for d in noeudsDecisions:
                 if(d.getNodeID()==decisionNodeID):#si elle est sur la couche courante
+                    contextetemp={**d.getContexte(),**contexte_parentRoot}
+                    d.setContexte(contextetemp)
                     domain=self.getDomain(d)
                     for dom in domain:
                         contextetemp=dict(d.getContexte())
@@ -104,161 +149,11 @@ class BranchAndBoundLIMIDInference():
                 valeurDecisionOptimale=valeurDecision
                 decisionOpt=decision
         return decisionOpt,valeurDecisionOptimale
-    def branchAndBound2(self):
-        #####Init#####
-        decisionNodeID=self.ordreDecision[0]#Prendre le premier noeud de décision dans l'ordre de décision défini
-        #--on récupère les parents qui sont des noeuds chances dans l'ID du noeud de décision courant--
-        temp=list(self.ID.parents(decisionNodeID))
-        parents_chance=[]
-        parents_chanceObjet=[]
-        for t in temp:
-            if self.ID.isChanceNode(temp):
-                parents_chance.append(t)
-                parents_chanceObjet.append(andOrGraph.chanceNode(t,self.getDomain(t)))
-        #--
-        couche=self.createCouche(parents_chance,[])#Creer toutes les alternatives d'instanciation des parents_chances possibles
-        decisionNodesInitial=[]#Liste des noeuds chances initiaux
-        domain=self.ID.variable(decisionNodeID).domain()[1:-1].split(',')
-        #--Creer pour chaque alternative d'instanciation des noeuds chances parents un noeuds OU
-        for c in couche:
-            contexte=dict()
-            for p in range(len(parents_chance)):
-                contexte[parents_chance[p]]=c[p]
-            andOrGraph.addNoeudDecision(andOrGraph.decisionNode(decisionNodeID,contexte,parents_chance,[],0,domain,[]))
-            decisionNodesInitial.append()
-        #--
-        #--Evaluation des noeuds de décision initiaux
-        if(len(self.OrdreDecision)>1):
-            for decisionNode in decisionNodesInitial:
-                borneSup=dict()
-                for d in domain:
-                    temp=dict(decisionNode.getContexte())#
-                    temp[decisionNode]=d
-                    borneSup[d]=self.evaluationID(self.IDRelaxe,temp)
-                decisionNode.setBorneSup(borneSup)
-        else:
-            for decisionNode in decisionNodesInitial:
-                eval=dict()
-                for d in domain:
-                    temp=dict(decisionNode.getContexte())#
-                    temp[decisionNode]=d
-                    eval[d]=self.evaluationID(self.ID,temp)
-                decisionNode.setEvaluation(eval)
-                decisionOptimale,valeurDecisionOptimale=self.findMaxDict(eval)
-                decisionNode.setDecisionOptimale(decisionOptimale)
-                decisionNode.setValeurDecisionOptimale(valeurDecisionOptimale)
-            
-            #TODO : écrire le code pour quand la profondeur est de 1
-
-        #--
-        
-        ##### Fin Init #####
-        decisionNodesInitial.sort(key=lambda x:x.getBorneSup())
-        decisionNodeID=decisionNodesInitial[-1]
-
-
+    
 
     def getDomain(self,NodeID):
         return self.ID.variable(NodeID).domain()[1:-1].split(',')
 
-    def findMaxDict(self,dict):
-        maxValue=None
-        max=None
-        for key,value in dict.items():
-            if(maxValue==None or value>maxValue):
-                maxValue=value
-                max=key
-        return max,maxValue
-
-
-    def branchAndBound(self):
-        listeMeilleurDecisionNode=[]
-        meilleurSolCourante=None
-        evalMeilleurSolCourante=None
-        #print('Init')
-        #Initialisation
-        #créer les noeuds de décision
-        decisionNodes=[]
-        decisionNodeID=self.ordreDecision[0]
-        parents=list(self.ID.parents(decisionNodeID))
-        couche=self.createCouche(parents,[])
-        for c in couche:
-            contexte=dict()
-            for p in range(len(parents)):
-                contexte[parents[p]]=c[p]
-            decisionNodes.append(andOrGraph.decisionNode(decisionNodeID,contexte,parents,None,0))
-
-        #Evaluer les noeuds de décision
-        for decisionNode in decisionNodes:
-            decisionNode.setBorneSup(self.evaluationID(self.IDRelaxe,decisionNode.getContexte()))
-            #decisionNode.setBorneSup(self.evaluationID(self.ID,decisionNode.getContexte()))
-
-        listeMeilleurDecisionNode=listeMeilleurDecisionNode+decisionNodes
-        listeMeilleurDecisionNode.sort(key=lambda x:x.getBorneSup())
-        #print('Init end')
-        #print("début while")
-        o=0
-        while(not len(listeMeilleurDecisionNode)==0):
-            print("--------------while n°",o,"taille liste,",len(listeMeilleurDecisionNode))
-            o=o+1
-            meilleurDecisionNode=listeMeilleurDecisionNode[-1]
-            del listeMeilleurDecisionNode[-1]
-            profondeurMeilleur=meilleurDecisionNode.getProfondeur()
-
-            decisionNodes=[]
-            decisionNodeID=self.ordreDecision[profondeurMeilleur+1]
-            parents=list(self.ID.parents(decisionNodeID))
-            #print("début couche")
-            couche=self.createCouche(parents,[])
-            #print("len couche :",len(couche))
-            #print("fin couche")
-            #print("début for couche")
-            for c in couche:
-                contexte=meilleurDecisionNode.getContexte().copy()
-                for p in range(len(parents)):
-                    contexte[parents[p]]=c[p]
-                print(contexte) 
-                decisionNodes.append(andOrGraph.decisionNode(decisionNodeID,contexte,parents,meilleurDecisionNode,profondeurMeilleur+1))
-            #print("fin for couche")
-            #Evaluer les noeuds de décision
-            #print("début calcul evaluations avec nb de décisionNode:",len(decisionNodes))
-            for decisionNode in decisionNodes:
-                if(profondeurMeilleur+1<len(self.ordreDecision)-1):
-                    print("début calcul borne")
-                    #decisionNode.setBorneSup(self.evaluationID(self.ID,decisionNode.getContexte()))
-                    decisionNode.setBorneSup(self.evaluationID(self.IDRelaxe,decisionNode.getContexte()))
-                    
-                    #print("fin calcul borne")
-                else:
-                    print("début calcul evaluation de solution")
-                    #eval=self.evaluationID(self.IDRelaxe,decisionNode.getContexte())
-                    eval=self.evaluationID(self.ID,decisionNode.getContexte())
-                    decisionNode.setEvaluation(eval)
-                    #print("fin calcul evaluation de solution")
-                    if(evalMeilleurSolCourante==None or eval>evalMeilleurSolCourante):
-                        print("changement de la solution, d'évaluation",eval,"contre",evalMeilleurSolCourante)
-                        meilleurSolCourante=decisionNode
-                        evalMeilleurSolCourante=eval
-            
-            if(profondeurMeilleur+1<len(self.ordreDecision)-1):
-                #print("début sort")
-                listeMeilleurDecisionNode=listeMeilleurDecisionNode+decisionNodes
-                listeMeilleurDecisionNode.sort(key=lambda x:x.getBorneSup())
-                #print("fin sort")
-            
-            indexDel=None
-            #print("fin calcul evaluations")
-            #print("début elaguage")
-            for i in range(len(listeMeilleurDecisionNode)):
-                #print("borneSup",listeMeilleurDecisionNode[i].getBorneSup(),"meilleureSol",evalMeilleurSolCourante)
-                if(listeMeilleurDecisionNode[i].getBorneSup()>evalMeilleurSolCourante):
-                    indexDel=i
-                    break
-            listeMeilleurDecisionNode=listeMeilleurDecisionNode[:indexDel]
-            #print("fin élaguage")
-        #print("fin while")
-        return meilleurSolCourante,evalMeilleurSolCourante
-        
     
     #evaluationID(IDRelaxé,contexte.items())        
     def evaluationID(self,ID,evidence):
