@@ -284,31 +284,3 @@ class decisionNode():
     def getEvaluation(self):
         return self.evaluation
 
-"""#Dans bandbLIMID : PB
-def branchAndBound():
-        # Récupération des noeuds de décision
-        decisionNodes = [nodeID for nodeID in self.ID.nodes() if self.ID.isDecisionNode(nodeID)]
-        di = 0 #Indice du noeud de décision en cours de traitement
-        
-        #Construction de l'arbre ET/OU
-        conditionneurDi = self.ID.ancestors(desicionNodes[di])
-        root = andNode(Id,childs,probabilities,isLeaf,utilityValue) 
-        arbre = andOrGraph(ID,ordre,root)
-        
-        #child c'est (nb de valeurs pour le conditionneur en cours) fois le conditionneur suivant
-        for i in range(nbValCond):
-            child = andNode(Id,childs,probabilities,isLeaf,utilityValue) 
-            root.addChild(child,probability)
-            for i in range(nbValCond2):
-                child2 = andNode(Id,childs,probabilities,isLeaf,utilityValue) # conditionneur suivant
-                child.addChild(child,probability)
-                
-            etc. pour tous les conditionneurs
-            
-            A la fin on évalue la borne sup grace à la relaxation
-            Puis on prend le meilleur de ces valeurs 
-            
-            Si il reste des decisionNodes, on fait di=i+1 pour continuer
-            Si il n en reste plus, on met à jour la solution courante et on coupe les branches bornesup<solcourante
-            
-            Si il reste des branches, on reprend sinon on renvoie la meilleure sol (càd solcourante)"""

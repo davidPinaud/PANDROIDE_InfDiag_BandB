@@ -16,8 +16,8 @@ class BranchAndBoundLIMIDInference():
         self.ID=ID
         self.ordreDecision=OrdreDecision
         self.IDRelaxe=self.createRelaxation_Temporaire()
-        self.andOrGraph=andOrGraph(self.ID,None)
-        self.root=None
+        #self.andOrGraph=andOrGraph(self.ID,None)
+        #self.root=None
 
     
     #ids of parents of current decisionNode,andOrGraph.chanceNode(parents[0],domain)
@@ -241,8 +241,10 @@ class BranchAndBoundLIMIDInference():
         
 
 
-            
-
+##################################################################################################################################################################################################################
+##################################################################################################################################################################################################################
+##################################################################################################################################################################################################################
+##################################################################################################################################################################################################################
     #ID->DAG (sans neouds utilités)->graphe moralisé ancestral ou on doit trouver l'ensemble de noeuds
     #séparant X et Y
     def SIS(self,decisionNodeID,ID):
@@ -263,8 +265,7 @@ class BranchAndBoundLIMIDInference():
             workGraph.addEdge(edge[0],edge[1],1,False,None)
         
         #---Algorithme----
-        
-        
+
         y=id_puit
         x=id_source
         print("x",x,"y",y)
@@ -426,7 +427,7 @@ class BranchAndBoundLIMIDInference():
             else:
                 u=edge.getNodes()[1]
             if(edge.getMarked()):
-                print("in 7BIS, LOOKING ",workGraph.getState(u)==unlabelled,u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
+                #print("in 7BIS, LOOKING ",workGraph.getState(u)==unlabelled,u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
                 if(workGraph.getState(u)==unlabelled):
                     print("in 7.1, adding ",u,self.getNameFromID(u),"pos",workGraph.getLabel_Positive(u),'neg',workGraph.getLabel_Negative(u))
                     ensembleSeparant.append(u)
@@ -438,6 +439,11 @@ class BranchAndBoundLIMIDInference():
                     ensembleSeparant.append(res)
 
         return ensembleSeparant
+####################################################################################################################################################################################
+####################################################################################################################################################################################
+####################################################################################################################################################################################
+####################################################################################################################################################################################
+
     #f(u,workGraph,y)
     def getSISNode(self,u,workGraph,oldu):
         print(oldu,self.getNameFromID(oldu))
@@ -475,31 +481,36 @@ class BranchAndBoundLIMIDInference():
 
 
 
-
+    #ID->DAG(\noeuds utilités ?)->MoralizedAncestral H-> DAG H~ +source+puit
     def fromIDToMoralizedAncestral2(self,decisionNodeID,ID):
+        #--Construction de X={D1,..,Dj} où Dj est le noeud de décision pour lequel on veut le SIS
         X=[]
         for nodeID in ID.nodes():
             if(ID.isDecisionNode(nodeID)):
-                if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #si il precède dj ou égal dans l'ordre
+                if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #prendre tous les noeuds de décision si il precède dj ou égal dans l'ordre
                     X=X+list(ID.family(nodeID)).copy()
-    
+        #--Construction de Y={U inter de(Dj)} Descendants de Dj qui sont des noeuds d'utilités
         Y=list(ID.descendants(decisionNodeID)).copy()
         ytemp=Y.copy()
         for nodeID in ytemp:
             if(not ID.isUtilityNode(nodeID)):
                 Y.remove(nodeID)
         XUY=self.unionList(X,Y)
-        XUYNames=self.getNamesFromID(XUY,ID)
+        #--Construction de An(XUY)=XUY Union (Union des an(XUY_i)) Union de lui même et de l'union des ancêtres de ses élements
         ancestralSubset=XUY.copy()
         for x in XUY:
             ancestralSubset=self.unionList(ancestralSubset,list(ID.ancestors(x)))
+        #--Construction du sous graphe
         ID_dag=ID.dag()
         for nodeID in ID.nodes():
             if nodeID not in ancestralSubset:
                 ID_dag.eraseNode(nodeID)
+        #--Moralisation du sous graphe
         MoralizedAncestral=ID_dag.moralGraph()
+        #--Ajout de la source et du puit
         alphaXid=MoralizedAncestral.addNode()
         BetaYid=MoralizedAncestral.addNode()
+        #--Ajouter des arêtes entre la source et les voisins de fa(X)
         for (nodeID,node2ID) in MoralizedAncestral.edges():#Connection source
             if(nodeID in X and node2ID in X):
                 continue
@@ -510,14 +521,15 @@ class BranchAndBoundLIMIDInference():
                 if(nodeID in X):
                     if(node2ID not in X and not MoralizedAncestral.existsEdge(alphaXid,node2ID)):
                         MoralizedAncestral.addEdge(alphaXid,node2ID)
-        temp=[]
+        #--Ajouter des arêtes entre le puit et de(Dj) Inter an(U inter de(Dj)) (les descendants de Dj qui sont les ancetre des noeuds d'utilités descendant Dj)
+        temp=[] #an(U inter de(Dj))
         for y in Y:
             temp=self.unionList(temp,list(ID.ancestors(y)))
-        desc=ID.descendants(decisionNodeID)
+        desc=ID.descendants(decisionNodeID)#de(Dj)
         t=temp.copy()
         for nodeID in t:
             if(nodeID not in desc):
-                temp.remove(nodeID)
+                temp.remove(nodeID)#de(Dj) Inter an(U inter de(Dj))
         for nodeID in temp: #Connection puit
             if( not MoralizedAncestral.existsEdge(BetaYid,nodeID)):
                 MoralizedAncestral.addEdge(nodeID,BetaYid)
