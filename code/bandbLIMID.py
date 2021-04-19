@@ -8,6 +8,7 @@ import math
 import pyAgrum as gum
 import warnings
 import andOrGraph
+from minindepset import MinimalDSep
 from functools import lru_cache
 
 
@@ -250,7 +251,8 @@ class BranchAndBoundLIMIDInference():
     #séparant X et Y
     def SIS_ID(self,decisionNodeID,ID):
         #--Construction du graphe moralisé sur lequel appliquer l'algorithme--
-        return self.SIS(*self.fromIDToMoralizedAncestral2(decisionNodeID,ID))
+        graph,x,y=self.fromIDToMoralizedAncestral2(decisionNodeID,ID)
+        return MinimalDSep(graph).find(x,y)
 
     def SIS(self,moralizedAncestral,id_source,id_puit):
         labelledScanned="labelledScanned"

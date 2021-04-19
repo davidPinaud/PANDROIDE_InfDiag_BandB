@@ -52,6 +52,7 @@ class NodeProperty:
   def clearLabels(self):
     self.setPLabel(None)
     self.setNLabel(None)
+    self._state = NodeStates.UNLABELLED 
 
   def todot(self, num: int, model=None, x=None, y=None):
     if num == x:
@@ -91,6 +92,8 @@ class EdgeProperty:
 
   def setMarked(self, b: bool):
     self._marked = b
+    if(not b):
+      self.setDir(None)
 
   def getDir(self):
     return self._dir
@@ -182,13 +185,14 @@ class MinimalDSep:
           q.put(v)
 
   def find_bsearch(self, u: int, q: Queue):
-    for t in self.neighbours(u):
+    for t in self.graph.neighbours(u):
       if self.prop(u, t).isMarked() and self.prop(u, t).getDir() == (t, u):
         if not self.prop(t).hasNLabel():
           self.prop(t).setNLabel(u)
+          q.put(t)
         if self.prop(u).getState() == NodeStates.SCANNED:
           self.prop(u).setState(NodeStates.UNSCANNED)
-          q.put(u)
+          q.put(t)
         break  # such t is unique
 
   def find_forward_procedure(self, q: Queue, x: int):
@@ -205,11 +209,11 @@ class MinimalDSep:
       else:
         # step 2.2
         if not self.prop(u).hasNLabel():
-          self.find_bsearch(u)
+          self.find_bsearch(u,q)
         # step 2.3
         else:
-          self.find_fsearch(u)
-          self.find_bsearch(u)
+          self.find_fsearch(u,q)
+          self.find_bsearch(u,q)
       self.prop(u).setState(NodeStates.SCANNED)
 
       if self.prop(x).getState() != NodeStates.UNLABELLED:
@@ -266,8 +270,18 @@ class MinimalDSep:
             res.add(self.model.variable(u).name())
           else:
             res.add(u)
+        else:
+          res.add(self.step7(u,[y]))
 
     return res
+
+  def step7(self,u,oldU):
+    for v in self.graph.neighbours(u):
+      if(v not in oldU and self.prop(u,v).isMarked()):
+        self.step7(v,oldU+[u])
+        break #such that v is unique
+    if(self.prop(u).hasNLabel() or self.prop(u).hasPLabel()):
+      return u
 
   def find(self, x: int, y: int):
     """
@@ -337,6 +351,23 @@ def figure6():
   g.addEdge(5,6)
 
   return g,1,6,None,"figure6"
+def ID_Simple_Test():
+  #ID=gum.fastID('D->A->*B->F->$C') #test pour cet ID, le SIS de B devrait être {D} (normalement si j'ai bien compris le concept)
+  #Le graphe moralisé ancestral correspondant :
+  g=gum.UndiGraph()
+  for i in range(0,8):
+    g.addNodeWithId(i)
+  g.addEdge(0,1)
+  g.addEdge(1,2)
+  g.addEdge(2,3)
+  g.addEdge(3,4)
+  g.addEdge(3,6)
+  g.addEdge(3,7)
+  g.addEdge(4,5)
+  g.addEdge(4,7)
+  g.addEdge(6,0)
+  return g,6,7,None,"ID_simple"
 
 test(*figure1())
 test(*figure6())
+test(*ID_Simple_Test())
