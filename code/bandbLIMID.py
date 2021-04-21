@@ -1,3 +1,4 @@
+from andOrGraph import decisionNode
 import numpy as np
 import os
 from pyAgrum.pyAgrum import IDGenerator
@@ -54,6 +55,7 @@ class BranchAndBoundLIMIDInference():
                 contexteTemp[root.getNodeID()]=d
                 node=andOrGraph.decisionNode(decisionNodeID,contexteTemp,root,self.getDomain(decisionNodeID),self.andOrGraph.getIDNoeudDecisionAndOr())
                 couche.append(node)
+                root.addChild(d,node)
                 if(not self.ordreDecision.index(node.getNodeID())==len(self.ordreDecision)-1):#is node is a leaf
                     pile.append(node.getId_andOr())
                 self.andOrGraph.addNoeudDecision(node)
@@ -120,7 +122,7 @@ class BranchAndBoundLIMIDInference():
         return parents_chanceID
     def addCouche(self,index,root,contexte_parentRoot,parents_chanceID,pile):
         #####Init#####
-        decisionNodeID=self.ordreDecision[index]#Prendre le premier noeud de décision dans l'ordre de décision défini
+        decisionNodeID=self.ordreDecision[index]#Prendre le noeud de décision dans l'ordre de décision défini
         #--on récupère les parents qui sont des noeuds chances dans l'ID du noeud de décision courant--
         self.createCoucheChance(parents_chanceID[1:],root)#Creer toutes les alternatives d'instanciation des parents_chances possibles
         couche=self.createCoucheDecision(root,decisionNodeID,dict(),pile,[])
@@ -157,7 +159,6 @@ class BranchAndBoundLIMIDInference():
                 decisionOpt,valeurDecisionOptimale=self.getDecisionOpt(d)
                 d.setDecisionOptimale(decisionOpt)
                 d.setValeurDecisionOptimale(valeurDecisionOptimale)
-            #TODO: finir l'algorithme
         return couche
 
     def getDecisionOpt(self,decisionNode):
@@ -226,7 +227,8 @@ class BranchAndBoundLIMIDInference():
         relaxedID=gum.InfluenceDiagram(self.ID)
         #Calculs des SIS des noeuds de décision et en faire des noeuds d'information aux noeuds de décision associés
         for i in range(len(self.ordreDecision)-1,-1,-1):
-            sis=self.SIS(self.ordreDecision[i],relaxedID)
+            sis=list(self.SIS_ID(self.ordreDecision[i],relaxedID))
+            print("SIS de :",relaxedID.variable(self.ordreDecision[i]).name()," | ",self.getNamesFromID(list(sis),relaxedID))
             for nodeID in sis:
                 if(not relaxedID.existsArc(nodeID,self.ordreDecision[i]) and nodeID in relaxedID.nodes()):
                     relaxedID.addArc(nodeID,self.ordreDecision[i])
@@ -252,7 +254,7 @@ class BranchAndBoundLIMIDInference():
     def SIS_ID(self,decisionNodeID,ID):
         #--Construction du graphe moralisé sur lequel appliquer l'algorithme--
         graph,x,y=self.fromIDToMoralizedAncestral2(decisionNodeID,ID)
-        return MinimalDSep(graph).find(x,y)
+        return MinimalDSep(graph).find(y,x)
 
     def SIS(self,moralizedAncestral,id_source,id_puit):
         labelledScanned="labelledScanned"
@@ -542,7 +544,7 @@ class BranchAndBoundLIMIDInference():
         for nodeID in ID.nodes():
             if(ID.isDecisionNode(nodeID)):
                 if(self.ordreDecision.index(nodeID)<=self.ordreDecision.index(decisionNodeID)): #prendre tous les noeuds de décision si il precède dj ou égal dans l'ordre
-                    X=X+list(ID.family(nodeID)).copy()
+                    X=self.unionList(X,list(ID.family(nodeID)))
         #--Construction de Y={U inter de(Dj)} Descendants de Dj qui sont des noeuds d'utilités
         Y=list(ID.descendants(decisionNodeID)).copy()
         ytemp=Y.copy()
@@ -565,15 +567,16 @@ class BranchAndBoundLIMIDInference():
         alphaXid=MoralizedAncestral.addNode()
         BetaYid=MoralizedAncestral.addNode()
         #--Ajouter des arêtes entre la source et les voisins de fa(X)
+        descendantOfDecisionNode=list(ID.descendants(decisionNodeID))
         for (nodeID,node2ID) in MoralizedAncestral.edges():#Connection source
             if(nodeID in X and node2ID in X):
                 continue
             if(nodeID in X or node2ID in X):
                 if(node2ID in X):
-                    if(nodeID not in X and not MoralizedAncestral.existsEdge(alphaXid,nodeID) ):
+                    if(nodeID not in X and not MoralizedAncestral.existsEdge(alphaXid,nodeID) and nodeID not in descendantOfDecisionNode):
                         MoralizedAncestral.addEdge(alphaXid,nodeID)
                 if(nodeID in X):
-                    if(node2ID not in X and not MoralizedAncestral.existsEdge(alphaXid,node2ID)):
+                    if(node2ID not in X and not MoralizedAncestral.existsEdge(alphaXid,node2ID) and node2ID not in descendantOfDecisionNode):
                         MoralizedAncestral.addEdge(alphaXid,node2ID)
         #--Ajouter des arêtes entre le puit et de(Dj) Inter an(U inter de(Dj)) (les descendants de Dj qui sont les ancetre des noeuds d'utilités descendant Dj)
         temp=[] #an(U inter de(Dj))

@@ -361,7 +361,7 @@ def ID_Simple_Test():
   g.addEdge(1,2)
   g.addEdge(2,3)
   g.addEdge(3,4)
-  g.addEdge(3,6)
+  #g.addEdge(3,6)
   g.addEdge(3,7)
   g.addEdge(4,5)
   g.addEdge(4,7)
