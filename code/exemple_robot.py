@@ -429,6 +429,81 @@ def getCasesAndGris2(maze):
 # bnb=BranchAndBoundLIMIDInference(ID,ordre)
 #gnb.showInfluenceDiagram(bnb.IDRelaxe)
 
+#Fonctions pour calculer taille+temps
+def run():
+    xInitial = 7
+    yInitial = 4
+    for level in range(2, 5):
+        robot = createIDRobot(level, 2, 2,maze)
+        start = time.time()
+        ie = gum.ShaferShenoyLIMIDInference(robot)
+        mid = time.time()
+        ie.makeInference()
+        stop = time.time()
+        print(f"{level} : {mid-start:10.3f}s - {stop-mid:10.3f}s")
+
+
+def human_readable(n):
+    def div1024(x): return x//1024, x % 1024
+    res = ""
+
+    for s in ["o", "Ko", "Mo", "Go"]:
+        n, r = div1024(n)
+        if r > 0:
+            res = f"{r}{s} {res}"
+        if n == 0:
+            return res
+
+    return f"{n}To {res}"
+
+
+def nbParamInClique(model, jt, n):
+    nb = 8  # size of python's float
+    for i in jt.clique(n):
+        nb *= model.variable(i).domainSize()
+    return nb
+
+
+def simule():
+    xInitial = 7
+    yInitial = 4
+    timeInf=[]
+    timeJonc=[]
+    largeurArbre=[]
+    tailleMem=[]
+    for level in range(2, 11):
+        robot = createIDRobot(level, 2, 2,maze)
+
+        start = time.time()
+        ie = gum.ShaferShenoyLIMIDInference(robot)
+
+        mid = time.time()
+        jt = ie.junctionTree()
+        maxtw = max([len(jt.clique(n)) for n in jt.nodes()])
+        maxsize = max([nbParamInClique(robot, jt, n) for n in jt.nodes()])
+
+        stop = time.time()
+        timeInf.append(mid-start)
+        timeJonc.append(stop-mid)
+        largeurArbre.append(maxtw)
+        tailleMem.append(human_readable(maxsize))
+        print(f"{level} : {mid-start:7.3f}s - {stop-mid:7.3f}s - treewidth={maxtw} - size= {human_readable(maxsize)}")
+    return timeInf,timeJonc,largeurArbre,tailleMem
+
+maze=["---------",
+      "--     --",
+      "-  - -  -",
+      "-- - - --",
+      "-  - - $-",
+      "--     --",
+      "---------"]
+
+nbStage=2
+xInitial=3
+yInitial=2
+ID=createIDRobot(nbStage,xInitial,yInitial,maze)
+
+
 
 
 def createIDRobotRelaxe(n,xInitial,yInitial,maze):
