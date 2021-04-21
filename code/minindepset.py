@@ -284,13 +284,25 @@ class MinimalDSep:
       return u
 
   def find(self, x: int, y: int):
-    """
-    Do the job
+    """Function that finds the seperating set given source and well node ids
 
-    :param x: nodeId
-    :param y: nodeId
-    :return: Set(int)
-    """
+    Parameters
+    ----------
+    x : int
+        the id of the source
+    y : int
+        the id of the well
+
+    Returns
+    -------
+    set(int)
+        the separating set
+
+    Raises
+    ------
+    NotImplementedError
+        should not reach this point
+    """    
     # init
     self.initProperties()
 

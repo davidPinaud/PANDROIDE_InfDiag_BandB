@@ -1,6 +1,31 @@
 import numpy as np
 class andOrGraph():
+    """Class that emulates an And/Or Graph (its really a tree)
+    Attributes
+    ----------
+    ID : pyAgrum.InfluenceDiagram
+        The influence diagram we use for the And/Or Graph
+    root : andOrGraph.chanceNode
+        the root of the And/Or Graph
+    noeuds : list of andOrGraph.chanceNode and andOrGraph.decisionNode
+        The list of nodes in the graph
+    noeudsChance : list of andOrGraph.chanceNode
+        The list of andOrGraph.chanceNode in the graph
+    noeudsDecision : list of andOrGraph.decisionNode
+        The list of andOrGraph.decisionNode in the graph
+    IDNoeudDecisionAndOr : int
+        Integer that serves to give ids to the decision nodes (different to their influence ids)
+    """    
     def __init__(self,ID,root):
+        """Class constructor
+
+        Parameters
+        ----------
+        ID : pyAgrum.InfluenceDiagram
+            The influence diagram we use for the And/Or Graph
+        root : andOrGraph.chanceNode
+            the root of the And/Or Graph
+        """        
         self.ID=ID
         self.root=root
         self.noeuds=[]
@@ -8,31 +33,109 @@ class andOrGraph():
         self.noeudsDecision=[]
         self.IDNoeudDecisionAndOr=0
     def getIDNoeudDecisionAndOr(self):
+        """Getter function for the IDNoeudDecisionAndOr attribute
+
+        Returns
+        -------
+        int
+            Integer that serves to give ids to the decision nodes (different to their influence ids)
+        """        
         return self.IDNoeudDecisionAndOr
     def getID(self):
+        """Getter function for the ID attribute
+
+        Returns
+        -------
+        pyAgrum.InfluenceDiagram
+            The influence diagram we use for the And/Or Graph
+        """        
         return self.ID
     def setRoot(self,root):
+        """Setter function for the root attribute
+
+        Parameters
+        ----------
+        root : andOrGraph.chanceNode
+            the root of the And/Or Graph
+        """        
         self.root=root
     def getRoot(self):
+        """Getter function for the root attribute
+
+        Returns
+        -------
+        andOrGraph.chanceNode
+            the root of the And/Or Graph
+        """        
         return self.root
     def addNoeudChance(self,noeud):#id = contexte sous forme de liste
+        """Function that adds a andOrGraph.chanceNode to the And/Or Graph
+
+        Parameters
+        ----------
+        noeud : andOrGraph.chanceNode 
+            the chance node to add
+        """        
         self.noeudsChance.append(noeud)
         self.noeuds.append(noeud)
     def addNoeudDecision(self,noeud):
+        """Function that adds a andOrGraph.decisionNode to the And/Or Graph
+        It also sets its And/Or Graph id
+
+        Parameters
+        ----------
+        noeud : andOrGraph.decisionNode 
+            the decision node to add
+        """    
         self.noeudsChance.append(noeud)
         self.IDNoeudDecisionAndOr+=1
         self.noeuds.append(noeud)
     def getNoeudChance(self):
+        """Getter function for the noeudsChance attribute
+
+        Returns
+        -------
+        list of andOrGraph.chanceNode
+            The list of andOrGraph.chanceNode in the graph
+        """        
         return self.noeudsChance
     def getNoeudDecision(self):
+        """Getter function for the ID attribute
+
+        Returns
+        -------
+        pyAgrum.InfluenceDiagram
+            The influence diagram we use for the And/Or Graph
+        """        
         return self.noeudsDecision
     def getNoeudDecisionAndOr(self,id_andOr):
+        """Getter function for that returns a decision node given its And/Or Graph id (not the Influence Diagram one)
+
+        Returns
+        -------
+        andOrGraph.decisionNode
+            the decision node corresponding to the given id
+        """        
         for d in self.noeudsDecision:
             if d.getId_andOr()==id_andOr:
                 return d
     def getNoeudDecisionIDs(self):
+        """Getter function that returns all the And/Or Graph ids
+
+        Returns
+        -------
+        list of ints
+            The ids of the nodes in the And/Or Graph
+        """        
         return [i for i in range(self.IDNoeudDecisionAndOr)]
     def getNoeud(self):
+        """Getter function that returns all the And/Or Graph nodes
+
+        Returns
+        -------
+        list of andOrGraph.chanceNode and andOrGraph.decisionNode
+            The list of nodes in the graph
+        """   
         return self.noeuds
 class chanceNode():
     def __init__(self,Id,support,parent,valeurParent):
