@@ -368,6 +368,6 @@ def ID_Simple_Test():
   g.addEdge(6,0)
   return g,6,7,None,"ID_simple"
 
-test(*figure1())
-test(*figure6())
-test(*ID_Simple_Test())
+# test(*figure1())
+# test(*figure6())
+# test(*ID_Simple_Test())
