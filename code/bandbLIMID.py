@@ -93,6 +93,8 @@ class BranchAndBoundLIMIDInference():
         while(len(parents)>1):
             parents=self.induction(parents)#on arrive au fils d'un noeud de décision
         root=parents[0]
+        if(root==self.root):
+            return
         noeudDecision=root.getParent()
         valeurDomRoot=root.getContexte()[noeudDecision.getNodeID()]#Valeur de l'instiation de noeud décision pour root
         noeudDecision.addEvaluation(valeurDomRoot,(root.getValeur(),None))
@@ -523,6 +525,18 @@ class BranchAndBoundLIMIDInference():
         
         return MoralizedAncestral,alphaXid,BetaYid 
         
+    def fromAndORGraphToDiGraph(self):
+        diGraph=gum.DiGraph()
+        for node in self.andOrGraph.getNoeud():
+            diGraph.addNodeWithId(node.getId_andOr())
+        for node in self.andOrGraph.getNoeud():
+            if(type(node)==chanceNode):
+                for value,child in node.getChilds().items():
+                    diGraph.addArc(node.getId_andOr(),child.getId_andOr())
+            else:
+                for value,child in node.getEnfants().items():
+                    diGraph.addArc(node.getId_andOr(),child.getId_andOr())
+        return diGraph
 
 
     #--Méthodes utilitaires--
