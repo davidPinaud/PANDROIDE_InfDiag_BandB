@@ -31,16 +31,16 @@ class andOrGraph():
         self.noeuds=[]
         self.noeudsChance=[] 
         self.noeudsDecision=[]
-        self.IDNoeudDecisionAndOr=0
-    def getIDNoeudDecisionAndOr(self):
-        """Getter function for the IDNoeudDecisionAndOr attribute
+        self.IDNoeudAndOr=0
+    def getIDNoeudAndOr(self):
+        """Getter function for the IDNoeudAndOr attribute
 
         Returns
         -------
         int
             Integer that serves to give ids to the decision nodes (different to their influence ids)
         """        
-        return self.IDNoeudDecisionAndOr
+        return self.IDNoeudAndOr
     def getID(self):
         """Getter function for the ID attribute
 
@@ -77,6 +77,7 @@ class andOrGraph():
             the chance node to add
         """        
         self.noeudsChance.append(noeud)
+        self.IDNoeudAndOr+=1
         self.noeuds.append(noeud)
     def addNoeudDecision(self,noeud):
         """Function that adds a andOrGraph.decisionNode to the And/Or Graph
@@ -87,8 +88,8 @@ class andOrGraph():
         noeud : andOrGraph.decisionNode 
             the decision node to add
         """    
-        self.noeudsChance.append(noeud)
-        self.IDNoeudDecisionAndOr+=1
+        self.noeudsDecision.append(noeud)
+        self.IDNoeudAndOr+=1
         self.noeuds.append(noeud)
     def getNoeudChance(self):
         """Getter function for the noeudsChance attribute
@@ -108,7 +109,7 @@ class andOrGraph():
             The influence diagram we use for the And/Or Graph
         """        
         return self.noeudsDecision
-    def getNoeudDecisionAndOr(self,id_andOr):
+    def getNoeudWithIdAndOr(self,id_andOr):
         """Getter function for that returns a decision node given its And/Or Graph id (not the Influence Diagram one)
 
         Returns
@@ -116,18 +117,21 @@ class andOrGraph():
         andOrGraph.decisionNode
             the decision node corresponding to the given id
         """        
-        for d in self.noeudsDecision:
+        for d in self.noeuds:
             if d.getId_andOr()==id_andOr:
                 return d
-    def getNoeudDecisionIDs(self):
+    def getNoeudDecisionAndOrIDs(self):
         """Getter function that returns all the And/Or Graph ids
 
         Returns
         -------
         list of ints
             The ids of the nodes in the And/Or Graph
-        """        
-        return [i for i in range(self.IDNoeudDecisionAndOr)]
+        """ 
+        id=[]    
+        for i in self.noeudsDecision :
+            id.append(i.getId_andOr())
+        return id
     def getNoeud(self):
         """Getter function that returns all the And/Or Graph nodes
 
@@ -138,17 +142,22 @@ class andOrGraph():
         """   
         return self.noeuds
 class chanceNode():
-    def __init__(self,Id,support,parent,valeurParent):
+    def __init__(self,Id,support,parent,valeurParent,contexte,id_andOr):
         self.Id=Id
         self.support=support #le support du noeud
         self.childs=dict() #key = valeur du support, value=enfant
         self.valeur=None
         self.parent=parent
         self.valeurParent=valeurParent
-        self.probabilitesPosteriori=dict()#key = valeur du support, value=proba
-
+        self.probabilitiesPosteriori=dict()#key = valeur du support, value=proba
+        self.contexte=contexte
+        self.id_andOr=id_andOr
+    def __eq__(self, other):
+        return self.id_andOr==other.getId_andOr()
     def getParent(self):
         return self.parent
+    def getId_andOr(self):
+        return self.id_andOr
     def setParent(self,parent):
         self.parent=parent
     def getValeurParent(self):
@@ -159,10 +168,14 @@ class chanceNode():
         return self.support
     def setSupport(self,support):
         self.support=support
-
+    def getContexte(self):  
+        return self.contexte
     def getNodeID(self):
         return self.Id
-    
+    def setValeur(self,valeur):
+        self.valeur=valeur
+    def getValeur(self):
+        return self.valeur
     def addChild(self,valeurSupportPourCetEnfant,child):
         """
         ajoute un enfant avec son identifiant
@@ -172,33 +185,46 @@ class chanceNode():
         return self.childs
     def setChilds(self,childs):
         self.childs=childs
-    def getProbabilitesPosteriori(self):
-        return self.probabilitesPosteriori
-    def setProbabilitesPosteriori(self,probabilitesPosteriori):
-        self.probabilitesPosteriori=probabilitesPosteriori
+    def getProbabilitiesPosteriori(self):
+        return self.probabilitiesPosteriori
+    def setProbabilitiesPosteriori(self,probabilitiesPosteriori):
+        self.probabilitiesPosteriori=probabilitiesPosteriori
 #parents_chance ce sont les noeuds d'informations qui sont parents dans l'ID du noeud de décision
 #parent_decision, c'est le noeud de décision du quel est issue ce noeud de décision dans le graphe ET/OU
 #contexte est l'instanciation des parents_chance
 class decisionNode():
     def __init__(self,Id,contexte,parent,support,id_andOr):
         self.id_andOr=id_andOr
-        self.contexte=contexte
+        self.contexte=contexte#key= id du noeud (dans le diagramme d'influence, 
+        #possible car on regarde le contexte dans l'ID, pas dans le graphe et/ou !), value=valeur d'instanciation
         self.Id=Id
-        self.parent=parent
+        self.id_andOr=id_andOr
+        self.parent=parent 
         self.borneSup=dict() #key= domainValue, value=(mean,variance)
-        self.enfants=None
-        self.evaluation=None #key= domainValue, value=(mean,variance)
+        self.enfants=dict() #key=domainValue, value=child
+        self.evaluation=dict() #key= domainValue, value=(mean,variance)
         self.support=support
         self.decisionOptimale=None
         self.ValeurDecisionOptimale=None
         self.doNotDevelop=[]
         self.inference=None
+        self.enfantProcessed=[]
+    def __hash__(self):
+        return hash(self.id_andOr)
+    def __eq__(self, other):
+        return self.id_andOr==other.getId_andOr()
+    def getParent(self):
+        return self.parent
+    def getID(self):
+        return self.Id
     def setInference(self,inference):
         self.inference=inference
     def getInference(self):
         return self.inference
     def getId_andOr(self):
         return self.id_andOr
+    def isProcessed(self):
+        return len(self.doNotDevelop)+len(self.evaluation)==len(self.support)
     def getDoNotDevelop(self):
         return self.doNotDevelop
     def addDoNotDevelop(self,domainValue):
@@ -215,14 +241,22 @@ class decisionNode():
         return self.support
     def setSupport(self,support):
         self.support=support
-        
+    def getEnfants(self):
+        return self.enfants
     def getNodeID(self):
         return self.Id    
-    def addEnfant(self,enfant):
+    def addEnfant(self,enfant,valeur):
         """
         ajoute un enfant avec son identifiant
         """
-        self.enfants.append(enfant)
+        self.enfants[valeur]=enfant
+    def addEnfantProcessed(self,enfant):
+        """
+        ajoute un enfant avec son identifiant
+        """
+        self.enfantProcessed.append(enfant)
+    def getEnfantProcessed(self):
+        return self.enfantProcessed
     def setContexte(self,contexte):
         self.contexte=contexte
     def getContexte(self):

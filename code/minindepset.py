@@ -289,9 +289,9 @@ class MinimalDSep:
     Parameters
     ----------
     x : int
-        the id of the source
-    y : int
         the id of the well
+    y : int
+        the id of the source
 
     Returns
     -------
