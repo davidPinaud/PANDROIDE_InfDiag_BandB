@@ -23,4 +23,3 @@ bnb=BranchAndBoundLIMIDInference(ID,ordre)
 #gnb.showInfluenceDiagram(bnb.IDRelaxe)
 #%%
 bnb.branchAndBound()
-# %%

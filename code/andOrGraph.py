@@ -250,11 +250,8 @@ class decisionNode():
         ajoute un enfant avec son identifiant
         """
         self.enfants[valeur]=enfant
-    def addEnfantProcessed(self,enfant):
-        """
-        ajoute un enfant avec son identifiant
-        """
-        self.enfantProcessed.append(enfant)
+    def addEnfantProcessed(self,enfantID):
+        self.enfantProcessed.append(enfantID)
     def getEnfantProcessed(self):
         return self.enfantProcessed
     def setContexte(self,contexte):

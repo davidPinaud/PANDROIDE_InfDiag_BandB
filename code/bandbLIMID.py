@@ -96,23 +96,52 @@ class BranchAndBoundLIMIDInference():
         noeudDecision=root.getParent()
         valeurDomRoot=root.getContexte()[noeudDecision.getNodeID()]#Valeur de l'instiation de noeud décision pour root
         noeudDecision.addEvaluation(valeurDomRoot,(root.getValeur(),None))
-        if(noeudDecision.getValeurDecisionOptimale()==None or root.getValeur()>noeudDecision.getValeurDecisionOptimale()):
+
+        if(root.getValeur()!=None and (noeudDecision.getValeurDecisionOptimale()==None or root.getValeur()>noeudDecision.getValeurDecisionOptimale())):
             #noeudDecision.addDoNotDevelop(noeudDecision.getDecisionOptimale())
             noeudDecision.setDecisionOptimale=valeurDomRoot
             noeudDecision.setValeurDecisionOptimale=root.getValeur()
-            for value,child in noeudDecision.getEnfants().items():
-                bornesSup=noeudDecision.getBorneSup()
-                evaluationsKeys=noeudDecision.getEvaluation().keys()
-                if value not in evaluationsKeys:
-                    if bornesSup[value][0]<root.getValeur():
-                        noeudDecision.addDoNotDevelop(value)
-                        self.npCoupe+=1
-        for node in couche:
+            print("changement de valeur optimale pour le noeud ",self.getNameFromID(noeudDecision.getNodeID()))
+            # for value,child in noeudDecision.getEnfants().items():
+            #     bornesSup=noeudDecision.getBorneSup()
+            #     evaluationsKeys=noeudDecision.getEvaluation().keys()
+            #     if value not in evaluationsKeys:
+            #         print("On regarde un voisin pas encore évalué (mais la borne sup est là")
+            #         print("Sa borne sup:",bornesSup[value][0],"l'évaluation qu'on a :",root.getValeur())
+            #         if bornesSup[value][0]<root.getValeur():
+            #             print("on coupe")
+            #             noeudDecision.addDoNotDevelop(value)
+            #             self.npCoupe+=1
+            #         else:
+            #             print("on ne coupe pas")
+            for DomainValue,ss in noeudDecision.getBorneSup().items():#Pour tous les frères
+                for d,child in noeudDecision.getEnfants().items():
+                    if(child==root):
+                        domainRoot=d
+                        break
+                if(DomainValue!=domainRoot):#Pas le noeud qu'on vient juste d'évaluer
+                    isEvalue=False
+                    for d2,ss2 in noeudDecision.getEvaluation().items():
+                        if(d2==DomainValue):
+                            isEvalue=True
+                            break
+                    if(not isEvalue):#pas encore évalué
+                        print("On regarde un voisin pas encore évalué (mais la borne sup est là")
+                        print("Sa borne sup:",ss,"l'évaluation qu'on a :",root.getValeur())
+                        if(ss[0]<root.getValeur()):
+                            print("on coupe")
+                            noeudDecision.addDoNotDevelop(child.getContexte()[noeudDecision.getNodeID()])
+                            self.npCoupe+=1
+                        else:
+                            print("on ne coupe pas")
+        for node in couche:#On enlève de la pile ce qu'on vient d'évaluer
             if( node in couche and node.getId_andOr() in pile):
                 del pile[pile.index(node.getId_andOr())]
-        if(len(noeudDecision.getEvaluation())+len(noeudDecision.getDoNotDevelop())<len(noeudDecision.getEnfants())):#PAS tous les enfants ont été processed
+        if(len(noeudDecision.getEvaluation())+len(noeudDecision.getDoNotDevelop())<len(noeudDecision.getBorneSup())):#PAS tous les enfants ont été processed
             print("in not all processed")
-            indexPile=pile.index(noeudDecision.getId_andOr())# on refait le même noeud de décision
+            #indexPile=pile.index(noeudDecision.getId_andOr())# on refait le même noeud de décision
+            indexPile-=1
+            return indexPile
         else:
             print("in all processed")
             coucheParent=self.findCoucheDeNoeudDeDecision(noeudDecision,couches)
@@ -151,14 +180,18 @@ class BranchAndBoundLIMIDInference():
                 try:
                     parent.setProbabilitiesPosteriori(self.ie.posterior(parent.getNodeID()))
                 except :
+                    print("Erreur dans le postérieur")
                     break
                 self.ie.eraseAllEvidence()
                 s=0
                 for ValeurDuSupport,enfant in parent.getChilds().items():
+                    
                     if(self.ID.isChanceNode(enfant.getNodeID())):
-                        s+=parent.getProbabilitiesPosteriori()[{self.getNameFromID(parent.getNodeID()):ValeurDuSupport}]*enfant.getValeur()
+                        if(enfant.getValeur()!=None):
+                            s+=parent.getProbabilitiesPosteriori()[{self.getNameFromID(parent.getNodeID()):ValeurDuSupport}]*enfant.getValeur()
                     else:
-                        s+=parent.getProbabilitiesPosteriori()[{self.getNameFromID(parent.getNodeID()):ValeurDuSupport}]*enfant.getValeurDecisionOptimale()[0]
+                        if(enfant.getValeurDecisionOptimale()[0]!=None):
+                            s+=parent.getProbabilitiesPosteriori()[{self.getNameFromID(parent.getNodeID()):ValeurDuSupport}]*enfant.getValeurDecisionOptimale()[0]
                 parent.setValeur(s)
         return parents
 
@@ -210,12 +243,14 @@ class BranchAndBoundLIMIDInference():
             if(index<=len(self.ordreDecision)-2): #on veut pas developper 
                 for dom in domain:
                     if(dom not in nodeADev.getDoNotDevelop() and dom not in nodeADev.getEnfantProcessed()):
-                        print("On va développer le noeud",self.getNameFromID(nodeADevID),'On va donc chercher les parents du noeud',self.getNameFromID(self.ordreDecision[index+1]))
-                        print(nodeADevID,"de contexte :")
+                        print("On va développer le noeud",self.getNameFromID(nodeADevID),"id",nodeADev.getId_andOr(),'On va donc chercher les parents du noeud',self.getNameFromID(self.ordreDecision[index+1]))
+                        print("Le domaine de",self.getNameFromID(nodeADevID),":",domain,",les valeurs déjà processed:",nodeADev.getEnfantProcessed(),"ce qu'on va process :",dom)
+                        print(self.getNameFromID(nodeADevID),"de contexte :")
                         for id,value in nodeADev.getContexte().items():
                             print(self.getNameFromID(id),":",value)
+                        print(self.getNameFromID(nodeADevID),":",dom)
                         parents_chanceID=self.getParents_chanceID(self.ordreDecision[index+1],nodeADevID)
-                        print("Ses parents sont : ",self.getNamesFromID(parents_chanceID))
+                        print("Les parents de ",self.getNameFromID(self.ordreDecision[index+1])," sont : ",self.getNamesFromID(parents_chanceID))
                         contexteTemp=dict(nodeADev.getContexte())
                         contexteTemp[nodeADevID]=dom
                         root=chanceNode(parents_chanceID[0],self.getDomain(parents_chanceID[0]),nodeADev,dom,contexteTemp,self.andOrGraph.getIDNoeudAndOr())
@@ -225,7 +260,8 @@ class BranchAndBoundLIMIDInference():
                         couche=self.addCouche(index+1,root,parents_chanceID,pile)
                         couches[nodeADev]=couche
                         if (index+1==len(self.ordreDecision)-1):#si on est sur une couche feuille
-                            self.inductionArriere(couche,pile,couches,indexPile)
+                            a=self.inductionArriere(couche,pile,couches,indexPile)
+                            indexPile=a if a!=None else indexPile
                             #pile.insert(0,nodeADev.getId_andOr())
                             #appeller induction arriere
                         # if(len(nodeADev.getEnfantProcessed())!=len(nodeADev.getEnfant())):
