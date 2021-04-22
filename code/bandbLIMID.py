@@ -537,7 +537,23 @@ class BranchAndBoundLIMIDInference():
                 for value,child in node.getEnfants().items():
                     diGraph.addArc(node.getId_andOr(),child.getId_andOr())
         return diGraph
-
+    def viewAndOrGraph(self):
+        bn=gum.BayesNet()
+        alreadyIn=[]
+        s=''
+        for node in self.andOrGraph.getNoeud():
+            if(node not in alreadyIn):
+                bn.add(self.ID.variable(node.getNodeID()).name()+s,4)
+                alreadyIn.append(node)
+                s+='s'
+        for node in self.andOrGraph.getNoeud():
+            if(type(node)==chanceNode):
+                for value,child in node.getChilds().items():
+                    bn.addArc(node.getId_andOr(),child.getId_andOr())
+            else:
+                for value,child in node.getEnfants().items():
+                    bn.addArc(node.getId_andOr(),child.getId_andOr())
+        return bn
 
     #--Méthodes utilitaires--
     def getBNFromID(self,idiag:gum.InfluenceDiagram):
