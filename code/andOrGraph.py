@@ -150,7 +150,7 @@ class chanceNode():
         self.parent=parent
         self.valeurParent=valeurParent
         self.probabilitiesPosteriori=dict()#key = valeur du support, value=proba
-        self.contexte=contexte
+        self.contexte=contexte #key id du parent, valeur dom
         self.id_andOr=id_andOr
     def __eq__(self, other):
         return self.id_andOr==other.getId_andOr()

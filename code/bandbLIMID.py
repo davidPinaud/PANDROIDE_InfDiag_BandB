@@ -96,14 +96,14 @@ class BranchAndBoundLIMIDInference():
         if(root==self.root):
             return
         noeudDecision=root.getParent()
-        valeurDomRoot=root.getContexte()[noeudDecision.getNodeID()]#Valeur de l'instiation de noeud décision pour root
+        valeurDomRoot=root.getValeurParent()#Valeur de l'instiation de noeud décision pour root
         noeudDecision.addEvaluation(valeurDomRoot,(root.getValeur(),None))
 
         if(root.getValeur()!=None and (noeudDecision.getValeurDecisionOptimale()==None or root.getValeur()>noeudDecision.getValeurDecisionOptimale())):
             #noeudDecision.addDoNotDevelop(noeudDecision.getDecisionOptimale())
-            noeudDecision.setDecisionOptimale=valeurDomRoot
-            noeudDecision.setValeurDecisionOptimale=root.getValeur()
-            print("changement de valeur optimale pour le noeud ",self.getNameFromID(noeudDecision.getNodeID()))
+            noeudDecision.setDecisionOptimale=(valeurDomRoot)
+            noeudDecision.setValeurDecisionOptimale(root.getValeur())
+            print("changement de valeur optimale pour le noeud ",self.getNameFromID(noeudDecision.getNodeID()),"change à ",valeurDomRoot,"pour la valeur",root.getValeur())
             # for value,child in noeudDecision.getEnfants().items():
             #     bornesSup=noeudDecision.getBorneSup()
             #     evaluationsKeys=noeudDecision.getEvaluation().keys()
@@ -111,7 +111,7 @@ class BranchAndBoundLIMIDInference():
             #         print("On regarde un voisin pas encore évalué (mais la borne sup est là")
             #         print("Sa borne sup:",bornesSup[value][0],"l'évaluation qu'on a :",root.getValeur())
             #         if bornesSup[value][0]<root.getValeur():
-            #             print("on coupe")
+            #             print("on coupe") 
             #             noeudDecision.addDoNotDevelop(value)
             #             self.npCoupe+=1
             #         else:
@@ -192,7 +192,7 @@ class BranchAndBoundLIMIDInference():
                         if(enfant.getValeur()!=None):
                             s+=parent.getProbabilitiesPosteriori()[{self.getNameFromID(parent.getNodeID()):ValeurDuSupport}]*enfant.getValeur()
                     else:
-                        if(enfant.getValeurDecisionOptimale()[0]!=None):
+                        if(enfant.getValeurDecisionOptimale()!=None):
                             s+=parent.getProbabilitiesPosteriori()[{self.getNameFromID(parent.getNodeID()):ValeurDuSupport}]*enfant.getValeurDecisionOptimale()[0]
                 parent.setValeur(s)
         return parents
