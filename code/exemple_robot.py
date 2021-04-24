@@ -141,7 +141,7 @@ def createIDRobot(n,xInitial,yInitial,maze):
                     ID.cpt(ws)[{x:h,y:j}]=[0,1]
         
 
-    #ajout potentiels des noeuds positions x y au premier stage
+    """#ajout potentiels des noeuds positions x y au premier stage
         if(i==0):
             ID.cpt(x)[xInitial]=1
             ID.cpt(y)[{x:xInitial,y:yInitial}]=1
@@ -154,7 +154,9 @@ def createIDRobot(n,xInitial,yInitial,maze):
             remplirID(ID,y,fillY,i,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
-    casesOuPossibleAllerBas,gris)
+    casesOuPossibleAllerBas,gris)"""
+    
+        
 
     #Ajout des arcs entre le dernier noeud décision, les derniers noeuds chances x et y avec le noeud utilité
     xn=f"x_{n}"
@@ -170,7 +172,7 @@ def createIDRobot(n,xInitial,yInitial,maze):
     ID.addArc(f"x_{n-1}",yn)
     ID.addArc(f"y_{n-1}",yn)
     #ajout potentiels des derniers noeuds chances et du noeud d'utilité
-    remplirID(ID,xn,fillX,n,casesOuPossibleAllerGauche,
+    """remplirID(ID,xn,fillX,n,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
     casesOuPossibleAllerBas,gris)
@@ -178,9 +180,19 @@ def createIDRobot(n,xInitial,yInitial,maze):
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
     casesOuPossibleAllerBas,gris)
-    
+    """
     ID.utility(ID.idFromName("u"))[{f"x_{n}":caseObj[0],f"y_{n}":caseObj[1]}]=1
-    
+    l=[]
+    for k in range(n):
+        x=f"x_{k}"
+        y=f"y_{k}"
+        l.append(x)
+        l.append(y)
+    l=l+[xn,yn]
+    for node in l:
+        for i in ID.cpt(node).loopIn():
+            ID.cpt(node).set(i,np.random.rand())
+        ID.cpt(node).normalizeAsCPT()
     return ID
 
 
@@ -189,7 +201,7 @@ def remplirID(ID,NomNoeud,fonctionFill,stage,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
     casesOuPossibleAllerBas,gris):
-    I=gum.Instantiation(ID.cpt(NomNoeud))
+    
     """
     Méthode qui sert à remplir le tableau de potentiel des noeuds positions x et y aux stages après au premier stage
     Entrée : 
@@ -200,6 +212,7 @@ def remplirID(ID,NomNoeud,fonctionFill,stage,casesOuPossibleAllerGauche,
     Sortie:
         void
     """
+    I=gum.Instantiation(ID.cpt(NomNoeud))
     while not I.end():
         ID.cpt(NomNoeud).set(I,fonctionFill(I,stage,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,

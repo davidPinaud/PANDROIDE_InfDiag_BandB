@@ -129,7 +129,7 @@ class BranchAndBoundLIMIDInference():
                             break
                     if(not isEvalue):#pas encore évalué
                         print("On regarde un voisin pas encore évalué (mais la borne sup est là")
-                        print("Sa borne sup:",ss,"l'évaluation qu'on a :",root.getValeur())
+                        print("Sa borne sup:",ss,"l'évaluation qu'on a :",root.getValeur(),f"root de contexte {root.getContexte()}")
                         if(ss[0]<root.getValeur()):
                             print("on coupe")
                             noeudDecision.addDoNotDevelop(child.getContexte()[noeudDecision.getNodeID()])
@@ -173,8 +173,8 @@ class BranchAndBoundLIMIDInference():
             for parent in parents:
                 #print(self.getNameFromID(parent.getParent().getNodeID()),"est parent de",self.getNameFromID(parent.getNodeID()))
                 #print("contexte :",parent.getContexte())
-                for id,value in parent.getContexte().items():
-                    print(self.getNameFromID(id),":",value)
+                # for id,value in parent.getContexte().items():
+                #     print(self.getNameFromID(id),":",value)
                 #print(self.ID.variable(parent.getNodeID()).cpt())
                 
                 self.ie.setEvidence(parent.getContexte())
@@ -182,7 +182,7 @@ class BranchAndBoundLIMIDInference():
                 try:
                     parent.setProbabilitiesPosteriori(self.ie.posterior(parent.getNodeID()))
                 except :
-                    print("Erreur dans le postérieur")
+                    print(f"Erreur dans le postérieur, noeud : {self.getNameFromID(parent.getNodeID())}")
                     break
                 self.ie.eraseAllEvidence()
                 s=0
@@ -315,6 +315,7 @@ class BranchAndBoundLIMIDInference():
                     ss=self.evaluate(self.IDRelaxe,contextetemp)
                     d.addBorneSup(key=dom,borneSup=(ss.MEU()["mean"],ss.MEU()["variance"]))
                     d.setInference(ss)
+                #print(f"borne sup {self.getNameFromID(d.getNodeID())}, d'id {d.getId_andOr()} : {d.getBorneSup()}")
         else:#si le noeud de décision est une feuille
             print("Calcul des évaluations pour les noeuds de décisions")
             for d in couche:
@@ -326,6 +327,7 @@ class BranchAndBoundLIMIDInference():
                     ss=self.evaluate(self.ID,contextetemp)
                     d.addEvaluation(key=dom,evaluation=(ss.MEU()["mean"],ss.MEU()["variance"]))
                     d.setInference(ss)
+                #print(f"Évaluation {self.getNameFromID(d.getNodeID())}, d'id {d.getId_andOr()} : {d.getEvaluation()}")
                 #on peut directement choisir la décision optimale car c'est une feuille
                 decisionOpt,valeurDecisionOptimale=self.getDecisionOpt(d)
                 d.setDecisionOptimale(decisionOpt)
@@ -426,9 +428,10 @@ class BranchAndBoundLIMIDInference():
         #Remplir les CPT
         for node in relaxedID.nodes():
             if(relaxedID.isChanceNode(node)):
-                relaxedID.cpt(node).fillWith(gum.Potential(self.ID.cpt(node)))
+                relaxedID.cpt(node).fillWith(self.ID.cpt(node))
+                relaxedID.cpt(node).normalizeAsCPT()
             if(relaxedID.isUtilityNode(node)):
-                relaxedID.utility(node).fillWith(gum.Potential(self.ID.utility(node)))
+                relaxedID.utility(node).fillWith(self.ID.utility(node))
         return relaxedID
         
 
