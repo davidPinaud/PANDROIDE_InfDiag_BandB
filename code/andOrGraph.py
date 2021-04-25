@@ -198,7 +198,6 @@ class decisionNode():
         self.contexte=contexte#key= id du noeud (dans le diagramme d'influence, 
         #possible car on regarde le contexte dans l'ID, pas dans le graphe et/ou !), value=valeur d'instanciation
         self.Id=Id
-        self.id_andOr=id_andOr
         self.parent=parent 
         self.borneSup=dict() #key= domainValue, value=(mean,variance)
         self.enfants=dict() #key=domainValue, value=child
