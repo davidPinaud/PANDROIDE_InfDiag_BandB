@@ -27,13 +27,12 @@
 \section{Introduction}
 
 \subsection{Les diagrammes d'influence (ID)}
-Les diagrammes d'influence (ID) sont des graphes acycliques dirigés présentant trois types de nœuds. 
-Les nœuds de \textit{chance}, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
+Les diagrammes d'influence (ID) sont des graphes acycliques dirigés présentant trois types de nœuds. Les nœuds de \textit{chance}, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
 Les nœuds de \textit{décision}, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds d'\textit{utilité}, illustrés graphiquement par un losange, représentent une fonction d'utilité locale exprimant la préférence.
 Lorsqu'il y a plusieurs nœuds d'utilité, l'utilité totale en est la somme (c'est une décomposition partiellement additive de l'utilité).
 \bigbreak
 Les arcs de ce graphe représentent une dépendance entre les nœuds et ont une signification différente en fonction du type de nœud à son extrémité.
-En effet, si un arc pointe vers un nœud de chance, cela représente une dépendance probabiliste; si elle pointe vers un nœud de décision, elle a un but informatif; enfin, si elle pointe vers un nœud d'utilité, elle représente une dépendance fonctionnelle.
+En effet, si un arc pointe vers un nœud de chance, cela représente une dépendance probabiliste; si il pointe vers un nœud de décision, il a un but informatif; enfin, si il pointe vers un nœud d'utilité, il représente une dépendance fonctionnelle.
 \bigbreak
 Les IDs respectent deux hypothèses, une hypothèse de régularité (les décisions sont ordonnées dans le temps) et une hypothèse dite non-oubliant (chaque décision est conditionnée par toutes les observations de décisions antérieures).
 L'ensemble des instanciations des nœuds de chance pour les décisions antérieures d'une certaine désicion est appelé l'\textit{historique}.
@@ -116,12 +115,13 @@ Pour visualiser le caractère exponentiel de la complexité en espace, voici un 
 \end{figure}
 
 On parvient à résoudre cet ID avec les méthodes exactes actuelles (une machine avec 128Go de mémoire vive) sur des instances du problèmes comprenant jusqu'à 5 étapes. Au delà de 5 étapes, la mémoire nécessaire et le temps pour trouver la solution explose. \bigbreak
-Il n'est pas envisageable de concevoir une machine capable de stocker autant de données pour résoudre de façon exacte cet ID. Il y a donc un réel besoin d'avoir une implémentation permettant de résoudre plus rapidement les ID et en nécessitant moins d'espace.
+Il n'est pas envisageable de concevoir une machine capable de stocker autant de données pour résoudre de façon exacte cet ID. Il y a donc un réel besoin d'avoir une implémentation permettant de résoudre plus rapidement les IDs et en nécessitant moins d'espace.
 \bigbreak
 \bigbreak
 
 \subsection{But du projet}
-Le but de ce projet est d'implémenter en utilisant un algorithme heuristique basé sur le Branch and Bound pour résoudre ce type de problème à grande complexité en espace et en temps. Enfin, il est envisagé l'intégrer l'algorithme dans la librairie Python PyAgrum.
+Le but de ce projet est donc d'étudier un algorithme de Branch and Bound pour résoudre des LIMIDs dans un petit graphe de recherche dans lequel différents chemins menant au même nœud représentent différentes histoires. Pour résoudre ce type de problème à grande complexité en espace et en temps, on doit tirer parti des opportunités pour le calcul de stratégie, utiliser des techniques d'inférence probabiliste et calculer les limites dans un graphe.
+Enfin, il est envisagé l'intégrer l'algorithme dans la librairie Python PyAgrum.
 
 \section{Explication de l'algorithme de Branch and Bound}
 Les LIMIDs sont résolus en trouvant une stratégie qui maximise l'utilité prévue.
