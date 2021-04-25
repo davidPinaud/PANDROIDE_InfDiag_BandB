@@ -7,6 +7,24 @@ import numpy as np
 from bandbLIMID import BranchAndBoundLIMIDInference
 
 def createIDRobot(n,xInitial,yInitial,maze):
+    """Function that allows to create the ID given as an exemple in the 2013 "solving limited memory influence diagram" paper
+
+    Parameters
+    ----------
+    n : int
+        number of stage in the exemple
+    xInitial : int
+        the x axis initial position of the robot
+    yInitial : int
+        the y axis initial position of the robot
+    maze : str
+        the maze for which we create the example, it chances the values of the CPT
+
+    Returns
+    -------
+    InfluenceDiagram
+        the example ID
+    """    
     
     """
     chances contient tous les identifiants des noeuds chance de l'ID, par convention, si l'ID est égal à
