@@ -35,9 +35,9 @@ class BranchAndBoundLIMIDInference():
         self.root=None
         self.bn=self.getBNFromID(ID)
         self.ie=gum.LazyPropagation(self.bn)
-        self.npCoupe=0
+        self.nbCoupe=0
     def getAndOrGraph(self):
-        return self.andOrGraph,self.npCoupe
+        return self.andOrGraph,self.nbCoupe
     #ids of parents of current decisionNode,chanceNode(parents[0],domain)
     def createCoucheChance(self,parents,root,contexte):
         """
@@ -99,10 +99,10 @@ class BranchAndBoundLIMIDInference():
         valeurDomRoot=root.getValeurParent()#Valeur de l'instiation de noeud décision pour root
         noeudDecision.addEvaluation(valeurDomRoot,(root.getValeur(),None))
 
-        if(root.getValeur()!=None and (noeudDecision.getValeurDecisionOptimale()==None or root.getValeur()>noeudDecision.getValeurDecisionOptimale())):
+        if(root.getValeur()!=None and (noeudDecision.getValeurDecisionOptimale()==None or root.getValeur()>noeudDecision.getValeurDecisionOptimale()[0])):
             #noeudDecision.addDoNotDevelop(noeudDecision.getDecisionOptimale())
-            noeudDecision.setDecisionOptimale=(valeurDomRoot)
-            noeudDecision.setValeurDecisionOptimale(root.getValeur())
+            noeudDecision.setDecisionOptimale(valeurDomRoot)
+            noeudDecision.setValeurDecisionOptimale([root.getValeur()])
             print("changement de valeur optimale pour le noeud ",self.getNameFromID(noeudDecision.getNodeID()),"change à ",valeurDomRoot,"pour la valeur",root.getValeur())
             # for value,child in noeudDecision.getEnfants().items():
             #     bornesSup=noeudDecision.getBorneSup()
@@ -113,7 +113,7 @@ class BranchAndBoundLIMIDInference():
             #         if bornesSup[value][0]<root.getValeur():
             #             print("on coupe") 
             #             noeudDecision.addDoNotDevelop(value)
-            #             self.npCoupe+=1
+            #             self.nbCoupe+=1
             #         else:
             #             print("on ne coupe pas")
             for DomainValue,ss in noeudDecision.getBorneSup().items():#Pour tous les frères
@@ -133,7 +133,7 @@ class BranchAndBoundLIMIDInference():
                         if(ss[0]<root.getValeur()):
                             print("on coupe")
                             noeudDecision.addDoNotDevelop(child.getContexte()[noeudDecision.getNodeID()])
-                            self.npCoupe+=1
+                            self.nbCoupe+=1
                         else:
                             print("on ne coupe pas")
         for node in couche:#On enlève de la pile ce qu'on vient d'évaluer
@@ -228,7 +228,7 @@ class BranchAndBoundLIMIDInference():
             print("####################################################################################################################")
             print("####################################################################################################################")
             print("####################################################################################################################")
-            print("Nouvelle Branche, nombre de branche au total:",nb,"nombre de branches coupées:",self.npCoupe)
+            print("Nouvelle Branche, nombre de branche au total:",nb,"nombre de branches coupées:",self.nbCoupe)
 
             #Tant que la pile n'est pas vide :
                 #prendre un noeud de décision dans la pile et l'enlever de la pile
@@ -356,6 +356,7 @@ class BranchAndBoundLIMIDInference():
         decisionOpt=None
         valeurDecisionOptimale=None
         for decision,valeurDecision in eval.items():
+            #print(f"Decision : {decision}, valeur: {valeurDecision}, decision optimal courante {decisionOpt}, valeur : {valeurDecisionOptimale}")
             if(valeurDecisionOptimale==None or valeurDecision[0]>valeurDecisionOptimale[0]):
                 valeurDecisionOptimale=valeurDecision
                 decisionOpt=decision
@@ -393,16 +394,9 @@ class BranchAndBoundLIMIDInference():
         pyAgrum.ShaferShenoyLIMIDInference
             The inference object with makeInference() already called
         """        
-        ##print(evidence)
-        #print("Evaluating :",evidence)
-        ss=gum.ShaferShenoyLIMIDInference(ID)#---------- a changer a ID tout court
+        ss=gum.ShaferShenoyLIMIDInference(ID)
         ss.setEvidence(evidence)
-        """
-            items=list(evidence.items())
-            for parentID,value in items:
-            ss.addEvidence(parentID,value)"""
         ss.makeInference()
-        ##print(ss.MEU())
         return ss
 
 

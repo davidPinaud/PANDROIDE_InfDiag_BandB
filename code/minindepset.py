@@ -346,8 +346,8 @@ def test(graph,src,dst,model=None,pdfname=None):
 
 def figure1():
   bn=gum.fastBN("X2->X3->X5->X7->X9->X10->X15->X17<-X16<-X14<-X6<-X3<-X1->X4->X5->X11->X12->X13;X6->X7;X9->X15;X10->X12;X14<-X8->X15->X18")
-  src="X3"
-  dst="X15"
+  src=bn.idFromName("X3")
+  dst=bn.idFromName("X15")
   return bn.moralizedAncestralGraph({src,dst}),src,dst,bn,"figure1"
 
 def figure6():
