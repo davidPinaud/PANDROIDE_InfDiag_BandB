@@ -165,7 +165,7 @@ class BranchAndBoundLIMIDInference():
                         if(self.verbose):
                             print("On regarde un voisin pas encore évalué (mais la borne sup est là")
                             print("Sa borne sup:",ss,"l'évaluation qu'on a :",root.getValeur(),f"root de contexte {root.getContexte()}")
-                        if(ss[0]<root.getValeur()):
+                        if(ss[0]<=root.getValeur()):
                             if(self.verbose):
                                 print("on coupe")
                             noeudDecision.addDoNotDevelop(child.getContexte()[noeudDecision.getNodeID()])
