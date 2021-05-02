@@ -24,6 +24,7 @@ bnb=BranchAndBoundLIMIDInference(ID,ordre)
 #gnb.sideBySide(*[ID.cpt(i) for i in ID.nodes() if ID.isChanceNode(i)])
 #gnb.showInfluenceDiagram(bnb.IDRelaxe)
 #%%
+bnb.setVerbose(True)
 bnb.branchAndBound()
 # %%
 import pyAgrum as gum

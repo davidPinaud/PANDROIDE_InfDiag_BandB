@@ -18,7 +18,7 @@ class BranchAndBoundLIMIDInference():
     OrdreDecision : list of decision node ids in the order in which the decisions are taken in the influence diagram
     """
     def __init__(self,ID,OrdreDecision,verbose=False):
-        """Initialiees the class
+        """Initializes the class
 
         Parameters
         ----------
@@ -227,7 +227,8 @@ class BranchAndBoundLIMIDInference():
                 try:
                     parent.setProbabilitiesPosteriori(self.ie.posterior(parent.getNodeID()))
                 except :
-                    print(f"Erreur dans le postérieur, noeud : {self.getNameFromID(parent.getNodeID())}")
+                    if(self.verbose):
+                        print(f"Erreur dans le postérieur, noeud : {self.getNameFromID(parent.getNodeID())}")
                     break
                 self.ie.eraseAllEvidence()
                 s=0

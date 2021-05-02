@@ -3,7 +3,8 @@ from pylab import *
 import pyAgrum as gum
 import sys
 import unittest
-from numpy import random
+import random
+
 #--temporaire--
 #TODO: changer l'import de bandbLIMID (il faut faire un projet python)
 sys.path.append('/Users/davidpinaud/GitHub/PANDROIDE_InfDiag_BandB/code')
@@ -27,19 +28,21 @@ class LimidTestCase(unittest.TestCase):
 
 
 
-
     
     # def test_seperating_set(self):
     #     gen=gum.BNGenerator()
     #     for n in [10,30,50,100]:
-    #         rand=random.randint(130,170+1,n)
-    #         const=[rand[i]/100*n for i in range(10)]
+    #         rand=random.sample(list(range(130,171)),n)
+    #         const=[(rand[i]/100)*n for i in range(10)]
     #         for l in range(10):
     #             bn=gen.generate(n_nodes=n,n_arcs=int(const[l]),n_modmax=4)
-    #             src,dst=random.choice(list(bn.nodes()),replace=False,size=2)
+    #             #src,dst=npRandom.choice(list(bn.nodes()),replace=False,size=2)
+    #             l=random.sample(bn.nodes(),2)
+    #             src=l[0]
+    #             dst=l[1]
     #             graph=bn.moralizedAncestralGraph({src,dst})
     #             m=MinimalDSep(graph,bn)
-    #             separatingSet=m.find(dst,src)
+    #             separatingSet=m.find(src,dst)
     #             self.assertTrue(bn.isIndependent(src,dst,list(separatingSet)))
 
         

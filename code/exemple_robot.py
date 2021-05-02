@@ -6,6 +6,52 @@ import pyAgrum.lib.notebook as gnb
 import numpy as np
 from bandbLIMID import BranchAndBoundLIMIDInference
 
+def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc:int)->gum.InfluenceDiagram:
+    """creates a random ID
+    Parameters
+    ----------
+    nbDecisionNodes : int
+        number of decision nodes
+    nbChanceNodes : int
+        number of chance nodes
+    nbUtilityNode : int
+        number of utility nodes
+    nbArc : int
+        number of arcsnodes
+    Returns
+    -------
+    gum.InfluenceDiagram
+        the random ID
+    """
+    stringID=""
+    for i in range(nbDecisionNodes):
+        #ID.addDecisionNode(gum.LabelizedVariable(aName=f"d{i}",aDesc="",nbrLabel=np.random.randint(0,6)))
+        stringID+=f"*d{i};"
+    for i in range(nbChanceNodes):
+        #ID.addChanceNode(gum.LabelizedVariable(aName=f"c{i}",aDesc="",nbrLabel=np.random.randint(0,6)))
+        stringID+=f"c{i};"
+    for i in range(nbUtilityNode):
+        #ID.addUtilityNode(gum.LabelizedVariable(aName=f"u{i}",aDesc="",nbrLabel=1))
+        stringID+=f"$u{i};"
+    for i in range(nbArc):
+        r=np.random.randint(0,4)
+        if(r==0):
+            d1=np.random.randint(0,nbDecisionNodes)
+            d2=np.random.randint(0,nbDecisionNodes)
+            stringID+=f"d{d1}->d{d2};"
+        if(r==1):
+            d=np.random.randint(0,nbDecisionNodes)
+            c=np.random.randint(0,nbChanceNodes)
+            stringID+=f"d{d}->c{c};"
+        if(r==1):
+            d=np.random.randint(0,nbDecisionNodes)
+            c=np.random.randint(0,nbChanceNodes)
+            stringID+=f"c{c}->d{d};"
+        if(r==1):
+            c1=np.random.randint(0,nbChanceNodes)
+            c2=np.random.randint(0,nbChanceNodes)
+            stringID+=f"c{c1}->c{c2};"
+    return gum.fastID(stringID)
 def createIDRobot(n,xInitial,yInitial,maze):
     """Function that allows to create the ID given as an exemple in the 2013 "solving limited memory influence diagram" paper
 
@@ -537,7 +583,7 @@ ID=createIDRobot(nbStage,xInitial,yInitial,maze)
 
 
 
-def createIDRobotRelaxe(n,xInitial,yInitial,maze):
+def createLIMIDRobot(n,xInitial,yInitial,maze):
     
     """
     permet de créer l'ID relaxé sans calculer les SIS
@@ -674,7 +720,7 @@ def createIDRobotRelaxe(n,xInitial,yInitial,maze):
                     ID.cpt(ws)[{x:h,y:j}]=[0,1]
         
 
-    #ajout potentiels des noeuds positions x y au premier stage
+    """#ajout potentiels des noeuds positions x y au premier stage
         if(i==0):
             ID.cpt(x)[xInitial]=1
             ID.cpt(y)[{x:xInitial,y:yInitial}]=1
@@ -687,7 +733,7 @@ def createIDRobotRelaxe(n,xInitial,yInitial,maze):
             remplirID(ID,y,fillY,i,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
-    casesOuPossibleAllerBas,gris)
+    casesOuPossibleAllerBas,gris)"""
 
     #Ajout des arcs entre le dernier noeud décision, les derniers noeuds chances x et y avec le noeud utilité
     xn=f"x_{n}"
@@ -703,17 +749,26 @@ def createIDRobotRelaxe(n,xInitial,yInitial,maze):
     ID.addArc(f"x_{n-1}",yn)
     ID.addArc(f"y_{n-1}",yn)
     #ajout potentiels des derniers noeuds chances et du noeud d'utilité
-    remplirID(ID,xn,fillX,n,casesOuPossibleAllerGauche,
+    """remplirID(ID,xn,fillX,n,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
     casesOuPossibleAllerBas,gris)
     remplirID(ID,yn,fillY,n,casesOuPossibleAllerGauche,
     casesOuPossibleAllerHaut,
     casesOuPossibleAllerDroite,
-    casesOuPossibleAllerBas,gris)
-    
+    casesOuPossibleAllerBas,gris)"""
+    l=[]
     ID.utility(ID.idFromName("u"))[{f"x_{n}":caseObj[0],f"y_{n}":caseObj[1]}]=1
-    
+    for k in range(n):
+        x=f"x_{k}"
+        y=f"y_{k}"
+        l.append(x)
+        l.append(y)
+    l=l+[xn,yn]
+    for node in l:
+        for i in ID.cpt(node).loopIn():
+            ID.cpt(node).set(i,np.random.rand())
+        ID.cpt(node).normalizeAsCPT()
     return ID
 
 
