@@ -11,7 +11,7 @@ Encadré par M.Pierre-Henri Wuillemin.
 
 ## DOCUMENTATION
 Site de la documentation :  
-https://davidpinaud.github.io/PANDROIDE_InfDiag_BandB/
+https://davidpinaud.github.io/PANDROIDE_InfDiag_BandB/  
 Version PDF disponible sur  
 https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation
 
