@@ -34,11 +34,11 @@
 
 \subsection{Les diagrammes d'influence (ID)}
 Un diagramme d'influence est une représentation graphique et mathématique compacte d'une situation de décision. Il s'agit d'une généralisation d'un réseau bayésien, dans lequel non seulement les problèmes d'inférence probabiliste, mais aussi les problèmes de prise de décision peuvent être modélisés et résolus. 
-Le diagramme d'influence est une bonne alternative aux arbres de décision qui peuvent devenir extrêmement complexes. En effet, ce sont des arbres de décision symétriques plus compacts. On se place dans ce projet dans le cadre du maximum d'utilité.
+Le diagramme d'influence est une bonne alternative aux arbres de décision qui peuvent devenir extrêmement complexes. En effet, elles permettent de représenter des arbres de décision symétriques de façon compacte. On se place dans ce projet dans le cadre du maximum d'utilité.
 
-Par exemple, considérons une décision concernant l'activité (de domaine : sport en plein air et sport en intérieur) prise selon la prévision météorologique qui dépend, elle, des conditions réelles (leurs domaines est : pluvieux ou ensoleillé). Le diagramme d'influence ci-dessous représente cette situation et est équivalent à l'arbre de décision de la figure 1.
+Considérons une situation de décision concernant le choix d'une activité (de domaine : sport en plein air ou sport en intérieur) prise selon la prévision météorologique qui dépend, elle, des conditions réelles (leurs domaines est : pluvieux ou ensoleillé). Le diagramme d'influence 1 (a) ci-dessous permet de représenter cette situation et est équivalent à l'arbre de décision de la figure 1 (b).
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
@@ -56,8 +56,8 @@ Par exemple, considérons une décision concernant l'activité (de domaine : spo
 \label{fig:test}
 \end{figure}
 
-Les diagrammes d'influence (ID) sont des graphes dirigés acycliques présentant trois types de nœuds. Les nœuds de \textit{chance}, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
-Les nœuds de \textit{décision}, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds d'\textit{utilité}, illustrés graphiquement par un losange, représentent une fonction d'utilité locale exprimant la préférence.
+Plus précisément, les diagrammes d'influence (ID) sont des graphes dirigés acycliques présentant trois types de nœuds. Les nœuds de \textit{chance}, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
+Les nœuds de \textit{décision}, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds d'\textit{utilité}, illustrés graphiquement par un octogone ou un hexagone, représentent une fonction d'utilité locale exprimant la préférence.
 Lorsqu'il y a plusieurs nœuds d'utilité, l'utilité totale en est la somme (c'est une décomposition partiellement additive de l'utilité).
 
 Les arcs de ce graphe représentent une dépendance entre les nœuds et ont une signification différente en fonction du type de nœud à son extrémité.
@@ -184,7 +184,7 @@ Les nœuds ET sont alors des variables aléatoires correspondant aux nœuds chan
 
 Durant le parcours en profondeur, un chemin racine-feuille représente une instance des nœuds d'information et de décision. Ces nœuds sont générés à la volée, ce qui permet de limiter l'utilisation de la mémoire. Les bornes supérieures et les évaluations des solutions candidates sont aussi calculées à la volée, permettant d'élaguer les chemins non prometteurs. Les calculs des bornes supérieures sont faites sur un ID relaxé, dont la construction est détaillée plus tard dans le rapport.
 
-Il faut souligner que cet algorithme n'applique pas classiquement le Branch and Bound comme dans le problème du sac à dos par exemple, où les nœuds sont des sacs avec plus ou moins d'objets, et dont la branche peut être élaguée si une solution courante est meilleure que la borne supérieure de cette branche. 
+Il faut souligner que cet algorithme n'applique pas classiquement le Branch and Bound comme dans le problème du sac à dos par exemple (où les nœuds sont des sacs avec plus ou moins d'objets)dont une branche peut être élaguée si une solution courante est meilleure que la borne supérieure de cette branche. 
 
 En effet, l'élagage se produit uniquement sur les branches sortant de nœuds de décision (ceux qui ne sont pas des feuilles) et non tous les nœuds. L'arbre se compose  aussi de nœuds chances mais on ne peut pas élaguer leurs branches car ces nœuds construisent toutes les instances possibles du LIMID. On élague donc seulement sur les branches sortant des nœuds de décision car leurs évaluations sont commensurables puisqu'elles ont le même contexte. En contrepartie, un nœud de décision ne peut pas faire élaguer une branche d'un autre nœud de décision car elles ne possèdent pas le même contexte : si une branche d'un nœud de décision est élaguée car un autre nœud de décision est mieux évaluée, c'est une alternative du LIMID qu'on n'exploreras pas et donc on ne va pas résoudre entièrement le LIMID.
 
@@ -192,7 +192,7 @@ En effet, l'élagage se produit uniquement sur les branches sortant de nœuds de
 \subsection{Implémentation des arbres ET/OU}
 Les implémentations actuelles des arbres ET/OU ne sont pas satisfaisantes au regard des besoins de l'algorithme, nous avons donc implémenté notre version de l'arbre. Cette implémentation contient trois classes : une classe modélisant un graphe ET/OU, une classe modélisant les nœuds ET (nœuds de chance) et enfin une classe modélisant les nœuds OU (nœuds de décision).
 
-Dans l'arbre ET/OU, un nœud de décision est crée pour chaque alternative d'instanciation des nœuds chances parents de ce nœud de décision, et cela pour tous les nœuds de décision différents dans l'ID. C'est-à-dire que chaque nœud de décision a un contexte de nœuds chances instancié correspondant. Notre arbre se structure donc en couche, chaque couche étant constituée du même nœud de décision plusieurs fois (une fois par contexte possible) précédé de ses nœuds parents chance instanciés. 
+Dans l'arbre ET/OU, un noeud OU (décision) est créé pour chaque alternative d'instanciation des noeuds chances parents du nœud de décision qui correspond au noeud OU, et cela pour tous les nœuds de décision différents dans l'ID. C'est-à-dire que chaque nœud de décision dans l'ID a plusieurs contextes de nœuds chances possibles et tous sont représentés dans le graphe ET/OU par un noeud OU correspondant, à la suite du chemin des noeuds ET correspondant au contexte. Notre arbre se structure donc en couche, chaque couche étant constituée du même nœud de décision plusieurs fois (une fois par contexte possible) précédé de ses nœuds parents chance instanciés. 
 
 Ensuite, chaque nœud de décision va construire à la volée des branches au nombre égal, au maximum, au nombre de possibilités de décision de ce nœud (au maximum car il peut y avoir élagage). Ces fils vont être structurés de la même manière que précédemment en créant tous les contextes possibles pour le prochain nœud de décision. Soulignons encore qu'on ne peut ainsi pas élaguer entre nœuds de couches différentes mais seulement entre fils d'un même nœud de décision.
 
@@ -281,7 +281,7 @@ La performance en espace de notre algorithme dépend largement de la structure d
 \label{fig:test4}
 \end{figure}
 
-Voila la performance en espace lorsqu'aucun élagage n'est fait, c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort. La performance en espace lorsqu'il y a élagage peut théoriquement diminuer de façon drastique le nombre de branches explorées. Or, nous ne disposons pas de moyen pour calculer une bonne relaxation de LIMID, nous permettant d'avoir une borne supérieure informative.
+Voilà la performance en espace lorsqu'aucun élagage n'est fait, c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort. La performance en espace lorsqu'il y a élagage peut théoriquement diminuer de façon drastique le nombre de branches explorées. Or, nous ne disposons pas de moyen pour calculer une bonne relaxation de LIMID, nous permettant d'avoir une borne supérieure informative.
 
 Nous avons testé un exemple (très simple) ou un élagage a pu être fait :
 \begin{figure}[h]
@@ -303,13 +303,14 @@ Nous avons testé un exemple (très simple) ou un élagage a pu être fait :
 \end{figure}
 
 En effet, voici l'arbre ET/OU complet si aucun élagage n'est fait :
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=1.\linewidth]{docs/ressources_rapport/arbreETOUComplet.png}
  \caption{Arbre ET/OU complet}
 \end{figure}
 
-Une branche des deux noeuds $D_0$ est élagué, ce qui nous fait économise la construction de 6 noeuds, ce qui représente une économie d'espace de $40\%$ et nous libère de $4\times 2=8$ calculs d'inférence exacte (fait sur les noeuds $D_1$), ce qui représente $50\%$ des calculs d'inférences et de deux remontées de sous arbres (qui économise aussi du calcul car on a plus à calculer les valeurs des noeuds chances $X_1$ avec les probabilités à posteriori).
+Une branche des deux nœuds $D_0$ est élaguée, ce qui nous fait économiser la construction de 6 nœuds, ce qui représente une économie d'espace de $40\%$ et nous libère de $4\times 2=8$ calculs d'inférence exacte (fait sur les nœuds $D_1$), ce qui représente $50\%$ des calculs d'inférence et de deux remontées de sous-arbres (qui économise aussi du calcul car on n'a plus à calculer les valeurs des nœuds chances $X_1$ avec les probabilités à posteriori).
+
 \section{Intégration possible de l'algorithme dans PyAgrum}
 % *vérifier la compatibilité de l'inférence avec les inférences existantes
 % *vérifier la compatibilité avec notebooks
