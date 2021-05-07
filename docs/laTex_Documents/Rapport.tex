@@ -15,6 +15,7 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage[affil-it]{authblk}
+\usepackage{pdfpages}
 \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
 \title{Projet P-A.N.D.R.O.I.D.E.\\
 \bigbreak\textbf{Branch and Bound pour la résolution de diagrammes d'influence}}
@@ -252,7 +253,7 @@ Si, par contre, il n'y a qu'un seul nœud de décision, la première couche est 
 Nous avons écrit plusieurs test unitaires, notamment pour tester l'algorithme de calcul du SIS. Celui-ci calcule en réalité l'ensemble séparant minimal dans un réseau bayésien. Nous avons donc testé sur des réseaux bayésiens générés aléatoirement si l'ensemble séparant minimal de deux nœuds tirés au hasard font bien de ces deux nœuds des nœuds indépendants. Nous avons aussi testé le branch and bound sur des IDs aléatoires afin de vérifier qu'il prenne en charge tous types de diagrammes.
 
 \subsection{Documentation}
-Une documentation des classes et des méthodes est disponible, elle a été rédigée en anglais dans le style numpy.
+Une documentation des classes et des méthodes est disponible en annexe, elle a été rédigée en anglais dans le style numpy.
 \section{Évaluation de l'algorithme Branch and Bound}
 \subsection{Performances en temps}
 Sur l'exemple de la figure 2, l'ID relaxé construit avec les SIS était mauvais et donnais des valeurs (les bornes supérieures) de MEU très élevées comparés aux évaluations des solutions candidates. Il n'y avait donc pas d'élagage possible et l'exécution était très longue : 25 minutes comparé à moins d'une seconde avec la méthode classique.
@@ -465,5 +466,6 @@ L'arbre (classe andOrGraph) a pour attributs :
 \item Une liste de nœuds de décision.
 \item Un identifiant au sein de l'arbre ET/OU.
 \end{itemize}
-
+\subsection{Documentation version PDF (voir page suivante)}
+\includepdf[pages=-]{../documentation/doc_pdf/documentation.pdf}
 \end{document}
