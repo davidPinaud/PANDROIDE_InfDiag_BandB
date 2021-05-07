@@ -10,7 +10,9 @@ Encadré par M.Pierre-Henri Wuillemin.
 * Emilie BIEGAS
 
 ## DOCUMENTATION
-PDF ou HTML disponible sur  
+Site de la documentation :  
+https://davidpinaud.github.io/PANDROIDE_InfDiag_BandB/  
+Version PDF disponible sur  
 https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation
 
 ## RAPPORT SUR LE PROJET (fusionné avec le cahier des charges)
