@@ -1,0 +1,1399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>PANDROIDE Branch and bound method for LIMID Inference 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> PANDROIDE Branch and bound method for LIMID Inference
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">PANDROIDE Branch and bound method for LIMID Inference</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>PANDROIDE Branch and bound method for LIMID Inference 1.0.0 documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="documentation-for-the-pandroide-project">
+<h1>Documentation for the PANDROIDE Project<a class="headerlink" href="#documentation-for-the-pandroide-project" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-bandbLIMID"></span><p>File containing a class that allows the encapsulation of an influence diagram and its resolution by a branch and bound method</p>
+<dl class="py class">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">bandbLIMID.</span></code><code class="sig-name descname"><span class="pre">BranchAndBoundLIMIDInference</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OrdreDecision</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that allows the encapsulation of an influence diagram and its resolution by a branch and bound method</p>
+<dl class="py attribute">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.ID">
+<code class="sig-name descname"><span class="pre">ID</span></code><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>The influence diagram to encapsulate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pyAgrum.InfluenceDiagram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.OrdreDecision">
+<code class="sig-name descname"><span class="pre">OrdreDecision</span></code><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.OrdreDecision" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of decision node ids in the order in which the decisions are taken in the influence diagram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.SIS">
+<code class="sig-name descname"><span class="pre">SIS</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisionNodeID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.SIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns the Sufficient information set for a given decision node and influence diagram</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decisioNodeID</strong> (<em>int</em>) – the id of the decision node</p></li>
+<li><p><strong>ID</strong> (<em>pyAgrum.InfluenceDiagram</em>) – the ID on which to base the creation of the graph</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>SIS</strong> – The sufficient information set of the given decision node in the given influence diagram</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>set of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.addCouche">
+<code class="sig-name descname"><span class="pre">addCouche</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents_chanceID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.addCouche" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates a new branch given a root node and the index of the decision node that is the bottom layer to be</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>int</em>) – index of the decision node that is going to be the bottom layer in the branch</p></li>
+<li><p><strong>root</strong> (<a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode"><em>chanceNode</em></a>) – the node that serves as a root of the subtree</p></li>
+<li><p><strong>parents_chanceID</strong> (<em>list</em>) – list of the parents of the decision node, used to build the tree before adding the decisions nodes as bottom layer</p></li>
+<li><p><strong>pile</strong> (<em>list</em>) – the list of decision nodes still to be processed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the list of nodes that constitutes the new branch</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.branchAndBound">
+<code class="sig-name descname"><span class="pre">branchAndBound</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.branchAndBound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that executes the branch and bound algorithm.
+It generated the and or graph on the fly and calculates the MEU for every decision nodes/chance nodes for every instanciation possible</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.checkNameTaken">
+<code class="sig-name descname"><span class="pre">checkNameTaken</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.checkNameTaken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function for viewAndOrGraphNoCuts, checks if a name is taken in the BN (we need it because the and or tree has a lot of nodes with the same name)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bn</strong> (<em>pyAgrum.BayesNet</em>) – the bn to check</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – the name to check</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>true if the name is in the bn</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.createCoucheChance">
+<code class="sig-name descname"><span class="pre">createCoucheChance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contexte</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.createCoucheChance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that builds a new branch by adding recursively layers of chance nodes (only, decision nodes are added with the createCoucheDecision function)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parents</strong> (<em>list</em>) – the set of parents of the decision node for which we are branching (not the one from where we branch but the ones that will be created)</p></li>
+<li><p><strong>root</strong> (<a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode"><em>chanceNode</em></a>) – the chance node that is the root of the subtree</p></li>
+<li><p><strong>contexte</strong> (<em>dict</em>) – the instanciation path of the root</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.createCoucheDecision">
+<code class="sig-name descname"><span class="pre">createCoucheDecision</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decisionNodeID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contexte</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">couche</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.createCoucheDecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that builds the layer of decision node at the base of a new branch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode"><em>chanceNode</em></a>) – the root of the subtree</p></li>
+<li><p><strong>decisionNodeID</strong> (<em>int</em>) – the id of the decision node (in the ID) for which we must build the layer</p></li>
+<li><p><strong>contexte</strong> (<em>dict</em>) – the instanciation path of a decision node</p></li>
+<li><p><strong>pile</strong> (<em>list</em>) – the list of decision nodes to expand during the branch and bound, new decisions nodes are added as they are created</p></li>
+<li><p><strong>couche</strong> (<em>list</em>) – the branch for which we must create the layer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the branch but now with a layer of decision nodes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.createRelaxation">
+<code class="sig-name descname"><span class="pre">createRelaxation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.createRelaxation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates the relaxation of the encapsulated influence diagram by adding informations to the ID through the
+SIS and removing non-required arcs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The relaxed influence diagram</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pyAgrum.InfluenceDiagram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.createRest">
+<code class="sig-name descname"><span class="pre">createRest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decisionNodeCreated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.createRest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that creates the rest of the BN for viewAndOrGraphNoCuts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bn</strong> (<em>pyAgrum.BayesNet</em>) – the BN</p></li>
+<li><p><strong>decisionNodeCreated</strong> (<em>list</em>) – the decision created in a layer</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – the index of the current decision node that is being developped</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.evaluate">
+<code class="sig-name descname"><span class="pre">evaluate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that makes the inference over an ID given evidence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ID</strong> (<em>pyAgrum.InfluenceDiagram</em>) – The influence diagram to evaluate</p></li>
+<li><p><strong>evidence</strong> (<em>set of {key:nodeID</em><em>,</em><em>value:probability}</em><em> (</em><em>cpt</em><em>)</em>) – the evidence to set in the inference</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The inference object with makeInference() already called</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pyAgrum.ShaferShenoyLIMIDInference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.findCoucheDeNoeudDeDecision">
+<code class="sig-name descname"><span class="pre">findCoucheDeNoeudDeDecision</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisionNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">couches</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.findCoucheDeNoeudDeDecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function that allows to find the branch of a certain decision node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decisionNode</strong> (<a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode"><em>decisionNode</em></a>) – the decision node for which we want to find the branch</p></li>
+<li><p><strong>couches</strong> (<em>list</em>) – the list of all the branches in the and/or tree</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the branch where the decision node is</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.findLigneAuDessus">
+<code class="sig-name descname"><span class="pre">findLigneAuDessus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ligne</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.findLigneAuDessus" title="Permalink to this definition">¶</a></dt>
+<dd><p>function that allows to find the layer above the layer “ligne” in a branch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ligne</strong> (<em>list</em>) – the layer of nodes (chance of decision nodes) for which we wish to find the layer above</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the layer of nodes above</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.fromIDToMoralizedAncestral">
+<code class="sig-name descname"><span class="pre">fromIDToMoralizedAncestral</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisionNodeID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.fromIDToMoralizedAncestral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that, given an influence diagram and a decision node id, creates the corresponding
+moralized ancestral undirected graph and adds a source and a well node. It is used to generate a graph on
+which the SIS algorithm can work to return the SIS of the decision node given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decisioNodeID</strong> (<em>int</em>) – the id of the decision node</p></li>
+<li><p><strong>ID</strong> (<em>pyAgrum.InfluenceDiagram</em>) – the ID on which to base the creation of the graph</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>MoralizedAncestral</strong> (<em>pyAgrum.UndiGraph</em>) – the moralized ancestral undirected graph generated</p></li>
+<li><p><strong>alphaXid,BetaYid</strong> (<em>int</em>) – the source and well added to the graph</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getBNFromID">
+<code class="sig-name descname"><span class="pre">getBNFromID</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idiag</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyAgrum.pyAgrum.InfluenceDiagram</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getBNFromID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that gives us the bayesian network for finding posterior probability when
+doing the backwards inductio, part of the branch and bound</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idiag</strong> (<em>pyAgrum.InfluenceDiagram</em>) – the ID for which we want the bayesian network</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the bayesian network generated</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pyAgrum.BayesNet()</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getDecisionOpt">
+<code class="sig-name descname"><span class="pre">getDecisionOpt</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisionNode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getDecisionOpt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that, given a decisionNode from the And/Or Graph, returns the optimal decision and its MEU value.
+It is ONLY used internally and is part of the branch and bound algorithm. It is used only on
+decision nodes that are leaf nodes in the And/Or Graph that are already evaluated. Do NOT use this function
+to get the optimal decision of a decision Node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>decisionNode</strong> (<a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode"><em>andOrGraph.decisionNode</em></a>) – the decision node, part of the And/Or Graph</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>decisionOpt</strong> (<em>Object</em>) – The optimum decision</p></li>
+<li><p><strong>valeurDecisionOptimale</strong> (<em>float</em>) – the value of the optimal decision</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getDomain">
+<code class="sig-name descname"><span class="pre">getDomain</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NodeID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns the domain in which this node can instanciate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>NodeID</strong> (<em>int</em>) – the id of the node</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Domain of the node</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getNameFromID">
+<code class="sig-name descname"><span class="pre">getNameFromID</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idNode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getNameFromID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns the name of a node in the ID from its id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idNode</strong> (<em>int</em>) – the id of the node</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the name of the node</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getNamesFromID">
+<code class="sig-name descname"><span class="pre">getNamesFromID</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listId</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getNamesFromID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns the name of nodes in the influence diagram given their ids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>listId</strong> (<em>list of int</em>) – list of the ids of the node</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of the names of the nodes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getParents_chanceID">
+<code class="sig-name descname"><span class="pre">getParents_chanceID</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisionNodeID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodeADevID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getParents_chanceID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns the parents of a decision node (that is the leaf the branch we want to create)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decisionNodeID</strong> (<em>int</em>) – the id of the decision node in the and or graph</p></li>
+<li><p><strong>nodeADevID</strong> (<em>int</em>) – the id of the decision node in the ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of parents of the decision node</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.getSIS">
+<code class="sig-name descname"><span class="pre">getSIS</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisioNodeID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.getSIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns the Sufficient Information Set of a decision node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>decisioNodeID</strong> (<em>int</em>) – the id of the decision node</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the Sufficient Information Set of the decision Node</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>set of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.induction">
+<code class="sig-name descname"><span class="pre">induction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ligne</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.induction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that allows to go up through a layer in a branch given a layer ligne. It calculates the values of the chance nodes when the layer consist of chance nodes and the MEU of decision nodes when it consist decision node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ligne</strong> (<em>list</em>) – layer in which we want to start the going up process</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the layer above the layer ligne</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.inductionArriere">
+<code class="sig-name descname"><span class="pre">inductionArriere</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">couche</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">couches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexPile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.inductionArriere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that is called when the algorithm arrives at decision nodes that are leafs in the and/or graph, it allows to go back up through the branch while computing the values of the chance nodes and the MEU of the decision nodes
+It also prunes branches that upper bound are smaller than the best evaluation. It is a recursive function that uses the induction function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>couche</strong> (<em>list</em>) – the branch we wish to go up through</p></li>
+<li><p><strong>pile</strong> (<em>list</em>) – the list of decisions nodes to expand</p></li>
+<li><p><strong>couches</strong> (<em>list</em>) – the list of branches present in the and/or tree</p></li>
+<li><p><strong>indexPile</strong> (<em>int</em>) – the next decision node to expand</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if the algorithm reaches the root of the and or graph, it returns None and the algoritm has finished, otherwise, it returns an int that is the index of next decision node to expand in the pile</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.isAllDecisionNodeProcessed">
+<code class="sig-name descname"><span class="pre">isAllDecisionNodeProcessed</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">couches</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.isAllDecisionNodeProcessed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that checks if all the decision nodes are processed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>couches</strong> (<em>list of list</em>) – list of all the branches in the and or graph</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>true if all the decision nodes are processed, false otherwise</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.setVerbose">
+<code class="sig-name descname"><span class="pre">setVerbose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.setVerbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that allows to set the verbose parameter, true will print the trace, false will not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>bool</em>) – the parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.viewAndOrGraph">
+<code class="sig-name descname"><span class="pre">viewAndOrGraph</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.viewAndOrGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a BN that allows to visualize the and or graph (without branches that have been cut)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the BN</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>BayesNet</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.viewAndOrGraphNoCuts">
+<code class="sig-name descname"><span class="pre">viewAndOrGraphNoCuts</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.viewAndOrGraphNoCuts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a BN that allows to visualize the and or graph (without branches that have been cut).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the BN</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>BayesNet</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.viewCreateCoucheChance">
+<code class="sig-name descname"><span class="pre">viewCreateCoucheChance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idNodeIDParent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idNodeBNParent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.viewCreateCoucheChance" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a layer of chance node for viewAndOrGraphNoCuts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bn</strong> (<em>pyAgrum.BayesNet</em>) – the bn in which to add the nodes</p></li>
+<li><p><strong>s</strong> (<em>str</em>) – utility string to modulate the name of the nodes (prevent reuse)</p></li>
+<li><p><strong>parents</strong> (<em>list</em>) – list of chance nodes that are parents of the decision node</p></li>
+<li><p><strong>idNodeIDParent</strong> (<em>int</em>) – id in the influence diagram of the parent of the chance node that is being developped</p></li>
+<li><p><strong>idNodeBNParent</strong> (<em>int</em>) – id in the bayesian network of the parent of the chance node that is being developped</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="bandbLIMID.BranchAndBoundLIMIDInference.viewCreateDecisionCouche">
+<code class="sig-name descname"><span class="pre">viewCreateDecisionCouche</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decisionNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bandbLIMID.BranchAndBoundLIMIDInference.viewCreateDecisionCouche" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a layer of decision node for viewAndOrGraphNoCuts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bn</strong> (<em>pyAgrum.BayesNet</em>) – the bn in which to add the nodes</p></li>
+<li><p><strong>decisionNode</strong> (<em>int</em>) – the id of the decision node to add in the layer</p></li>
+<li><p><strong>root</strong> (<em>int</em>) – the id of the root of the layer (a chance node)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of ids of the decision node in the bn</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-andOrGraph"></span><dl class="py class">
+<dt id="andOrGraph.andOrGraph">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">andOrGraph.</span></code><code class="sig-name descname"><span class="pre">andOrGraph</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that emulates an And/Or Graph (in reality its a tree)
+.. attribute:: ID</p>
+<blockquote>
+<div><p>The influence diagram we use for the And/Or Graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>pyAgrum.InfluenceDiagram</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt id="andOrGraph.andOrGraph.root">
+<code class="sig-name descname"><span class="pre">root</span></code><a class="headerlink" href="#andOrGraph.andOrGraph.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>the root of the And/Or Graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode">andOrGraph.chanceNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.andOrGraph.noeuds">
+<code class="sig-name descname"><span class="pre">noeuds</span></code><a class="headerlink" href="#andOrGraph.andOrGraph.noeuds" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of nodes in the graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of andOrGraph.chanceNode and andOrGraph.decisionNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.andOrGraph.noeudsChance">
+<code class="sig-name descname"><span class="pre">noeudsChance</span></code><a class="headerlink" href="#andOrGraph.andOrGraph.noeudsChance" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of andOrGraph.chanceNode in the graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of andOrGraph.chanceNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.andOrGraph.noeudsDecision">
+<code class="sig-name descname"><span class="pre">noeudsDecision</span></code><a class="headerlink" href="#andOrGraph.andOrGraph.noeudsDecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of andOrGraph.decisionNode in the graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of andOrGraph.decisionNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.andOrGraph.IDNoeudDecisionAndOr">
+<code class="sig-name descname"><span class="pre">IDNoeudDecisionAndOr</span></code><a class="headerlink" href="#andOrGraph.andOrGraph.IDNoeudDecisionAndOr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integer that serves to give ids to the decision nodes (different to their influence ids)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.addNoeudChance">
+<code class="sig-name descname"><span class="pre">addNoeudChance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noeud</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.addNoeudChance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that adds a andOrGraph.chanceNode to the And/Or Graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>noeud</strong> (<a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode"><em>andOrGraph.chanceNode</em></a>) – the chance node to add</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.addNoeudDecision">
+<code class="sig-name descname"><span class="pre">addNoeudDecision</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noeud</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.addNoeudDecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that adds a andOrGraph.decisionNode to the And/Or Graph
+It also sets its And/Or Graph id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>noeud</strong> (<a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode"><em>andOrGraph.decisionNode</em></a>) – the decision node to add</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getID">
+<code class="sig-name descname"><span class="pre">getID</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the ID attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The influence diagram we use for the And/Or Graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pyAgrum.InfluenceDiagram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getIDNoeudAndOr">
+<code class="sig-name descname"><span class="pre">getIDNoeudAndOr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getIDNoeudAndOr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the IDNoeudAndOr attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Integer that serves to give ids to the decision nodes (different to their influence ids)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getNoeud">
+<code class="sig-name descname"><span class="pre">getNoeud</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getNoeud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function that returns all the And/Or Graph nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The list of nodes in the graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of andOrGraph.chanceNode and andOrGraph.decisionNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getNoeudChance">
+<code class="sig-name descname"><span class="pre">getNoeudChance</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getNoeudChance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the noeudsChance attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The list of andOrGraph.chanceNode in the graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of andOrGraph.chanceNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getNoeudDecision">
+<code class="sig-name descname"><span class="pre">getNoeudDecision</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getNoeudDecision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the ID attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The influence diagram we use for the And/Or Graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pyAgrum.InfluenceDiagram</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getNoeudDecisionAndOrIDs">
+<code class="sig-name descname"><span class="pre">getNoeudDecisionAndOrIDs</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getNoeudDecisionAndOrIDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function that returns all the And/Or Graph ids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The ids of the nodes in the And/Or Graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getNoeudWithIdAndOr">
+<code class="sig-name descname"><span class="pre">getNoeudWithIdAndOr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_andOr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getNoeudWithIdAndOr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for that returns a decision node given its And/Or Graph id (not the Influence Diagram one)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the decision node corresponding to the given id</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode">andOrGraph.decisionNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.getRoot">
+<code class="sig-name descname"><span class="pre">getRoot</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.getRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the root attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the root of the And/Or Graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode">andOrGraph.chanceNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.andOrGraph.setRoot">
+<code class="sig-name descname"><span class="pre">setRoot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.andOrGraph.setRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setter function for the root attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>root</strong> (<a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode"><em>andOrGraph.chanceNode</em></a>) – the root of the And/Or Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="andOrGraph.chanceNode">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">andOrGraph.</span></code><code class="sig-name descname"><span class="pre">chanceNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valeurParent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contexte</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_andOr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>AND node for the And/Or Graph
+.. attribute:: Id</p>
+<blockquote>
+<div><p>the id of this node in the corresponding influence Diagram</p>
+<dl class="field-list simple">
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.support">
+<code class="sig-name descname"><span class="pre">support</span></code><a class="headerlink" href="#andOrGraph.chanceNode.support" title="Permalink to this definition">¶</a></dt>
+<dd><p>the domain of this node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.valeur">
+<code class="sig-name descname"><span class="pre">valeur</span></code><a class="headerlink" href="#andOrGraph.chanceNode.valeur" title="Permalink to this definition">¶</a></dt>
+<dd><p>the value of this node calculated during the induction process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.parent">
+<code class="sig-name descname"><span class="pre">parent</span></code><a class="headerlink" href="#andOrGraph.chanceNode.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>the parent of this node in the andOrGraph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode">chanceNode</a> or <a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode">decisionNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.probabilitiesPosteriori">
+<code class="sig-name descname"><span class="pre">probabilitiesPosteriori</span></code><a class="headerlink" href="#andOrGraph.chanceNode.probabilitiesPosteriori" title="Permalink to this definition">¶</a></dt>
+<dd><p>The posterior probabilities calculated during the induction process ; key=a domainValue of this node value: a float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.contexte">
+<code class="sig-name descname"><span class="pre">contexte</span></code><a class="headerlink" href="#andOrGraph.chanceNode.contexte" title="Permalink to this definition">¶</a></dt>
+<dd><p>The instanciation context of this node ; key = id of a node in the influence diagram, value = the instanciation value of said node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.id_andOr">
+<code class="sig-name descname"><span class="pre">id_andOr</span></code><a class="headerlink" href="#andOrGraph.chanceNode.id_andOr" title="Permalink to this definition">¶</a></dt>
+<dd><p>the id of this node in the andOrGraph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.chanceNode.childs">
+<code class="sig-name descname"><span class="pre">childs</span></code><a class="headerlink" href="#andOrGraph.chanceNode.childs" title="Permalink to this definition">¶</a></dt>
+<dd><p>children of this node ; key=domainValue, value=chanceNode or decisionNode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getChilds">
+<code class="sig-name descname"><span class="pre">getChilds</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getChilds" title="Permalink to this definition">¶</a></dt>
+<dd><p>childs of the node in the And/Or Graph
+:returns: key=domainValue, value=chanceNode or decisionNode
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getContexte">
+<code class="sig-name descname"><span class="pre">getContexte</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getContexte" title="Permalink to this definition">¶</a></dt>
+<dd><p>The instanciation context of this node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key = id of a node in the influence diagram, value = the instanciation value of said node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getId_andOr">
+<code class="sig-name descname"><span class="pre">getId_andOr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getId_andOr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the id of the node in the AND/OR Graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getNodeID">
+<code class="sig-name descname"><span class="pre">getNodeID</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getNodeID" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the id of the node in the influence diagram</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getParent">
+<code class="sig-name descname"><span class="pre">getParent</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>parent of the node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the parent of the node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode">chanceNode</a> or <a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode">decisionNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getProbabilitiesPosteriori">
+<code class="sig-name descname"><span class="pre">getProbabilitiesPosteriori</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getProbabilitiesPosteriori" title="Permalink to this definition">¶</a></dt>
+<dd><p>The posterior probabilities calculated during the induction process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key=a domainValue of this node value: a float</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getSupport">
+<code class="sig-name descname"><span class="pre">getSupport</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getSupport" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>domain of the node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.chanceNode.getValeur">
+<code class="sig-name descname"><span class="pre">getValeur</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.chanceNode.getValeur" title="Permalink to this definition">¶</a></dt>
+<dd><p>the value of the chance node calculated in the induction process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>value of the chance node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="andOrGraph.decisionNode">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">andOrGraph.</span></code><code class="sig-name descname"><span class="pre">decisionNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contexte</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_andOr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>OR node for the And/Or Graph
+.. attribute:: Id</p>
+<blockquote>
+<div><p>the id of this node in the corresponding influence Diagram</p>
+<dl class="field-list simple">
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.support">
+<code class="sig-name descname"><span class="pre">support</span></code><a class="headerlink" href="#andOrGraph.decisionNode.support" title="Permalink to this definition">¶</a></dt>
+<dd><p>the domain of this node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.decisionOptimale">
+<code class="sig-name descname"><span class="pre">decisionOptimale</span></code><a class="headerlink" href="#andOrGraph.decisionNode.decisionOptimale" title="Permalink to this definition">¶</a></dt>
+<dd><p>the optimal decision of this node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.ValeurDecisionOptimale">
+<code class="sig-name descname"><span class="pre">ValeurDecisionOptimale</span></code><a class="headerlink" href="#andOrGraph.decisionNode.ValeurDecisionOptimale" title="Permalink to this definition">¶</a></dt>
+<dd><p>the value of the optimal decision of this node calculated during the induction process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.parent">
+<code class="sig-name descname"><span class="pre">parent</span></code><a class="headerlink" href="#andOrGraph.decisionNode.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>the parent of this node in the andOrGraph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode">chanceNode</a> or <a class="reference internal" href="#andOrGraph.decisionNode" title="andOrGraph.decisionNode">decisionNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.contexte">
+<code class="sig-name descname"><span class="pre">contexte</span></code><a class="headerlink" href="#andOrGraph.decisionNode.contexte" title="Permalink to this definition">¶</a></dt>
+<dd><p>The instanciation context of this node ; key = id of a node in the influence diagram, value = the instanciation value of said node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.id_andOr">
+<code class="sig-name descname"><span class="pre">id_andOr</span></code><a class="headerlink" href="#andOrGraph.decisionNode.id_andOr" title="Permalink to this definition">¶</a></dt>
+<dd><p>the id of this node in the andOrGraph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.doNotDevelop">
+<code class="sig-name descname"><span class="pre">doNotDevelop</span></code><a class="headerlink" href="#andOrGraph.decisionNode.doNotDevelop" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of domain values that should not be developped (its upper bound is smaller than the evaluation of another branch corresponding to a domain value of this node)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.inference">
+<code class="sig-name descname"><span class="pre">inference</span></code><a class="headerlink" href="#andOrGraph.decisionNode.inference" title="Permalink to this definition">¶</a></dt>
+<dd><p>the inference object on which we used to calculated the value of the node (only if this node is a leaf)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pyAgrum.ShaferShenoyLIMIDInference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.enfants">
+<code class="sig-name descname"><span class="pre">enfants</span></code><a class="headerlink" href="#andOrGraph.decisionNode.enfants" title="Permalink to this definition">¶</a></dt>
+<dd><p>children of this node ; key=domainValue, value=chanceNode or decisionNode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.evaluation">
+<code class="sig-name descname"><span class="pre">evaluation</span></code><a class="headerlink" href="#andOrGraph.decisionNode.evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluation of this node ; key=domainValue, value=(mean,variance)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="andOrGraph.decisionNode.borneSup">
+<code class="sig-name descname"><span class="pre">borneSup</span></code><a class="headerlink" href="#andOrGraph.decisionNode.borneSup" title="Permalink to this definition">¶</a></dt>
+<dd><p>upper bounds for the branches of this node (one for each domain value and only if this node is a leaf), key=domainValue, value=(mean,variance) ;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getBorneSup">
+<code class="sig-name descname"><span class="pre">getBorneSup</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getBorneSup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the upper valuation of the node (only is not a leaf)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key=domainValue, value=(mean,variance)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getContexte">
+<code class="sig-name descname"><span class="pre">getContexte</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getContexte" title="Permalink to this definition">¶</a></dt>
+<dd><p>The instanciation context of this node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key = id of a node in the influence diagram, value = the instanciation value of said node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getDecisionOptimale">
+<code class="sig-name descname"><span class="pre">getDecisionOptimale</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getDecisionOptimale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimal decision for this node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the optimal decision of this node, a value of its domain</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getEnfants">
+<code class="sig-name descname"><span class="pre">getEnfants</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getEnfants" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key=domainValue, value=chanceNode or decisionNode</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getEvaluation">
+<code class="sig-name descname"><span class="pre">getEvaluation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getEvaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter function for the valuation of the node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key=domainValue, value=(mean,variance)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getId_andOr">
+<code class="sig-name descname"><span class="pre">getId_andOr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getId_andOr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the id of the node in the AND/OR Graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getInference">
+<code class="sig-name descname"><span class="pre">getInference</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getInference" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the Shafer Shenoy Object used to make the inference on this node (only if it is a leaf node)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the inference object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pyAgrum.ShaferShenoyLIMIDInference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getNodeID">
+<code class="sig-name descname"><span class="pre">getNodeID</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getNodeID" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the id of the node in the influence diagram</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getParent">
+<code class="sig-name descname"><span class="pre">getParent</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>parent of the node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the parent of the node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#andOrGraph.chanceNode" title="andOrGraph.chanceNode">chanceNode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getSupport">
+<code class="sig-name descname"><span class="pre">getSupport</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getSupport" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>domain of the node</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="andOrGraph.decisionNode.getValeurDecisionOptimale">
+<code class="sig-name descname"><span class="pre">getValeurDecisionOptimale</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#andOrGraph.decisionNode.getValeurDecisionOptimale" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the value of the optimal decision</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the value</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, David PINAUD, Emilie BIEGAS.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
