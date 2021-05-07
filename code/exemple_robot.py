@@ -7,7 +7,7 @@ import numpy as np
 from bandbLIMID import BranchAndBoundLIMIDInference
 import time 
 
-def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc:int,nbAppel=0)->gum.InfluenceDiagram:
+def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc:int,nbAppel=0,verbose=False)->gum.InfluenceDiagram:
     """creates a random ID
     Parameters
     ----------
@@ -24,6 +24,8 @@ def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc
     gum.InfluenceDiagram
         the random ID
     """
+    if(verbose):
+        print(f"try n°{nbAppel+1}")
     dagTestCycle=gum.DAG()
     stringID=""
     dec=dict()
@@ -43,27 +45,31 @@ def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc
         utility[f'u{i}']=dagTestCycle.addNode()
     for i in range(nbArc):
         debut=time.time()
-        if(time.time()-debut>3 and nbAppel<=3):
+        if(time.time()-debut>0.000001 and nbAppel<=3):
             return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
-        elif(time.time()-debut>3 and nbAppel>3):
+        elif(time.time()-debut>0.000001 and nbAppel>3):
             raise Exception("Echec de construction d'ID, veuillez recommencer")
-        r=np.random.randint(0,6)
+        r=np.random.randint(1,5)
         found=False
-        while(r==0 and not found):
-            d1=np.random.randint(0,nbDecisionNodes)
-            d2=np.random.randint(0,nbDecisionNodes)
-            if(time.time()-debut>3 and nbAppel<=3):
-                return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
-            try:
-                dagTestCycle.addArc(dec[f"d{d1}"],dec[f"d{d2}"])
-                stringID+=f"d{d1}->d{d2};"
-                found=True
-            except:
-                found=False
+        # while(r==0 and not found):
+        #     print("1")
+        #     print("°")
+        #     d1=np.random.randint(0,nbDecisionNodes)
+        #     d2=np.random.randint(0,nbDecisionNodes)
+        #     if(time.time()-debut>0.000001 and nbAppel<=3):
+        #         return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
+        #     try:
+        #         dagTestCycle.addArc(dec[f"d{d1}"],dec[f"d{d2}"])
+        #         stringID+=f"d{d1}->d{d2};"
+        #         found=True
+        #     except:
+        #         found=False
         while(r==1 and not found):
+            print("2")
+            print("°")
             d=np.random.randint(0,nbDecisionNodes)
             c=np.random.randint(0,nbChanceNodes)
-            if(time.time()-debut>3 and nbAppel<=3):
+            if(time.time()-debut>0.000001 and nbAppel<=3):
                 return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
             try:
                 dagTestCycle.addArc(dec[f"d{d}"],chance[f"c{c}"])
@@ -72,9 +78,11 @@ def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc
             except:
                 found=False
         while(r==2 and not found):
+            print("3")
+            print("°")
             d=np.random.randint(0,nbDecisionNodes)
             c=np.random.randint(0,nbChanceNodes)
-            if(time.time()-debut>3 and nbAppel<=3):
+            if(time.time()-debut>0.000001 and nbAppel<=3):
                 return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
             try:
                 dagTestCycle.addArc(chance[f"c{c}"],dec[f"d{d}"])
@@ -83,9 +91,11 @@ def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc
             except:
                 found=False
         while(r==3 and not found):
+            print("4")
+            print("°")
             c1=np.random.randint(0,nbChanceNodes)
             c2=np.random.randint(0,nbChanceNodes)
-            if(time.time()-debut>3 and nbAppel<=3):
+            if(time.time()-debut>0.000001 and nbAppel<=3):
                 return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
             try:
                 dagTestCycle.addArc(chance[f"c{c1}"],chance[f"c{c2}"])
@@ -93,19 +103,25 @@ def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc
                 found=True
             except:
                 found=False
+        # while(r==4 and not found):
+        #     print("5")
+        #     print("°")
+        #     c=np.random.randint(0,nbChanceNodes)
+        #     u=np.random.randint(0,nbUtilityNode)
+        #     if(time.time()-debut>0.000001 and nbAppel<=3):
+        #         return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
+        #     try:
+        #         dagTestCycle.addArc(chance[f"c{d}"],utility[f"u{u}"])
+        #         stringID+=f"c{c}->u{u};"
+        #         found=True
+        #     except:
+        #         found=False
         while(r==4 and not found):
-            c=np.random.randint(0,nbChanceNodes)
-            u=np.random.randint(0,nbUtilityNode)
-            try:
-                dagTestCycle.addArc(chance[f"c{d}"],utility[f"u{u}"])
-                stringID+=f"c{c}->u{u};"
-                found=True
-            except:
-                found=False
-        while(r==5 and not found):
+            print("5")
+            print("°")
             d=np.random.randint(0,nbDecisionNodes)
             u=np.random.randint(0,nbUtilityNode)
-            if(time.time()-debut>3 and nbAppel<=3):
+            if(time.time()-debut>0.000001 and nbAppel<=3):
                 return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
             try:
                 dagTestCycle.addArc(dec[f"d{d}"],utility[f"u{u}"])
@@ -115,10 +131,17 @@ def createRandomID(nbDecisionNodes:int,nbChanceNodes:int,nbUtilityNode:int,nbArc
                 found=False
     try:
         ID=gum.fastID(stringID)
+        for node in ID.nodes():
+            if(ID.isUtilityNode(node) and not ID.parents(node)):
+                nodeID=np.random.choice([nodeID for nodeID in ID.nodes() if not ID.isUtilityNode(nodeID)],size=1)
+                print("choices",nodeID[0],node,type(nodeID[0]),type(node))
+                ID.addArc(int(nodeID[0]),node)
     except:
         if(nbAppel<=3):
             return createRandomID(nbDecisionNodes,nbChanceNodes,nbUtilityNode,nbArc,nbAppel=nbAppel+1)
+    
     return ID
+    
 def createIDRobot(n,xInitial,yInitial,maze):
     """Function that allows to create the ID given as an exemple in the 2013 "solving limited memory influence diagram" paper
 

@@ -4,7 +4,7 @@ import pyAgrum as gum
 import sys
 import unittest
 import random
-
+import time
 
 #--temporaire--
 #TODO: changer l'import de bandbLIMID (il faut faire un projet python)
@@ -16,18 +16,18 @@ sys.path.append("/Users/davidpinaud/GitHub/PANDROIDE_InfDiag_BandB/code/exemple_
 from exemple_robot import createRandomID
 
 class LimidTestCase(unittest.TestCase):
-    def setUpTestFigures(self,graph,src,dst,model=None,pdfname=None):
+    # def setUpTestFigures(self,graph,src,dst,model=None,pdfname=None):
 
-        dsep = MinimalDSep(graph,model)
-        x=src
-        y=dst
-        return dsep.find(x, y)
+    #     dsep = MinimalDSep(graph,model)
+    #     x=src
+    #     y=dst
+    #     return dsep.find(x, y)
 
 
-    def testFigures_seperating_set(self):
-        self.assertTrue(self.setUpTestFigures(*figure1())=={4})
-        self.assertTrue(self.setUpTestFigures(*figure6())=={4, 5})
-        self.assertTrue(self.setUpTestFigures(*ID_Simple_Test())=={3})
+    # def testFigures_seperating_set(self):
+    #     self.assertTrue(self.setUpTestFigures(*figure1())=={4})
+    #     self.assertTrue(self.setUpTestFigures(*figure6())=={4, 5})
+    #     self.assertTrue(self.setUpTestFigures(*ID_Simple_Test())=={3})
 
     # def test_seperating_set(self):
     #     gen=gum.BNGenerator()
@@ -46,21 +46,24 @@ class LimidTestCase(unittest.TestCase):
     #             self.assertTrue(bn.isIndependent(src,dst,list(separatingSet)))
 
     def test_branchAndBound_IDAleatoires(self):
-        for i in range(1):
+        for i in range(10):
             nbChance=random.randint(2,8)
-            nbDecision=int(nbChance*random.randint(1,int(nbChance/2)))
+            nbDecision=int(random.randint(1,int(nbChance/2)))
             nb=int(nbDecision*random.random())
             nbUtility=nb if nb>0 else 1
             nbArc=int(nbChance*(random.random()+1))
             print("generation")
-            ID=createRandomID(nbDecision,nbChance,nbUtility,nbArc,0)
+            ID=createRandomID(nbDecision,nbChance,nbUtility,nbArc,0,verbose=True)
             print("created")
             ordre=[id for id in ID.nodes() if ID.isDecisionNode(id)]
             random.shuffle(ordre)
-            bnb=BranchAndBoundLIMIDInference(ID,ordre,verbose=True)
+            #print([f'id {id} name {ID.variable(id).name()}' for id in ID.nodes()])
+            bnb=BranchAndBoundLIMIDInference(ID,ordre,verbose=False)
             print("bnb")
+            begin=time.time()
             bnb.branchAndBound()
-            print("coupe",bnb.nbCoupe)
+            end=time.time()
+            print(f"temps d'execution : {end-begin} | nombre de coupe(s) : {bnb.nbCoupe} | taille de l'ID : {len(ID.nodes())} noeud(s)")
 
 
 
