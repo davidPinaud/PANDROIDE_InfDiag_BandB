@@ -294,23 +294,23 @@ La performance en espace lorsqu'il y a élagage peut théoriquement diminuer de 
 \pagebreak
 \subsubsection{Exemples}
 \subsubsubsection{Exemple 1}
-Voici un exemple (très simple) ou un élagage a pu être fait :
+Voici un exemple (très simple) où un élagage a pu être fait :
 \begin{figure}[ht]
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=.08\linewidth]{docs/ressources_rapport/ID_exemple.png}
   \caption{Diagramme d'influence}
-  \label{fig:sub5}
+  \label{fig:diag_inf}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=0.75\linewidth]{docs/ressources_rapport/arbreETOU.png}
   \caption{L'arbre ET/OU construit pendant le branch and bound}
-  \label{fig:sub6}
+  \label{fig:arb}
 \end{subfigure}
 \caption{ID et Arbre ET/OU}
-\label{fig:test2}
+\label{fig:id_arbre}
 \end{figure}
 
 En effet, voici l'arbre ET/OU complet si aucun élagage n'est fait :
@@ -336,21 +336,21 @@ Shafer Shenoy a construit un arbre de jonction de largeur 2 et a utilisé enviro
 \centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{docs/ressources_rapport/EXEMPLE2ANDOR.png}
+  \includegraphics[height=40mm,width=1\linewidth]{docs/ressources_rapport/EXEMPLE2ANDOR.png}
   \caption{L'arbre ET/OU construit pendant le branch and bound}
-  \label{fig:sub5}
+  \label{fig:arbre}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=1\linewidth]{docs/ressources_rapport/EXEMPLE2FULLANDOR.png}
+  \includegraphics[height=40mm,width=1\linewidth]{docs/ressources_rapport/EXEMPLE2FULLANDOR.png}
   \caption{Arbre ET/OU complet}
-  \label{fig:sub6}
+  \label{fig:arbre_complet}
 \end{subfigure}
 \caption{Arbre ET/OU complet et élagué}
-\label{fig:test2}
+\label{fig:arbre_elague}
 \end{figure}
 
-Le branch and bound a élagué 4 branches, ce qui a permis de ne développer que 35 noeuds au lieu de 63 pour un temps d'exécution de 0.07885 secondes et un arbre de profondeur 6 occupant 1680 octets comparé à un arbre de jonction de largueur 3 occupant environ 64 octets et un temps d'exécution de 0.00126 secondes pour Shafer Shenoy. Le branch and bound est donc 204 fois plus lent et occupe 26 fois plus d'espace que la méthode actuelle.
+Le branch and bound a élagué 4 branches, ce qui a permis de ne développer que 35 nœuds au lieu de 63 pour un temps d'exécution de 0.07885 secondes et un arbre de profondeur 6 occupant 1680 octets comparé à un arbre de jonction de largeur 3 occupant environ 64 octets et un temps d'exécution de 0.00126 secondes pour Shafer Shenoy. Le branch and bound est donc 204 fois plus lent et occupe 26 fois plus d'espace que la méthode actuelle.
 \pagebreak
 \subsubsubsection{Exemple 3}
 \begin{figure}[ht]
@@ -359,7 +359,7 @@ Le branch and bound a élagué 4 branches, ce qui a permis de ne développer que
  \caption{Diagramme d'influence}
 \end{figure}
 
-Le branch and bound a élagué 8 branches, ce qui a permis de ne développer que 135 noeuds au lieu de 255 pour un temps d'exécution de 0.56199 secondes et un arbre de profondeur 7 occupant 6480 octets comparé à un arbre de jonction de largueur 4 occupant environ 128 octets et un temps d'exécution de 0.00275 secondes pour Shafer Shenoy. Le branch and bound est donc 62 plus lent et occupe 50 fois plus d'espace que la méthode actuelle.
+Le branch and bound a élagué 8 branches, ce qui a permis de ne développer que 135 nœuds au lieu de 255 pour un temps d'exécution de 0.56199 secondes et un arbre de profondeur 7 occupant 6480 octets comparé à un arbre de jonction de largeur 4 occupant environ 128 octets et un temps d'exécution de 0.00275 secondes pour Shafer Shenoy. Le branch and bound est donc 62 plus lent et occupe 50 fois plus d'espace que la méthode actuelle.
 \section{Intégration possible de l'algorithme dans PyAgrum}
 % *vérifier la compatibilité de l'inférence avec les inférences existantes
 % *vérifier la compatibilité avec notebooks

@@ -131,7 +131,7 @@ Un chemin racine-feuille représente alors une instance des nœuds d'information
 En effectuant un parcours en profondeur d'abord, on peut générer l'arbre à la volée et ne garder qu'une partie de l'arborescence en mémoire.
 Deux problèmes se posent alors, le calcul des limites et celui des probabilités postérieures.
 
-\section{Déliverables du projet}
+\section{Délivrables du projet}
 Le projet a pour but de réaliser :
 \begin{itemize}
 \item Un état de l'art et stabilisation des algorithmes pour la résolution avec Branch and Bound, en particulier l'analyse du calcul des bornes et des probabilités postérieures.
@@ -139,13 +139,13 @@ Le projet a pour but de réaliser :
 \item Une intégration de l'algorithme correctement documentée (style python en anglais) dans l'API pyAgrum vérifiant l'implémentation des méthodes (liste non exhaustive) :
 \begin{itemize}
     \item makeInference : Réalise l'inférence sur un LIMID.
-    \item PosterieurUtility : Retourne la probabilité postérieure d'un noeud.
+    \item PosterieurUtility : Retourne la probabilité postérieure d'un nœud.
     \item lIMInfluenceDiagram : Retourne le LIMID associé à l'instance de la classe.
-    \item optimalDecision : Retourne la décision optimale pour un certain noeud décision basé sur le critère MEU.
+    \item optimalDecision : Retourne la décision optimale pour un certain nœud de décision basé sur le critère MEU.
     \item MEU : Retourne l'utilité maximate espérée de l'inférence.
     \item junctionTree : Retourne l'arbre de jonction associé au LIMID
     \item andOrTree: Retourne le graphe de jonction développé
-    \item une fonction pour avoir le graphe/arbre du branch and bound + une fonction pour avoir les états?
+    \item une fonction pour avoir le graphe/arbre du branch and bound et possiblement une fonction pour avoir les états
 \end{itemize}
 \item Une série de tests unitaires effectués sur les méthodes avec l'API TestUnit.
 \item Une série de benchmark validant l'utilité de notre implémentation de la méthode branch and bound face aux méthodes existante.
