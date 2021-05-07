@@ -516,11 +516,13 @@ class BranchAndBoundLIMIDInference():
                 s+=' '
         for node in self.andOrGraph.getNoeud():
             if(type(node)==chanceNode):
-                for value,child in node.getChilds().items():
-                    bn.addArc(nodeIDs[node.getId_andOr()],nodeIDs[child.getId_andOr()])
+                for value,child in node.getChilds().items():#getChild
+                    if(not bn.existsArc(nodeIDs[node.getId_andOr()],nodeIDs[child.getId_andOr()])):
+                        bn.addArc(nodeIDs[node.getId_andOr()],nodeIDs[child.getId_andOr()])
             else:
-                for value,child in node.getEnfants().items():
-                    bn.addArc(nodeIDs[node.getId_andOr()],nodeIDs[child.getId_andOr()])
+                for value,child in node.getEnfants().items(): #getEnfant
+                    if(not bn.existsArc(nodeIDs[node.getId_andOr()],nodeIDs[child.getId_andOr()])):
+                        bn.addArc(nodeIDs[node.getId_andOr()],nodeIDs[child.getId_andOr()])
         return bn
 
     def viewAndOrGraphNoCuts(self):

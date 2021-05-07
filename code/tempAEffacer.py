@@ -24,6 +24,9 @@ for i in range(nbStage):
 
 bnb=BranchAndBoundLIMIDInference(ID,ordre,verbose=True)
 bnb.branchAndBound()
+#%%
+from bandbLIMID import BranchAndBoundLIMIDInference
+
 gnb.show(bnb.viewAndOrGraph())
 gnb.show(bnb.viewAndOrGraphNoCuts())
 # %%
