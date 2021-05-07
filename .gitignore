@@ -1,8 +1,0 @@
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-*/Untitled.ipynb
-*/__pycache__
-*.aux
-*.log
-*.toc
-.vscode

@@ -728,7 +728,7 @@ class BranchAndBoundLIMIDInference():
                 s+=' '
             idNodeBNChild=bn.add(self.ID.variable(idNodeIDChild).name()+s,self.ID.variable(idNodeIDChild).domainSize())
             bn.addArc(idNodeBNParent,idNodeBNChild)
-            self.viewCreateCoucheChance(bn,[],s,parents[1:],idNodeIDChild,idNodeBNChild)
+            self.viewCreateCoucheChance(bn,s,parents[1:],idNodeIDChild,idNodeBNChild)
     def getParents_chanceID(self,decisionNodeID,nodeADevID):
         """Function that returns the parents of a decision node (that is the leaf the branch we want to create)
 
