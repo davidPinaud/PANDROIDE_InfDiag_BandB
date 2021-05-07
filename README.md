@@ -9,5 +9,4 @@ Algorithme codé en Python en utilisant la bibliothèque PyAgrum développé par
 
 # DOCUMENTATION
 PDF ou HTML disponible sur
-https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation}
-\section{Évaluation de l'algorithme Branch and Bound
+https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation
