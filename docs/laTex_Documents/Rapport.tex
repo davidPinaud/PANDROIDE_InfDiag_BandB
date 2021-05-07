@@ -12,20 +12,92 @@
 \usepackage{amssymb}
 \usepackage{multicol}
 \usepackage{breqn}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\fancyhf{}
+%\rhead{P-ANDROIDE}
+%\lhead{David PINAUD | Emilie BIEGAS}
+%\rfoot{Page \thepage}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{David PINAUD | Emilie BIEGAS}
+\fancyhead[RE,LO]{P-ANDROIDE}
+\fancyfoot[CE,CO]{\leftmark}
+\fancyfoot[LE,RO]{\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage[affil-it]{authblk}
 \usepackage{pdfpages}
 \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
 \usepackage{hyperref}
-\title{Projet P-A.N.D.R.O.I.D.E.\\
-\bigbreak\textbf{Branch and Bound pour la résolution de diagrammes d'influence}}
-\author{PINAUD David \& BIEGAS Emilie}
-\date{Mai 2021 \bigbreak Dirigé par M. Pierre-Henri Wuillemin}
-\affil{Université Sorbonne Sciences}
 \begin{document}
 
-\maketitle
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE Sorbonne Université}\\[1.5cm] % Name of your university/college
+\textsc{\Large Projet P-A.N.D.R.O.I.D.E}\\[0.5cm] % Major heading such as course name
+\textsc{\large \url{https://git.io/J39ZB}}\\[0.5cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Branch and Bound pour les Diagrammes d'influence}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Auteurs:}\\
+David \textsc{PINAUD} % Your name
+
+Emilie \textsc{BIEGAS} % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Encadrant:} \\
+M. Pierre-Henri \textsc{WUILLEMIN} % Supervisor's Name
+\end{flushright}
+\end{minipage}\\[2cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+%\Large \emph{Author:}\\
+%John \textsc{Smith}\\[3cm] % Your name
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large 8 Mai 2021}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\includegraphics[scale=0.5]{logo.png}\\[1cm] % Include a department/university logo - this will require the graphicx package
+ 
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
 
 \renewcommand{\contentsname}{Table des Matières}
 \pagebreak
