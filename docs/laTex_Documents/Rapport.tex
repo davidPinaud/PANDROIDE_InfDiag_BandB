@@ -6,17 +6,23 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{stmaryrd}
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
 \usepackage{amssymb}
+\usepackage{multicol}
 \usepackage{breqn}
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage[affil-it]{authblk}
 \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
 \title{Projet P-A.N.D.R.O.I.D.E.\\
-\bigbreak\textbf{Branch and Bound pour les diagrammes d'influence}}
+\bigbreak\textbf{Branch and Bound pour la résolution de diagrammes d'influence}}
 \author{PINAUD David \& BIEGAS Emilie}
-\date{Janvier 2021 \bigbreak Dirigé par M. Wuillemin}
+\date{Mai 2021 \bigbreak Dirigé par M. Pierre-Henri Wuillemin}
 \affil{Université Sorbonne Sciences}
 \begin{document}
+
 \maketitle
 
 \renewcommand{\contentsname}{Table des Matières}
@@ -27,36 +33,77 @@
 \section{Introduction}
 
 \subsection{Les diagrammes d'influence (ID)}
-Les diagrammes d'influence (ID) sont des graphes acycliques dirigés présentant trois types de nœuds. Les nœuds de \textit{chance}, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
+Un diagramme d'influence est une représentation graphique et mathématique compacte d'une situation de décision. Il s'agit d'une généralisation d'un réseau bayésien, dans lequel non seulement les problèmes d'inférence probabiliste, mais aussi les problèmes de prise de décision peuvent être modélisés et résolus. 
+Le diagramme d'influence est une bonne alternative aux arbres de décision qui peuvent devenir extrêmement complexes. En effet, ce sont des arbres de décision symétriques plus compacts. On se place dans ce projet dans le cadre du maximum d'utilité.
+
+Par exemple, considérons une décision concernant l'activité (de domaine : sport en plein air et sport en intérieur) prise selon la prévision météorologique qui dépend, elle, des conditions réelles (leurs domaines est : pluvieux ou ensoleillé). Le diagramme d'influence ci-dessous représente cette situation et est équivalent à l'arbre de décision de la figure 1.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{docs/ressources_rapport/exempleID_SIMPLE.png}
+  \caption{Diagramme d'influence}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1.2\linewidth]{docs/ressources_rapport/exempleArbreDecision.png}
+  \caption{L'arbre de décision symétrique associé}
+  \label{fig:sub2}
+\end{subfigure}
+\caption{ID et Arbre de décision}
+\label{fig:test}
+\end{figure}
+
+Les diagrammes d'influence (ID) sont des graphes dirigés acycliques présentant trois types de nœuds. Les nœuds de \textit{chance}, illustrés graphiquement par un ovale, représentent des variables aléatoire (dont le domaine est fini et non vide). 
 Les nœuds de \textit{décision}, illustrés graphiquement par un rectangle, représentent des variables de décision (dont le domaine est fini et non vide) tandis que les nœuds d'\textit{utilité}, illustrés graphiquement par un losange, représentent une fonction d'utilité locale exprimant la préférence.
 Lorsqu'il y a plusieurs nœuds d'utilité, l'utilité totale en est la somme (c'est une décomposition partiellement additive de l'utilité).
-\bigbreak
+
 Les arcs de ce graphe représentent une dépendance entre les nœuds et ont une signification différente en fonction du type de nœud à son extrémité.
 En effet, si un arc pointe vers un nœud de chance, cela représente une dépendance probabiliste; si il pointe vers un nœud de décision, il a un but informatif; enfin, si il pointe vers un nœud d'utilité, il représente une dépendance fonctionnelle.
+
 \bigbreak
 Les IDs respectent deux hypothèses, une hypothèse de régularité (les décisions sont ordonnées dans le temps) et une hypothèse dite non-oubliant (chaque décision est conditionnée par toutes les observations de décisions antérieures).
-L'ensemble des instanciations des nœuds de chance pour les décisions antérieures d'une certaine désicion est appelé l'\textit{historique}.
+L'ensemble des instanciations des nœuds de chance pour les décisions antérieures d'une certaine décision est appelé l'\textit{historique}.
 \\\\
 
+
 \subsection{Les LIMIDs}
-  Les \textit{LImited-Memory Influence-Diagrams} (LIMIDs) sont des diagrammes d'influence qui assouplissent les deux hypothèses précédemment citées. 
- \bigbreak
- Tout d'abord, les LIMIDs assouplissent l'hypothèse non-oubliant de manière à conditionner une décision sur un nombre limité d'observations et de décisions antérieurs pertinentes (pour un compromis qualité/complexité).
-\bigbreak
+Les \textit{LImited-Memory Influence-Diagrams} (LIMIDs) sont des diagrammes d'influence qui assouplissent les deux hypothèses précédemment citées. 
+ 
+Tout d'abord, les LIMIDs assouplissent l'hypothèse non-oubliant de manière à conditionner une décision sur un nombre limité d'observations et de décisions antérieurs pertinentes (pour un compromis qualité/complexité).
+
 Ensuite, assouplir l'hypothèse de régularité permet par exemple de modéliser la coopération de problèmes de décision multi-agents où un agent n'est pas au courant de décision d'autres agents. 
-Les IDs forment alors un sous-ensemble des LIMIDs.
+Les IDs forment alors un sous-ensemble des LIMIDs. On peut en voir un exemple ci-dessous.
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{docs/ressources_rapport/ID_LIMID.png}
+  \caption{Diagramme d'influence}
+  \label{fig:sub3}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.5\linewidth]{docs/ressources_rapport/LIMID_ID.png}
+  \caption{LIMID associé à l'ID}
+  \label{fig:sub4}
+\end{subfigure}
+\caption{ID et LIMID}
+\label{fig:test1}
+\end{figure}
 
 \subsection{Limites des implémentations actuelles}
+
 Les méthodes de résolution exactes actuelles de LIMIDs ou IDs sont limités par leur complexité en temps et en espace.
 Pour exemple, considérons un ID qui modélise un robot dans un labyrinthe représenté par une matrice $n\times m$ composé de cases \textit{mur}, de cases \textit{libre} et d'une case \textit{objectif}. On représente le labyrinthe comme ci-dessous, les cases grises, blanches, et étoilés étant respectivement les cases \textit{mur}, \textit{libre}, et \textit{objectif}.
-\begin{figure}[h]
+
+\begin{figure}[ht]
 \centering
 \includegraphics[scale=0.2]{docs/ressources_rapport/MAZE.png}
 \caption{Un exemple de représentation d'un labyrinthe $9\times 7$}
 \end{figure}
-\pagebreak
-
-
 Le robot est initialement placé sur une des cases \textit{libre} et l'objectif du robot est d'atteindre la case \textit{objectif}. 
 À chaque étape, le robot peut se déplacer dans toutes les directions (nord, sud, est, ouest et les diagonales) d'une seule case ou choisir de ne pas se déplacer. Il possède quatre capteurs pointés vers les quatre cardinaux qui indiquent au robot la présence d'un mur ou non.
 %les probabilités sommes à 1 --> c'est bien une distribution donc pas de mouvement en diagonale possible ?!
@@ -65,50 +112,51 @@ Le robot est initialement placé sur une des cases \textit{libre} et l'objectif 
 \begin{itemize}
   \item Un pas vers la case voulu a une probabilité $pBouger$ de réussir.
   \item Échouer de bouger survient avec probabilité $pEchecBouger$.
-  \item À chaque étape, il y a une chance que le robot fasse un mouvement erratique:
+  \item Un pas vers un \textit{mur} a une probabilité de 0.
+  \item À chaque étape, il y a une chance que le robot fasse un mouvement erratique :
   \begin{itemize}
         \item Faire un pas vers la droite ou vers la gauche (c'est-à-dire vers l'est ou vers l'ouest si son choix est de se diriger vers le nord), s'il est possible de le faire, survient avec une probabilité de $pCote$ dans chacun des deux cas.
         \item Faire un pas en arrière (c'est-à-dire vers le sud si son choix est de se diriger vers le nord), s'il est possible de le faire, survient avec une probabilité $pArriere$.
         \end{itemize}
-  \item Un pas vers un \textit{mur} a une probabilité de 0.
   \item Les autres probabilités sont normalisées afin de former une distribution de probabilité.
 \end{itemize}
+
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.22]{docs/ressources_rapport/IDROBOT.png}
 \caption{L'ID modélisant le problème du robot à deux étapes }
 \end{figure}
-A l'étape $i$, les nœuds de chance $x_i$ et $y_i$ représentent les coordonnées du robot sur la grille, $ns_i, es_i, ss_i, ws_i$ les capteurs du robot dans les sens nord, est, sud et ouest respectivement. Les nœuds $d_i$ sont les nœuds de décision.
 
-\pagebreak
+A l'étape $i$, les nœuds de chance $x_i$ et $y_i$ représentent les coordonnées du robot sur la grille, $ns_i, es_i, ss_i, ws_i$ les capteurs du robot dans les sens nord, est, sud et ouest respectivement. Les nœuds $d_i$ sont les nœuds de décision.
 Pour visualiser le caractère exponentiel de la complexité en espace, voici un tableau récapitulatif des tailles des arbres de jonctions selon le nombre d'étapes ainsi que les graphes associés.
+
 \bigbreak
 \begin{center}
    \begin{tabular}{|p{3cm} || p{3cm} | p{3cm} | }
     \hline
     Nombre d'étapes & Tree-width (largeur de l'arbre) & taille en mémoire de l'arbre (en Go) \\ 
     \hline
-    2&11&2 E-3\\
+    2&11&0,002\\
     \hline
-    3&15&38 E-3\\
+    3&15&0,038\\
     \hline
-    4&20&787 E-3\\
+    4&20&0,787\\
     \hline
     5&24&12\\
     \hline
     6&29&984\\
     \hline
-    7&34&76 E3\\
+    7&34&76 000\\
     \hline
-    8&37&246 E3\\
+    8&37&246 000\\
     \hline
-    9&42&19687 E3\\
+    9&42&19 687 000\\
     \hline
-    109&46&315000 E3\\
+    10&46&315 000 000\\
     \hline
    \end{tabular}
 \end{center}
- \begin{figure}[h]
+ \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.2]{docs/ressources_rapport/graphes.png}
 \caption{Graphes sur la complexité en temps et espace des méthodes actuelles}
@@ -118,49 +166,153 @@ On parvient à résoudre cet ID avec les méthodes exactes actuelles (une machin
 Il n'est pas envisageable de concevoir une machine capable de stocker autant de données pour résoudre de façon exacte cet ID. Il y a donc un réel besoin d'avoir une implémentation permettant de résoudre plus rapidement les IDs et en nécessitant moins d'espace.
 \bigbreak
 \bigbreak
+\pagebreak
 
 \subsection{But du projet}
-Le but de ce projet est donc d'étudier un algorithme de Branch and Bound pour résoudre des LIMIDs dans un petit graphe de recherche dans lequel différents chemins menant au même nœud représentent différentes histoires. Pour résoudre ce type de problème à grande complexité en espace et en temps, on doit tirer parti des opportunités pour le calcul de stratégie, utiliser des techniques d'inférence probabiliste et calculer les limites dans un graphe.
-Enfin, il est envisagé l'intégrer l'algorithme dans la librairie Python PyAgrum.
+Ce projet avait un cadre prospectif et était orienté recherche. Ni nous ni notre encadrant ne savions quels en serait les aboutissants. Pour mener à bien ce projet, nous avons donc d'abord eu besoin de nous familiariser avec le sujet et de trouver les documents adéquats pour répondre à nos questions. Après cela, nous avions donc pour but d'étudier et d'implémenter un algorithme de Branch and Bound pour résoudre des LIMIDs afin de proposer une solution à l'explosion en espace des algorithmes actuels. Nous nous appuierons fortement sur les travaux de Yuan et Hensen [4], et d'Acid et Campos [6] qui posent les bases et explicitent les étapes de construction de l'algorithme. Celui-ci devra être documenté et testé.
+Enfin, il est envisagé d'intégrer l'algorithme dans la librairie Python PyAgrum.
 
-\pagebreak
-\section{Explication de l'algorithme de Branch and Bound}
+Ce sujet d'implémentation étant orienté recherche, nous n'avons pas de réel cahier des charges et avons décidé de l'inclure directement à ce rapport. Ce dernier correspond à la partie 4.1.    
+
+
+\section{Algorithme de Branch and Bound pour la résolution de LIMIDS}
+\subsection{Description informelle}
 Les LIMIDs sont résolus en trouvant une stratégie qui maximise l'utilité prévue.
 L'algorithme étudié dans ce projet résout les LIMIDs en les convertissant en un graphe ET/OU puis en effectuant un parcours en profondeur sur ces derniers.
+
 Les nœuds ET sont alors des variables aléatoires correspondant aux nœuds chances qui sont informatifs à un nœud de décision et les nœuds OU sont des nœuds de décision (représentant des alternatives de décision), enfin les feuilles sont les nœuds d'utilités.
-Un chemin racine-feuille représente alors une instance des nœuds d'information et de décision.
-En effectuant un parcours en profondeur d'abord, on peut générer l'arbre à la volée et ne garder qu'une partie de l'arborescence en mémoire.
-Deux problèmes se posent alors, le calcul des limites et celui des probabilités postérieures.
-Pour ce faire, on introduit un ID secondaire appelé diagramme d'influence relaxé.
 
-\section{Implémentation de l'algorithme}
+Durant le parcours en profondeur, un chemin racine-feuille représente une instance des nœuds d'information et de décision. Ces nœuds sont générés à la volée, ce qui permet de limiter l'utilisation de la mémoire. Les bornes supérieures et les évaluations des solutions candidates sont aussi calculées à la volée, permettant d'élaguer les chemins non prometteurs. Les calculs des bornes supérieures sont faites sur un ID relaxé, dont la construction est détaillée plus tard dans le rapport.
 
-\subsection{Calcul des bornes}
-La borne inférieure est la meilleure valeur calculée pour un nœud OU.
-Pour déterminer la borne supérieure, il faut résoudre un ID relaxé. 
-Ce dernier est créé en ajoutant des informations à l'ID de départ (en veillant à ce que cette solution soit bien une borne supérieure de l'ID d'origine) et en simplifiant l'ID en déplacant des arcs non requis (en veillant à ce que ce soit bien plus facile à résoudre).
+Il faut souligner que cet algorithme n'applique pas classiquement le Branch and Bound comme dans le problème du sac à dos par exemple, où les nœuds sont des sacs avec plus ou moins d'objets, et dont la branche peut être élaguée si une solution courante est meilleure que la borne supérieure de cette branche. 
 
-Notons tout d'abord que la politique optimale pour un nœud $D_j$ dépend d'un ensemble d'informations $N_j$ ou est indépendant de l'histoire. $N_j$ est l'état actuel du problème de décision, c'est-à-dire l'ensemble des informations suffisantes pour $D_j$ et est appelé SIS.
+En effet, l'élagage se produit uniquement sur les branches sortant de nœuds de décision (ceux qui ne sont pas des feuilles) et non tous les nœuds. L'arbre se compose  aussi de nœuds chances mais on ne peut pas élaguer leurs branches car ces nœuds construisent toutes les instances possibles du LIMID. On élague donc seulement sur les branches sortant des nœuds de décision car leurs évaluations sont commensurables puisqu'elles ont le même contexte. En contrepartie, un nœud de décision ne peut pas faire élaguer une branche d'un autre nœud de décision car elles ne possèdent pas le même contexte : si une branche d'un nœud de décision est élaguée car un autre nœud de décision est mieux évaluée, c'est une alternative du LIMID qu'on n'exploreras pas et donc on ne va pas résoudre entièrement le LIMID.
 
-L'ID relaxé est alors crée en deux étapes.
-Tout d'abord, le SIS de chaque nœud de décision est calculé dans l'ordre temporel inverse $D_n$, ..., $D_1$ faisant de chaque SIS les variables d'information pour sa variable de décision.
-Enfin, les arcs d'information non requis sont supprimés de l'ID.
-
-\subsection{Extension aux LIMIDs}
-L'algorithme pour résoudre un ID utilise un arbre ET/OU, à la différence de celui résolvant un LIMID qui, lui, utilise un graphe ET/OU.
-Afin d'étendre l'approche Branch and Bound aux LIMIDs, on utilise un algorithme d'arborescence de jointure.
-
-L'arbre de jointure est construit à partir de l'ID relaxé et est utilisé pour calculer les probabilités et les bornes supérieures pour le graphe ET/OU.
 
 \subsection{Implémentation des arbres ET/OU}
+Les implémentations actuelles des arbres ET/OU ne sont pas satisfaisantes au regard des besoins de l'algorithme, nous avons donc implémenté notre version de l'arbre. Cette implémentation contient trois classes : une classe modélisant un graphe ET/OU, une classe modélisant les nœuds ET (nœuds de chance) et enfin une classe modélisant les nœuds OU (nœuds de décision).
 
+Dans l'arbre ET/OU, un nœud de décision est crée pour chaque alternative d'instanciation des nœuds chances parents de ce nœud de décision, et cela pour tous les nœuds de décision différents dans l'ID. C'est-à-dire que chaque nœud de décision a un contexte de nœuds chances instancié correspondant. Notre arbre se structure donc en couche, chaque couche étant constituée du même nœud de décision plusieurs fois (une fois par contexte possible) précédé de ses nœuds parents chance instanciés. 
+
+Ensuite, chaque nœud de décision va construire à la volée des branches au nombre égal, au maximum, au nombre de possibilités de décision de ce nœud (au maximum car il peut y avoir élagage). Ces fils vont être structurés de la même manière que précédemment en créant tous les contextes possibles pour le prochain nœud de décision. Soulignons encore qu'on ne peut ainsi pas élaguer entre nœuds de couches différentes mais seulement entre fils d'un même nœud de décision.
+
+La structure détaillée de cet arbre est accessible en annexe.
+
+\subsection{Implémentation de l'algorithme}
+
+\subsubsection{ID relaxé et calcul des bornes}
+La borne inférieure est la meilleure valeur courante calculée pour un nœud OU.
+Pour sa borne supérieure, il faut résoudre un ID relaxé. 
+Ce dernier est créé en ajoutant des informations à l'ID de départ et en simplifiant l'ID en supprimant des arcs non requis. 
+\bigbreak
+Les informations ajoutées sont sous la forme d'arcs entre des nœuds d'information et des nœuds de décision. Pour savoir quels arcs à ajouter à un nœud de décision, il faut calculer son \textit{sufficient information set} ou SIS.
+\bigbreak
+L'ID relaxé est alors crée en deux étapes :
+tout d'abord, le SIS de chaque nœud de décision est calculé dans l'ordre temporel inverse $D_n$, ..., $D_1$ faisant de chaque nœud chance dans leur SIS correspondant un de leur nœud parent.
+Enfin, les arcs d'information non requis sont supprimés de l'ID.
+
+\subsubsubsection{Sufficient Information Set (SIS)}
+Le calcul du SIS a été un point majeur de l'implémentation de l'algorithme et nous a pris une grande partie du temps alloué au développement.
+\bigbreak
+Nous nous sommes basé sur l'article d'Acid et Campos [6] qui propose une méthode basé sur l'algorithme de Ford et Fulkerson afin de trouver l'ensemble séparant entre deux nœuds dans un graphe non dirigé et l'article de Yuan et al. [4] qui nous proposé les ensembles de nœuds sur lesquels appliquer l'algorithme.
+\bigbreak
+Nous avons implémenté 3 versions de l'algorithme :
+\begin{itemize}
+    \item La première se basait sur la construction complète d'un graphe auxilliaire à partir de l'ID, sur lequel on pouvait appliquer Ford et Fulkerson.
+    \item La deuxième, plus performante, utilisait quant à elle un algorithme sur un graphe moralisé ancestral où on applique Ford et Fulkerson de manière implicite.
+    \item La troisième, dont la majorité du code a été fourni par M. Wuillemin, était similaire au deuxième jet mais en présentant des optimisations et un code plus propre.
+\end{itemize}
+Nous soulignons le fait que la compréhension des articles était délicat, d'une part à cause de notre inexpérience dans le sujet et d'autre part à cause de l'écriture confuse et expéditive de la part d'Acid et Campos [6].
+
+\subsubsection{Branch and bound}
+Après avoir construit l'ID relaxé, nous pouvons commencer à appliquer l'algorithme. 
+
+L'idée de départ était d'appliquer un Branch and Bound sur un \textit{graphe} ET/OU construit à partir d'un LIMID donné, d'évaluer les solutions candidates et de calculer les bornes supérieures avec un algorithme itératif utilisant les arbres de jointures fort construit eux aussi à partir de l'ID. 
+\bigbreak
+Par manque de temps, nous nous sommes résolus à :
+\begin{itemize}
+    \item Utiliser un arbre ET/OU au lieu d'un graphe ET/OU. En effet, l'idée originale était de construire un graphe ET/OU au lieu d'un arbre ET/OU pour la résolution de LIMID car ils offraient des optimisations en temps et en espace en exploitant le fait que, dans un LIMID, comme l'assomption du non oubliant est assoupli, beaucoup de décisions seront prises dans le même contexte. Ce qui augmenterait à la fois le temps de calcul en faisant des inférences plusieurs fois, mais aussi l'espace requis car on doit stocker plus de nœuds. Le graphe ET/OU devait en plus des nœuds ET et OU, avoir des nœuds spéciaux qui facilite l'implémentation de l'algorithme.
+    \item Calculer les bornes supérieures et les évaluations avec de l'inférence exacte complète à chaque fois augmente grandement notre complexité en temps (qui va même devenir le goulot d'étranglement de l'algorithme).
+\end{itemize}
+
+Nous devons donc commencer par construire l'arbre ET/OU, et ce à la volée. Pour cela, nous commençons par choisir dans l'ordre de décision donné avec le LIMID, le premier nœud de décision $d_0$.
+
+Nous générons alors les alternatives possibles d'instanciations des parents de $d_0$ que nous appellerons \textit{couche} de $d_0$. Cette couche est composée de nœuds ET (chance), nous ajoutons alors des nœuds OU (décision) correspondant à $d_0$ sur les feuilles de cette couche. Pour exemple, si $d_0$ est le nœud (6) de décision dans l'ID de la figure 2, ses parents sont $ns_0, es_0, ss_0, ws_0$. Ceux-là ont pour domaine $[True, False]$  dont il y a $2^4=16$ alternatives possibles pour $d_0$.
+
+Lorsque cela est fait, s'il y a plus d'un seul nœud de décision dans le LIMID, nous calculons la borne supérieure des nœuds OU générés (pour toutes les valeurs de son domaine) et nous générons la couche pour les nœuds de décision suivants dans l'ordre de décision donné pour une branche d'un des nœuds OU qu'on vient de créer (on garde en mémoire, pour les nœuds OU, quelles branches ont été développées, évaluées, ou élaguées). Lorsque nous arrivons au dernier nœud de décision, il faut faire une inférence pour tous les nœuds de décision de cette couche feuille, pour tous les éléments de domaines de ces nœuds afin qu'on puisse remonter par un processus similaire à l'induction arrière dans la résolution d'un arbre de décision (la valeur d'un nœud chance est la moyenne pondérée par les probabilités postérieures des valeurs de ses fils et la valeur d'un nœud de décision est le maximum des valeurs de ses enfants). Lorsque cette induction arrière qui remonte la couche atteint son nœud de décision père, nous pouvons regarder si on peut élaguer en comparant les bornes supérieures des autres branches du nœud de décision avec l'évaluation de la couche (on met aussi à jour la meilleure solution courante pour ce nœud de décision s'il le faut). Lorsque un nœud de décision a toutes ses branches évaluées ou élaguées, il est \textit{processed}. Lorsque tous les nœuds de décision dans une couche sont \textit{processed}, nous pouvons faire l'induction arrière pour cette couche. Nous répétons ces étapes jusqu'à atteindre la racine de l'arbre ET/OU. 
+
+Si, par contre, il n'y a qu'un seul nœud de décision, la première couche est alors une couche feuille dans l'arbre ET/OU et nous procédons comme dans le premier cas.
+
+À la fin d'une exécution, nous avons donc un arbre ET/OU dont les nœuds de décision ont une décision optimale et une valeur d'utilité pour cette décision, les nœuds chances ont des probabilités postérieures associées ainsi qu'une valeur. Nous avons donc calculé pour toutes les alternatives une décision optimale.
+%L'arbre de jointure est construit à partir de l'ID relaxé et est utilisé pour calculer les probabilités et les bornes supérieures pour le graphe ET/OU.
+% \subsection{Extension aux LIMIDs}
+%L'algorithme pour résoudre un ID utilise un arbre ET/OU, à la différence de celui résolvant un LIMID qui, lui, utilise un graphe ET/OU.
+%Afin d'étendre l'approche Branch and Bound aux LIMIDs, on utilise un algorithme d'arborescence de jointure.
 \subsection{Test}
+Nous avons écrit plusieurs test unitaires, notamment pour tester l'algorithme de calcul du SIS. Celui-ci calcule en réalité l'ensemble séparant minimal dans un réseau bayésien. Nous avons donc testé sur des réseaux bayésiens générés aléatoirement si l'ensemble séparant minimal de deux nœuds tirés au hasard font bien de ces deux nœuds des nœuds indépendants. Nous avons aussi testé le branch and bound sur des IDs aléatoires afin de vérifier qu'il prenne en charge tous types de diagrammes.
 
 \subsection{Documentation}
+Une documentation des classes et des méthodes est disponible, elle a été rédigée en anglais dans le style numpy.
+\section{Évaluation de l'algorithme Branch and Bound}
+\subsection{Performances en temps}
+Sur l'exemple de la figure 2, l'ID relaxé construit avec les SIS était mauvais et donnais des valeurs (les bornes supérieures) de MEU très élevées comparés aux évaluations des solutions candidates. Il n'y avait donc pas d'élagage possible et l'execution était très longue : 25 minutes comparé à moins d'une seconde avec la méthode classique.
 
+En général, la performance en temps dépent largement de la qualité de la relaxation et donc de la borne supérieure qui influe directement sur le nombre d'inférence à faire par les élagage qu'elle permet.
+
+La performance est aussi très impacté par le fait que nous avions choisis de faire des inférences exactes à chaque calcul de bornes ou d'évaluation au lieu d'implémenter la méthode itérative.
+\subsection{Performances en espace}
+La performance en espace de notre algorithme dépend largement de la structure du LIMID. En effet, l'arbre est d'autant plus profond qu'il y a de nœuds de décision et d'autant plus large que le nombre de parents des nœuds de décision et leur domaine. À titre de comparaison avec l'exemple de la figure 2, voici le nombre de nœuds en fonction du nombre de stages. Elle dépend aussi des potentiels des nœuds et de la qualité du relaxé : plus le relaxé est bon, plus on élaguera. Nous rappelons aussi que la performance en espace est impacté par notre choix d'utiliser des arbres ET/OU et non des graphes ET/OU.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.65\linewidth]{docs/ressources_rapport/perf_espace.png}
+  \caption{Nombre de nœuds/Stage}
+  \label{fig:sub8}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.65\linewidth]{docs/ressources_rapport/perf_Go.png}
+  \caption{Mémoire/Stage}
+  \label{fig:sub9}
+\end{subfigure}
+\caption{Performance en espace}
+\label{fig:test4}
+\end{figure}
+
+Voila la performance en espace lorsqu'aucun élagage n'est fait, c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort. La performance en espace lorsqu'il y a élagage peut théoriquement diminuer de façon drastique le nombre de branches explorées. Or, nous ne disposons pas de moyen pour calculer une bonne relaxation de LIMID, nous permettant d'avoir une borne supérieure informative.
+
+Nous avons testé un exemple (très simple) ou un élagage a pu être fait :
+\begin{figure}[h]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.08\linewidth]{docs/ressources_rapport/ID_exemple.png}
+  \caption{Diagramme d'influence}
+  \label{fig:sub5}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.75\linewidth]{docs/ressources_rapport/arbreETOU.png}
+  \caption{L'arbre ET/OU construit pendant le branch and bound}
+  \label{fig:sub6}
+\end{subfigure}
+\caption{ID et Arbre ET/OU}
+\label{fig:test2}
+\end{figure}
+
+En effet, voici l'arbre ET/OU complet si aucun élagage n'est fait :
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.\linewidth]{docs/ressources_rapport/arbreETOUComplet.png}
+ \caption{Arbre ET/OU complet}
+\end{figure}
+
+Une branche des deux noeuds $D_0$ est élagué, ce qui nous fait économise la construction de 6 noeuds, ce qui représente une économie d'espace de $40\%$ et nous libère de $4\times 2=8$ calculs d'inférence exacte (fait sur les noeuds $D_1$), ce qui représente $50\%$ des calculs d'inférences et de deux remontées de sous arbres (qui économise aussi du calcul car on a plus à calculer les valeurs des noeuds chances $X_1$ avec les probabilités à posteriori).
 \section{Intégration possible de l'algorithme dans PyAgrum}
-*vérifier la compatibilité de l'inférence avec les inférences existantes
-*vérifier la compatibilité avec notebooks
+% *vérifier la compatibilité de l'inférence avec les inférences existantes
+% *vérifier la compatibilité avec notebooks
 \subsection{Déliverables du projet}
 Le projet a pour but de réaliser :
 \begin{itemize}
@@ -170,16 +322,97 @@ Le projet a pour but de réaliser :
 \item Une intégration de l'algorithme correctement documentée (style python en anglais) dans l'API pyAgrum vérifiant l'implémentation des méthodes (liste non exhaustive) :
 \begin{itemize}
     \item makeInference : Réalise l'inférence sur un LIMID.
-    \item PosterieurUtility : Retourne la probabilité postérieure d'un noeud.
+    \item PosterieurUtility : Retourne la probabilité postérieure d'un nœud.
     \item lIMInfluenceDiagram : Retourne le LIMID associé à l'instance de la classe.
-    \item optimalDecision : Retourne la décision optimale pour un certain noeud décision basé sur le critère MEU.
+    \item optimalDecision : Retourne la décision optimale pour un certain nœud décision basé sur le critère MEU.
     \item MEU : Retourne l'utilité maximate espérée de l'inférence.
     \item junctionTree : Retourne l'arbre de jonction associé au LIMID
-    \item andOrTree: Retourne le graphe de jonction développé
-    \item une fonction pour avoir le graphe/arbre du branch and bound + une fonction pour avoir les états?
+    \item andOrTree : Retourne le graphe de jonction développé
+    \item une fonction pour visualiser l'arbre ET/OU
 \end{itemize}
 \item Une série de tests unitaires effectués sur les méthodes avec l'API TestUnit.
 \item Une série de benchmark validant l'utilité de notre implémentation de la méthode branch and bound face aux méthodes existante.
+\end{itemize}
+\section{Conclusion}
+En conclusion, après avoir testé les algorithmes actuels sur un exemple, nous avons implémenté une solution plus performante en terme d'espace (et qui pourrait également l'être en terme de temps de calcul après une optimisation du code par exemple grâce à une évaluation avec l'arbre de jonction incrémental).
+On a pu mesurer grâce à ce projet la complexité de cet algorithme malgré la documentation. En effet, ce sujet était plus complexe que prévu et cela nous a beaucoup retardé par rapport aux rendus attendus.
+Plus généralement, on a appris à avoir un œil critique sur les documents étudiés et nous avons pu approfondir des notions dans le domaine d'aide à la prise de décision.
+Nous n'avons, en effet, pas adhéré au document qui présentait l'algorithme puisqu'il était finalement bancal et la méthode qu'il proposait n'était pas reproductible.
+ 
+
+
+
+\newpage
+\section{Bibliographie}
+\begin{itemize}
+
+\item [1] C.Yuan and E.Hansen, « Efficient Computation of Join\-tree Bounds for Systematic MAP Search. », IJCAI Int. Jt. Conf. Artif. Intell., p. 1989, janv. 2009. 
+
+\item[2] D.Nilsson and S.Lauritzen, « Evaluating influence\-diagrams using LIMIDs », Proc. Sixt. Conf. Uncertain. Artif. Intell., janv. 2013.
+
+\item[3] A.Khaled, E.Hansen, and C.Yuan, « Solving Limited-Memory Influence Diagrams Using Branch-and-Bound Search », Int. Symp. Artif. Intell. Math. ISAIM 2012, sept. 2013.
+
+\item[4] C.Yuan, X.Wu, and E.Hansen, Solving Multistage\-Influence Diagrams using Branch-and-Bound Search. 2012, p. 700.
+
+\item[5] R.Dechter and R.Mateescu, « AND/OR searchspaces for\-graphical models », Artif. Intell.,vol. 171, p. 73‐106, févr. 2007, doi: 10.1016/j.artint.2006.11.003.
+
+\item[6] S.Acid and L.M.deCampos, « An Algorithm for Finding Minimum d-Separating Sets in Belief Networks », in Proceedings of the twelfth Conference of Uncertainty in Artificial Intelligence,
+1996, p. 22.
+
+\item[7] D.D.Maua, C.P.deCampos, and M.Zaffalon, « Solving Limited Memory Influence Diagrams », J. Artif. Intell. Res., vol. 44, p. 97‐140, mai 2012, doi: 10.1613/jair.3625.
+
+\item[8] D.R.Morrison, S.H.Jacobson, J.J.Sauppe, and E.C.Sewell, « Branch-and-bound algorithms: A survey of recent advances in searching, branching, and pruning », Discrete Optim., vol. 19, p. 79‐102, févr. 2016, doi: 10.1016/j.disopt.2016.01.005.
+
+\item[9] R.A.Howard, J.E.Matheson, and Strategic Decisions Group, Éd.,Readings on the principles and applications of decision analysis, Repr. Menlo Park, Calif: SDG, 1989.
+
+\item[10] A.J. Myles, R. N. Feudale, Y. Liu, N. A. Woody, and S. D. Brown, « An introduction to decision tree modeling », J. Chemom., vol. 18, no 6, p. 275‐285, 2004, doi:
+https://doi.org/10.1002/cem.873.
+
+\item[11] D. Geiger, T. Verma, and J. Pearl, « d-Separation: From Theorems to Algorithms », in Machine Intelligence and Pattern Recognition, vol. 10, M. Henrion, R. D. Shachter, L. N. Kanal, et J. F. Lemmer, Éd. North-Holland, 1990, p. 139‐148.
+
+\item[12]David Kahle, Terrance Savitsky, Stephen Schnelle, and Volkan Cevher, « Junction tree algorithm », Stat, Volume 631, 2008.
+\end{itemize}
+
+\newpage
+
+
+\section{Annexes}
+\subsection{Structre des éléments de l'arbre ET/OU}
+Les nœuds de décision ont pour attributs :
+\begin{itemize}
+\item Un identifiant au sein de l'arbre ET/OU
+\item Un dictionnaire de contexte dont la clef est l'identifiant du nœud (dans le diagramme d'influence, ce qui est possible même s'il y a plusieurs nœuds correspondant au même nœud de décision, puisqu'on regarde le contexte dans l'ID et non pas dans l'arbre ET/OU) et dont la valeur est la valeur d'instanciation
+\item Une valeur d'instanciation du nœud
+\item Deux identifiants (celui du nœud correspondant dans l'ID pour retrouver à quel nœud dans l'ID celui ci corresponds, et un autre identifiant pour le graphe ET/OU)
+\item Une liste de parents.
+\item Un dictionnaire de bornes supérieures dont la clef est la valeur du domaine et dont la valeur est un tuple (moyenne, variance).
+\item Un dictionnaire d'enfants dont la clef est la valeur du domaine et dont la valeur est l'enfant, un dictionnaire d'évaluations dont la clef est la valeur du domaine et dont la valeur est un tuple (moyenne, variance).
+\item Un support (domaine du nœud).
+\item Une décision optimale (une valeur du domaine du nœud de décision).
+\item La valeur de cette décision (la moyenne du MEU).
+\item Une liste de nœuds élagués.
+\item L'inférence qui a été faite sur l'instanciation qui a mené à ce nœud.
+\item La liste des enfants qui ont été évalués.
+\end{itemize}
+Les nœuds de chance ont pour attributs :
+\begin{itemize}
+\item Un identifiant.
+\item Un support.
+\item Un dictionnaire d'enfants dont la clef est la valeur du support et dont la valeur est l'enfant.
+\item Une valeur d'instanciation, une liste de parents, et leurs valeurs.
+\item Un dictionnaire de probabilités postérieures dont la clef est la valeur du support et dont la valeur est la probabilité.
+\item Un dictionnaire de contexte dont la clef est l'identifiant du parent, et dont la valeur est le domaine.
+\item Un identifiant au sein de l'arbre ET/OU.
+\end{itemize}
+
+L'arbre (classe andOrGraph) a pour attributs :
+\begin{itemize}
+\item Le diagramme d'influence que l'on utilise pour l'arbre ET/OU.
+\item Un nœud chance racine.
+\item Une liste de nœuds.
+\item Une liste de nœuds chance.
+\item Une liste de nœuds de décision.
+\item Un identifiant au sein de l'arbre ET/OU.
 \end{itemize}
 
 \end{document}
