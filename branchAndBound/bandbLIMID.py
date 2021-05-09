@@ -526,7 +526,7 @@ class BranchAndBoundLIMIDInference():
         return bn
 
     def viewAndOrGraphNoCuts(self):
-        """Creates a BN that allows to visualize the and or graph (without branches that have been cut).
+        """Creates a BN that allows to visualize the complete and or graph (with branches that have been cut).
 
         Returns
         -------
