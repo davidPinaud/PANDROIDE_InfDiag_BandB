@@ -47,7 +47,7 @@
 
 \textsc{\LARGE Sorbonne Université}\\[1.5cm] % Name of your university/college
 \textsc{\Large Projet P-A.N.D.R.O.I.D.E}\\[0.5cm] % Major heading such as course name
-\textsc{\large \url{https://git.io/J39ZB}}\\[0.5cm] % Minor heading such as course title
+\textsc{\large Dépôt Github : \url{https://git.io/J39ZB}}\\[0.5cm] % Minor heading such as course title
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
@@ -326,23 +326,19 @@ Si, par contre, il n'y a qu'un seul nœud de décision, la première couche est 
 Nous avons écrit plusieurs test unitaires, notamment pour tester l'algorithme de calcul du SIS. Celui-ci calcule en réalité l'ensemble séparant minimal dans un réseau bayésien. Nous avons donc testé sur des réseaux bayésiens générés aléatoirement si l'ensemble séparant minimal de deux nœuds tirés au hasard font bien de ces deux nœuds des nœuds indépendants. Nous avons aussi testé le branch and bound sur des IDs aléatoires afin de vérifier qu'il prenne en charge tous types de diagrammes.
 
 \subsection{Documentation}
-Une documentation des classes et des méthodes est disponible en annexe sous format PDF, elle a été rédigée en anglais dans le style numpy. Une version HTML est aussi disponible sur \url{https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation}
+Une documentation des classes et des méthodes est disponible en annexe sous format PDF, elle a été rédigée en anglais dans le style numpy. Une version en ligne est aussi disponible sur \url{https://davidpinaud.github.io/PANDROIDE_InfDiag_BandB/}
 \section{Évaluation de l'algorithme Branch and Bound}
 \subsection{Performances en temps}
 Sur l'exemple de la figure 2, l'ID relaxé construit avec les SIS était mauvais et donnais des valeurs (les bornes supérieures) de MEU très élevées comparés aux évaluations des solutions candidates. Il n'y avait donc pas d'élagage possible et l'exécution était très longue : 25 minutes comparé à moins d'une seconde avec la méthode classique.
 
-En général, la performance en temps dépend largement de la qualité de la relaxation et donc de la borne supérieure qui influe directement sur le nombre d'inférence à faire par les élagages qu'elle permet.
+La performance en temps dépend largement de la qualité de la relaxation et donc de la borne supérieure qui influe directement sur le nombre d'inférence à faire par les élagages qu'elle permet. Elle est aussi très impacté par le fait que nous avions choisis de faire des inférences exactes à chaque calcul de bornes ou d'évaluation au lieu d'implémenter la méthode itérative.
 
-La performance est aussi très impacté par le fait que nous avions choisis de faire des inférences exactes à chaque calcul de bornes ou d'évaluation au lieu d'implémenter la méthode itérative.
+Les performances en temps du branch and bound comparé à l'algorithme Shafer Shenoy sont mauvaises aussi. Ce dernier est exponentiellement plus rapide proportionnellement au nombre de noeuds et d'arcs dans le LIMID. Ceci est peut être dût à la mauvaise optimisation de notre code, couplé aux concessions sur l'algorithme initial décidé, mais aussi dû au fait que le branch and bound a été écrit en Python et l'implémentation de l'algorithme de Shafer Shenoy en C++.
 \subsection{Performances en espace}
 La performance en espace de notre algorithme dépend largement de la structure du LIMID. 
+En effet, l'arbre est d'autant plus profond qu'il y a de nœuds de décision et d'autant plus large que le nombre de parents des nœuds de décision et leur domaine. Nous rappelons aussi que la performance en espace est impacté par notre choix d'utiliser des arbres ET/OU et non des graphes ET/OU. Elle dépend aussi des potentiels des nœuds et de la qualité du relaxé : plus le relaxé est bon, plus on élaguera. 
 
-En effet, l'arbre est d'autant plus profond qu'il y a de nœuds de décision et d'autant plus large que le nombre de parents des nœuds de décision et leur domaine. 
-
-À titre de comparaison avec l'exemple de la figure 2, voici le nombre de nœuds en fonction du nombre de stages. 
-Elle dépend aussi des potentiels des nœuds et de la qualité du relaxé : plus le relaxé est bon, plus on élaguera. 
-\bigbreak
-Nous rappelons aussi que la performance en espace est impacté par notre choix d'utiliser des arbres ET/OU et non des graphes ET/OU.
+À titre de comparaison avec l'exemple de la figure 2, voici le nombre de nœuds crée et la quantité de mémoire occupée dans le graphe ET/OU en fonction du nombre de stages.
 
 \begin{figure}[ht]
 \centering
@@ -362,13 +358,13 @@ Nous rappelons aussi que la performance en espace est impacté par notre choix d
 \label{fig:test4}
 \end{figure}
 
-Voilà la performance en espace lorsqu'aucun élagage n'est fait, c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort.
-\bigbreak
-La performance en espace lorsqu'il y a élagage peut théoriquement diminuer de façon drastique le nombre de branches explorées. Or, nous ne disposons pas de moyen pour calculer une bonne relaxation de LIMID, nous permettant d'avoir une borne supérieure informative.
-\pagebreak
+Remarquons que c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort. C'est parce que le LIMID relaxé n'était pas informatif et aucun élagage n'est fait ! Cet exemple souligne encore l'importance du relaxé, en effet, l'élagage peut théoriquement diminuer de façon drastique le nombre de branches exploré.
+Sur des exemples ou des élagages ont pu être fait, nous observons une réductions souvent drastique (souvent plus de 40\%) de la quantité de mémoire occupée et du nombre de noeuds crée dans l'arbre ET/OU.
+En comparaison directe avec l'implémentation de Shafer Shenoy en C++, le branch and bound occupe beaucoup plus d'espace sur le disque. Cette différence de performance est sûrement dû au choix du langage d'implémentation et de l'optimisation de l'algorithme.
+
 \subsubsection{Exemples}
+Voici des exemples illustrant les performances en temps et en espace et l'importance de l'élagage :
 \subsubsubsection{Exemple 1}
-Voici un exemple (très simple) où un élagage a pu être fait :
 \begin{figure}[ht]
 \centering
 \begin{subfigure}{.5\textwidth}
@@ -425,7 +421,6 @@ Shafer Shenoy a construit un arbre de jonction de largeur 2 et a utilisé enviro
 \end{figure}
 
 Le branch and bound a élagué 4 branches, ce qui a permis de ne développer que 35 nœuds au lieu de 63 pour un temps d'exécution de 0.07885 secondes et un arbre de profondeur 6 occupant 1680 octets comparé à un arbre de jonction de largeur 3 occupant environ 64 octets et un temps d'exécution de 0.00126 secondes pour Shafer Shenoy. Le branch and bound est donc 204 fois plus lent et occupe 26 fois plus d'espace que la méthode actuelle.
-\pagebreak
 \subsubsubsection{Exemple 3}
 \begin{figure}[ht]
 \centering
@@ -459,10 +454,13 @@ Le projet a pour but de réaliser :
 \end{itemize}
 
 \section{Conclusion}
-En conclusion, après avoir testé les algorithmes actuels sur un exemple, nous avons implémenté une solution plus performante en terme d'espace (et qui pourrait également l'être en terme de temps de calcul après une optimisation du code par exemple grâce à une évaluation avec l'arbre de jonction incrémental).
-On a pu mesurer grâce à ce projet la complexité de cet algorithme malgré la documentation. En effet, ce sujet était plus complexe que prévu et cela nous a beaucoup retardé par rapport aux rendus attendus.
-Plus généralement, on a appris à avoir un œil critique sur les documents étudiés et nous avons pu approfondir des notions dans le domaine d'aide à la prise de décision.
-Nous n'avons, en effet, pas adhéré au document qui présentait l'algorithme puisqu'il était finalement bancal et la méthode qu'il proposait n'était pas reproductible.
+En conclusion, après avoir testé les algorithmes actuels sur un exemple, nous avons implémenté un algorithme de résolution de LIMID basé sur le branch and bound qui prouve la promesse de performance en terme d'espace de ce type d'approche (et qui pourrait également l'être en terme de temps de calcul en utilisant un algorithme incrémental), malgré la faible performance en comparaison directe avec l'algorithme de Shafer Shenoy dû à l'optimisation insuffisante de notre code. 
+
+Nous avons souligné le rôle majeur de la relaxation dans la performance de l'algorithme et montré que l'algorithme pour la création de celle-ci n'est pas encore très bien compris au vu des difficultés qu'on a rencontré pendant l'implémentation de l'algorithme de calcul de SIS.
+
+Nous avons donc appris à avoir un œil critique sur les documents étudiés et nous avons pu approfondir des notions dans le domaine d'aide à la prise de décision ainsi que l'utilisation de la librairie PyAgrum.
+
+Enfin, nous remercions M.Pierre-Henri Wuillement pour ses contributions et ses conseils sans lesquels nous aurions sans doute pas pu venir à terme de ce projet.
  
 
 
@@ -502,6 +500,24 @@ https://doi.org/10.1002/cem.873.
 
 
 \section{Annexes}
+\subsection{Liens divers}
+\underline{\textbf{Documentation : }}
+\begin{itemize}
+    \item WEB : \url{https://davidpinaud.github.io/PANDROIDE_InfDiag_BandB/}
+    \item PDF : \url{https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation}
+\end{itemize}
+\underline{\textbf{Carnet de Bord : }}
+\begin{itemize}
+    \item PDF : \url{https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/blob/master/docs/pdf/Carnet\%20de\%20bord.pdf}
+\end{itemize}
+\underline{\textbf{Dépendances : }}
+\begin{itemize}
+    \item Python >3.8.5 :\url{https://www.python.org/downloads/}
+    \item PyAgrum >0.20.2 : \url{https://gitlab.com/agrumery/aGrUM/blob/0.20.2/wrappers/pyAgrum/doc/sphinx/index.rst}
+    \item NumPy >v1.20.0 : \url{https://numpy.org/install/}
+    \item pydotplus >2.0.2 : \url{https://pypi.org/project/pydotplus/}
+    \item Matplotlib >3.4.1: \url{https://matplotlib.org/stable/users/installing.html}
+\end{itemize}
 \subsection{Structre des éléments de l'arbre ET/OU}
 Les nœuds de décision ont pour attributs :
 \begin{itemize}
