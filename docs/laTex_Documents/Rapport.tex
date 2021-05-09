@@ -281,7 +281,7 @@ Ce dernier est créé en ajoutant des informations à l'ID de départ et en simp
 \bigbreak
 Les informations ajoutées sont sous la forme d'arcs entre des nœuds d'information et des nœuds de décision. Pour savoir quels arcs à ajouter à un nœud de décision, il faut calculer son \textit{sufficient information set} (SIS).
 \bigbreak
-L'ID relaxé est alors crée en deux étapes :
+L'ID relaxé est alors créé en deux étapes :
 tout d'abord, le SIS de chaque nœud de décision est calculé dans l'ordre temporel inverse des décisions (donné par le décideur) $D_n$, ..., $D_1$ faisant de chaque nœud chance dans leur SIS correspondant un de leur nœud parent.
 Enfin, les arcs d'information non requis sont supprimés de l'ID.
 
@@ -331,14 +331,14 @@ Une documentation des classes et des méthodes est disponible en annexe sous for
 \subsection{Performances en temps}
 Sur l'exemple de la figure 2, l'ID relaxé construit avec les SIS était mauvais et donnais des valeurs (les bornes supérieures) de MEU très élevées comparés aux évaluations des solutions candidates. Il n'y avait donc pas d'élagage possible et l'exécution était très longue : 25 minutes comparé à moins d'une seconde avec la méthode classique.
 
-La performance en temps dépend largement de la qualité de la relaxation et donc de la borne supérieure qui influe directement sur le nombre d'inférence à faire par les élagages qu'elle permet. Elle est aussi très impacté par le fait que nous avions choisis de faire des inférences exactes à chaque calcul de bornes ou d'évaluation au lieu d'implémenter la méthode itérative.
+La performance en temps dépend largement de la qualité de la relaxation et donc de la borne supérieure qui influe directement sur le nombre d'inférences à faire par les élagages qu'elle permet. Elle est aussi très impactée par le fait que nous avions choisi de faire des inférences exactes à chaque calcul de bornes ou d'évaluation au lieu d'implémenter la méthode itérative.
 
-Les performances en temps du branch and bound comparé à l'algorithme Shafer Shenoy sont mauvaises aussi. Ce dernier est exponentiellement plus rapide proportionnellement au nombre de noeuds et d'arcs dans le LIMID. Ceci est peut être dût à la mauvaise optimisation de notre code, couplé aux concessions sur l'algorithme initial décidé, mais aussi dû au fait que le branch and bound a été écrit en Python et l'implémentation de l'algorithme de Shafer Shenoy en C++.
+Les performances en temps du branch and bound comparées à celles de l'algorithme Shafer Shenoy sont mauvaises aussi. Ce dernier est exponentiellement plus rapide proportionnellement au nombre de nœududs et d'arcs dans le LIMID. Ceci est peut être du à la mauvaise optimisation de notre code, couplé aux concessions sur l'algorithme initial décidées, mais aussi au fait que le branch and bound a été écrit en Python et l'implémentation de l'algorithme de Shafer Shenoy en C++.
 \subsection{Performances en espace}
 La performance en espace de notre algorithme dépend largement de la structure du LIMID. 
-En effet, l'arbre est d'autant plus profond qu'il y a de nœuds de décision et d'autant plus large que le nombre de parents des nœuds de décision et leur domaine. Nous rappelons aussi que la performance en espace est impacté par notre choix d'utiliser des arbres ET/OU et non des graphes ET/OU. Elle dépend aussi des potentiels des nœuds et de la qualité du relaxé : plus le relaxé est bon, plus on élaguera. 
+En effet, l'arbre est d'autant plus profond qu'il y a de nœuds de décision et d'autant plus large que le nombre de parents des nœuds de décision et leur domaine. Nous rappelons aussi que la performance en espace est impactée par notre choix d'utiliser des arbres ET/OU et non des graphes ET/OU. Elle dépend aussi des potentiels des nœuds et de la qualité du relaxé : plus le relaxé est bon, plus on élaguera. 
 
-À titre de comparaison avec l'exemple de la figure 2, voici le nombre de nœuds crée et la quantité de mémoire occupée dans le graphe ET/OU en fonction du nombre de stages.
+À titre de comparaison avec l'exemple de la figure 2, voici le nombre de nœuds créés et la quantité de mémoire occupée dans le graphe ET/OU en fonction du nombre de stages.
 
 \begin{figure}[ht]
 \centering
@@ -358,12 +358,12 @@ En effet, l'arbre est d'autant plus profond qu'il y a de nœuds de décision et 
 \label{fig:test4}
 \end{figure}
 
-Remarquons que c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort. C'est parce que le LIMID relaxé n'était pas informatif et aucun élagage n'est fait ! Cet exemple souligne encore l'importance du relaxé, en effet, l'élagage peut théoriquement diminuer de façon drastique le nombre de branches exploré.
-Sur des exemples ou des élagages ont pu être fait, nous observons une réductions souvent drastique (souvent plus de 40\%) de la quantité de mémoire occupée et du nombre de noeuds crée dans l'arbre ET/OU.
-En comparaison directe avec l'implémentation de Shafer Shenoy en C++, le branch and bound occupe beaucoup plus d'espace sur le disque. Cette différence de performance est sûrement dû au choix du langage d'implémentation et de l'optimisation de l'algorithme.
+Remarquons que c'est la même complexité exponentielle que les algorithmes de résolutions actuels qui ressort. C'est parce que le LIMID relaxé n'était pas informatif et aucun élagage n'a été fait ! Cet exemple souligne encore l'importance du relaxé, en effet, l'élagage peut théoriquement diminuer de façon drastique le nombre de branches explorées.
+Sur des exemples où des élagages ont pu être fait, nous observons une réduction souvent drastique (souvent plus de 40\%) de la quantité de mémoire occupée et du nombre de nœuds créés dans l'arbre ET/OU.
+En comparaison directe avec l'implémentation de Shafer Shenoy en C++, le branch and bound occupe beaucoup plus d'espace sur le disque. Cette différence de performance est sûrement due au choix du langage d'implémentation et à l'optimisation de l'algorithme.
 
 \subsubsection{Exemples}
-Voici des exemples illustrant les performances en temps et en espace et l'importance de l'élagage :
+Voici des exemples illustrant les performances en temps et en espace ainsi que l'importance de l'élagage :
 \subsubsubsection{Exemple 1}
 \begin{figure}[ht]
 \centering
@@ -394,7 +394,7 @@ Une branche des deux nœuds $D_0$ est élaguée, ce qui nous fait économiser la
 
 En comparaison avec l'inférence Shafer Shenoy, notre algorithme a fait l'inférence en 0.00956 secondes comparé à 0.00054 pour la méthode état de l'art soit $17,7$ fois plus rapide. 
 
-Shafer Shenoy a construit un arbre de jonction de largeur 2 et a utilisé environ 32 octets de mémoire tandis que le branch and bound a utilisé un arbre ET/OU de profondeur 4 et environ 432 octets soit 32 fois plus d'espace occupé. Shafer Shenoy étant écrit en $C++$ et le branch and bound en Python, il est aisé de comprendre l'écart de performance entre les deux algorithmes.
+Shafer Shenoy a construit un arbre de jonction de largeur 2 et a utilisé environ 32 octets de mémoire tandis que le branch and bound a utilisé un arbre ET/OU de profondeur 4 et environ 432 octets soit 32 fois plus d'espace occupé. Shafer Shenoy étant écrit en C++ et le branch and bound en Python, il est aisé de comprendre l'écart de performance entre les deux algorithmes.
 \subsubsubsection{Exemple 2}
 \begin{figure}[ht]
 \centering
@@ -454,13 +454,13 @@ Le projet a pour but de réaliser :
 \end{itemize}
 
 \section{Conclusion}
-En conclusion, après avoir testé les algorithmes actuels sur un exemple, nous avons implémenté un algorithme de résolution de LIMID basé sur le branch and bound qui prouve la promesse de performance en terme d'espace de ce type d'approche (et qui pourrait également l'être en terme de temps de calcul en utilisant un algorithme incrémental), malgré la faible performance en comparaison directe avec l'algorithme de Shafer Shenoy dû à l'optimisation insuffisante de notre code. 
+En conclusion, après avoir testé les algorithmes actuels sur un exemple, nous avons implémenté un algorithme de résolution de LIMID basé sur le branch and bound qui fait honneur à la promesse de performance en terme d'espace de ce type d'approche (et qui pourrait également l'être en terme de temps de calcul en utilisant un algorithme incrémental), malgré la faible performance en comparaison directe avec l'algorithme de Shafer Shenoy dû à l'optimisation insuffisante de notre code. 
 
-Nous avons souligné le rôle majeur de la relaxation dans la performance de l'algorithme et montré que l'algorithme pour la création de celle-ci n'est pas encore très bien compris au vu des difficultés qu'on a rencontré pendant l'implémentation de l'algorithme de calcul de SIS.
+Nous avons souligné le rôle majeur de la relaxation dans les performances et montré que l'algorithme pour la création de celle-ci n'est pas encore très bien compris au vu des difficultés que l'on a rencontré pendant l'implémentation du programme concernant le calcul de SIS.
 
-Nous avons donc appris à avoir un œil critique sur les documents étudiés et nous avons pu approfondir des notions dans le domaine d'aide à la prise de décision ainsi que l'utilisation de la librairie PyAgrum.
+Nous avons donc appris à avoir un œil critique sur les documents étudiés et nous avons pu approfondir des notions dans le domaine d'aide à la prise de décision. Nous avons également appris à utiliser plus en profondeur la librairie PyAgrum et sa documentation.
 
-Enfin, nous remercions M.Pierre-Henri Wuillement pour ses contributions et ses conseils sans lesquels nous aurions sans doute pas pu venir à terme de ce projet.
+Enfin, nous remercions M.Pierre-Henri Wuillemin pour ses contributions et ses conseils sans lesquels nous n'aurions sans doute pas pu mener ce projet à terme.
  
 
 
