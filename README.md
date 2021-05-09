@@ -1,5 +1,5 @@
 # Projet P-A.N.D.R.O.I.D.E - Sorbonne Université - 2020-2021
-Projet d'implémentation d'un algorithme basé sur le Branch and Bound (Séparation et Évaluation) pour la résolution de **LI**mited **M**emory **I**nfluence **D**iagram **(LIMID).
+Projet d'implémentation d'un algorithme basé sur le Branch and Bound (Séparation et Évaluation) pour la résolution de **LI**mited **M**emory **I**nfluence **D**iagram **(LIMID)**.
 
 Projet réalisé dans le cadre de l'UE P-ANDROIDE 2020-2021 de Sorbonne Université.
 
