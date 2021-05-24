@@ -108,7 +108,7 @@ M. Pierre-Henri \textsc{WUILLEMIN} % Supervisor's Name
 
 \subsection{Les diagrammes d'influence (ID)}
 Un diagramme d'influence est une représentation graphique et mathématique compacte d'une situation de décision. Il s'agit d'une généralisation d'un réseau bayésien, dans lequel non seulement les problèmes d'inférence probabiliste, mais aussi les problèmes de prise de décision peuvent être modélisés et résolus. 
-Le diagramme d'influence est une bonne alternative aux arbres de décision qui peuvent devenir extrêmement complexes. En effet, elles permettent de représenter des arbres de décision symétriques de façon compacte. On se place dans ce projet dans le cadre du maximum d'utilité.
+Le diagramme d'influence est une bonne alternative aux arbres de décision qui peuvent devenir extrêmement complexes. En effet, elles permettent de représenter des arbres de décision symétriques de façon compacte. On se place dans ce projet dans le cadre du maximum de l'espérance d'utilité.
 
 Considérons, par exemple, une situation de décision concernant le choix d'une activité (de domaine : sport en plein air ou sport en intérieur) prise selon la prévision météorologique qui dépend, elle, des conditions réelles (leurs domaines est : pluvieux ou ensoleillé). Le diagramme d'influence 1 (a) ci-dessous permet de représenter cette situation et est équivalent à l'arbre de décision de la figure 1 (b).
 
@@ -256,7 +256,7 @@ L'algorithme étudié dans ce projet résout les LIMIDs en les convertissant en 
 
 Les nœuds ET sont alors des variables aléatoires correspondant aux nœuds chances qui sont informatifs à un nœud de décision et les nœuds OU sont des nœuds de décision (représentant des alternatives de décision), enfin les feuilles sont les nœuds d'utilités.
 
-Durant le parcours en profondeur, un chemin racine-feuille représente une instance des nœuds d'information et de décision. Ces nœuds sont générés à la volée, ce qui permet de limiter l'utilisation de la mémoire. Les bornes supérieures et les évaluations des solutions candidates sont aussi calculées à la volée, permettant d'élaguer les chemins non prometteurs. Les calculs des bornes supérieures sont faites sur un ID relaxé, dont la construction est détaillée plus tard dans le rapport.
+Durant le parcours en profondeur, un chemin racine-feuille représente une instance des nœuds d'information et de décision. Ces nœuds sont générés à la volée, ce qui permet de limiter l'utilisation de la mémoire. Les bornes supérieures et les évaluations des solutions candidates sont aussi calculées à la volée, permettant d'élaguer les chemins non prometteurs [3]. Les calculs des bornes supérieures sont faites sur un ID relaxé, dont la construction est détaillée plus tard dans le rapport.
 
 Il faut souligner que cet algorithme n'applique pas classiquement le Branch and Bound comme dans le problème du sac à dos par exemple (où les nœuds sont des sacs avec plus ou moins d'objets)dont une branche peut être élaguée si une solution courante est meilleure que la borne supérieure de cette branche. 
 
@@ -294,7 +294,7 @@ Nous avons implémenté 3 versions de l'algorithme :
 \begin{itemize}
     \item La première se basait sur la construction complète d'un graphe auxiliaire à partir de l'ID, sur lequel on pouvait appliquer Ford et Fulkerson.
     \item La deuxième, plus performante, utilisait quant à elle un algorithme sur un graphe moralisé ancestral où on applique Ford et Fulkerson de manière implicite.
-    \item La troisième, dont la majorité du code a été fourni par M. Wuillemin, était similaire au deuxième jet mais en présentant des optimisations et un code plus propre.
+    \item La troisième, dont la majorité du code a été fourni par M. Wuillemin, présentait une structure plus modulaire qui permettait aussi de calculer des ensembles séparants pour des réseaux bayésiens. Il contenait aussi des éléments qui permettait de mieux débugger et de comprendre le comportement de l'algorithme de Acid et Compos [6].
 \end{itemize}
 Nous soulignons le fait que la compréhension des articles était délicat, d'une part à cause de notre inexpérience sur ce sujet et d'autre part à cause de l'écriture confuse et expéditive de la part d'Acid et Campos [6]. L'implémentation de cet algorithme est complète mais il reste des points confus qui restent à discuter tel que le choix final des nœuds dans le SIS, la méthode de parcours du graphe moralisé ancestral dans certaines parties de l'algorithme ou encore la validité de la théorie derrière l'adaptation de l'algorithme Ford and Fulkerson. Il est d'autant plus important pour le projet de bien comprendre cette partie au vu de l'importance d'une relaxation informative du diagramme d'influence.
 
@@ -305,13 +305,13 @@ L'idée de départ était d'appliquer un Branch and Bound sur un \textit{graphe}
 \bigbreak
 Par manque de temps, nous nous sommes résolus à :
 \begin{itemize}
-    \item Utiliser un arbre ET/OU au lieu d'un graphe ET/OU. En effet, l'idée originale était de construire un graphe ET/OU au lieu d'un arbre ET/OU pour la résolution de LIMID car ils offraient des optimisations en temps et en espace en exploitant le fait que, dans un LIMID, comme l'assomption du non oubliant est assoupli, beaucoup de décisions seront prises dans le même contexte. Ce qui augmenterait à la fois le temps de calcul en faisant des inférences plusieurs fois, mais aussi l'espace requis car on doit stocker plus de nœuds. Le graphe ET/OU devait en plus des nœuds ET et OU, avoir des nœuds spéciaux qui facilite l'implémentation de l'algorithme.
+    \item Utiliser un arbre ET/OU au lieu d'un graphe ET/OU. En effet, l'idée originale était de construire un graphe ET/OU au lieu d'un arbre ET/OU pour la résolution de LIMID car ils offraient des optimisations en temps et en espace en exploitant le fait que, dans un LIMID, comme l'hypothèse du non oubliant est assoupli, beaucoup de décisions seront prises dans le même contexte. Ce qui augmenterait à la fois le temps de calcul en faisant des inférences plusieurs fois, mais aussi l'espace requis car on doit stocker plus de nœuds. Le graphe ET/OU devait en plus des nœuds ET et OU, avoir des nœuds spéciaux qui facilite l'implémentation de l'algorithme.
     \item Calculer les bornes supérieures et les évaluations avec de l'inférence exacte complète à chaque fois, ce qui augmente grandement notre complexité en temps (qui va même devenir le goulot d'étranglement de l'algorithme).
 \end{itemize}
 
 Nous devons donc commencer par construire l'arbre ET/OU, et ce à la volée. Pour cela, nous commençons par choisir dans l'ordre de décision donné avec le LIMID, le premier nœud de décision $d_0$.
 
-Nous générons alors les alternatives possibles d'instanciations des parents de $d_0$ que nous appellerons \textit{couche} de $d_0$. Cette couche est composée de nœuds ET (chance), nous ajoutons alors des nœuds OU (décision) correspondant à $d_0$ sur les feuilles de cette couche. Pour exemple, si $d_0$ est le nœud (6) de décision dans l'ID de la figure 2, ses parents sont $ns_0, es_0, ss_0, ws_0$. Ceux-là ont pour domaine $[True, False]$  dont il y a $2^4=16$ alternatives possibles pour $d_0$.
+Nous générons alors les alternatives possibles d'instanciations des parents de $d_0$ que nous appellerons \textit{couche} de $d_0$. Cette couche est composée de nœuds ET (chance), nous ajoutons alors des nœuds OU (décision) correspondant à $d_0$ sur les feuilles de cette couche. Pour exemple, si $d_0$ est le nœud (6) de décision dans l'ID de la figure 2, ses parents sont $ns_0, es_0, ss_0, ws_0$. Ceux-là ont pour domaine $[True, False]$  donc il y a $2^4=16$ alternatives possibles pour $d_0$.
 %mettre l'arbre généré par l'exemple du robot
 Lorsque cela est fait, s'il y a plus d'un seul nœud de décision dans le LIMID, nous calculons la borne supérieure des nœuds OU générés (pour toutes les valeurs de son domaine) et nous générons la couche pour les nœuds de décision suivants dans l'ordre de décision donné pour une branche d'un des nœuds OU qu'on vient de créer (on garde en mémoire, pour les nœuds OU, quelles branches ont été développées, évaluées, ou élaguées). Lorsque nous arrivons au dernier nœud de décision, il faut faire une inférence pour tous les nœuds de décision de cette couche feuille, pour tous les éléments de domaines de ces nœuds afin qu'on puisse remonter par un processus similaire à l'induction arrière dans la résolution d'un arbre de décision (la valeur d'un nœud chance est la moyenne pondérée par les probabilités postérieures des valeurs de ses fils et la valeur d'un nœud de décision est le maximum des valeurs de ses enfants). Lorsque cette induction arrière qui remonte la couche atteint son nœud de décision père, nous pouvons regarder si on peut élaguer en comparant les bornes supérieures des autres branches du nœud de décision avec l'évaluation de la couche (on met aussi à jour la meilleure solution courante pour ce nœud de décision s'il le faut). Lorsque un nœud de décision a toutes ses branches évaluées ou élaguées, il est \textit{processed}. Lorsque tous les nœuds de décision dans une couche sont \textit{processed}, nous pouvons faire l'induction arrière pour cette couche. Nous répétons ces étapes jusqu'à atteindre la racine de l'arbre ET/OU. 
 
@@ -398,7 +398,7 @@ Shafer Shenoy a construit un arbre de jonction de largeur 2 et a utilisé enviro
 \subsubsubsection{Exemple 2}
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.2\linewidth]{docs/ressources_rapport/exempleID2.png}
+\includegraphics[width=0.13\linewidth]{docs/ressources_rapport/exempleID2.png}
  \caption{Diagramme d'influence}
 \end{figure}
 
