@@ -9,15 +9,15 @@ Encadré par M.Pierre-Henri Wuillemin.
 * David PINAUD
 * Emilie BIEGAS
 
+## RAPPORT SUR LE PROJET (fusionné avec le cahier des charges)
+PDF disponible sur :  
+https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/blob/master/docs/pdf/rapport.pdf
+
 ## DOCUMENTATION
 Site de la documentation :  
 https://davidpinaud.github.io/PANDROIDE_InfDiag_BandB/  
 Version PDF disponible sur  
-https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/tree/master/docs/documentation
-
-## RAPPORT SUR LE PROJET (fusionné avec le cahier des charges)
-PDF disponible sur :  
-https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/blob/master/docs/pdf/rapport.pdf
+https://github.com/davidPinaud/PANDROIDE_InfDiag_BandB/blob/master/docs/documentation/doc_pdf/documentation.pdf
 
 ## CARNET DE BORD
 PDF disponible sur :
